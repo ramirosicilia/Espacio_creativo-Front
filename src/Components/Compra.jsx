@@ -46,57 +46,49 @@ export function Compra() {
   }, [publicKey]);
 
   // 💰 Crear preferencia y renderizar botón de pago
-  const handlePagar = async () => {
-    if (!mercadoPago) return;
+  const [loading, setLoading] = useState(false); // 🧩 nuevo estado
 
-    try {
-      const response = await fetch(`${apiUrl}/create_preference`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          mp: [
-            {
-              id: id,
-              name: producto.titulo,
-              quantity: 1,
-              unit_price: producto.precio,
-            },
-          ],
-        }),
-      });
+const handlePagar = async () => {
+  if (!mercadoPago || loading) return; // ⛔ evitar múltiples clicks
 
-      const data = await response.json();
-      if (!data.id) throw new Error("No se recibió preferenceId desde el backend");
+  setLoading(true); // bloquear mientras crea la preferencia
 
-      setPreferenceId(data.id);
-
-      // 👇 Cuando llega el botón de MP, ocultamos el botón de comprar
-      setBotonVisible(false);
-
-      // Renderizar botón con Bricks
-      const bricksBuilder = mercadoPago.bricks();
-      const container = document.getElementById("wallet_container");
-
-      if (container) container.innerHTML = ""; // limpiar si ya existe
-
-      await bricksBuilder.create("wallet", "wallet_container", {
-        initialization: {
-          preferenceId: data.id,
-        },
-        customization: {
-          texts: {
-            valueProp: "smart_option",
+  try {
+    const response = await fetch(`${apiUrl}/create_preference`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        mp: [
+          {
+            id: id,
+            name: producto.titulo,
+            quantity: 1,
+            unit_price: producto.precio,
           },
-        },
-      });
-    } catch (error) {
-      console.error("Error al crear la preferencia de pago:", error);
-    }
-  };
+        ],
+      }),
+    });
 
-  if (!producto) {
-    return <h2 style={{ padding: "40px" }}>Producto no encontrado ❌</h2>;
+    const data = await response.json();
+    if (!data.id) throw new Error("No se recibió preferenceId desde el backend");
+
+    setPreferenceId(data.id);
+    setBotonVisible(false);
+
+    const bricksBuilder = mercadoPago.bricks();
+    const container = document.getElementById("wallet_container");
+    if (container) container.innerHTML = ""; // limpiar si ya existe    
+
+    await bricksBuilder.create("wallet", "wallet_container", {
+      initialization: { preferenceId: data.id },
+      customization: { texts: { valueProp: "smart_option" } },
+    });
+  } catch (error) {
+    console.error("Error al crear la preferencia de pago:", error);
+  } finally {
+    setLoading(false); // 🔓 permitir nuevo intento si falló
   }
+};
 
  return (
     <div
@@ -128,19 +120,21 @@ export function Compra() {
           Precio: <strong>${producto.precio} ARS</strong>
         </p>
 
-        <button
-          className="boton-siguiente"
-          style={{
-            marginTop: "20px",
-            padding: "10px 30px",
-            fontSize: "1.1rem",
-            opacity: botonVisible ? 1 : 0,
-            transition: "opacity 0.4s ease",
-          }}
-          onClick={handlePagar}
-        >
-          Comprar Ahora 💳
-        </button>
+             <button
+        className="boton-siguiente"
+        style={{
+          marginTop: "20px",
+          padding: "10px 30px",
+          fontSize: "1.1rem",
+          opacity: botonVisible ? 1 : 0,
+          transition: "opacity 0.4s ease",
+        }}
+        onClick={handlePagar}
+        disabled={loading} // ⛔ bloquea el botón mientras carga
+      >
+        {loading ? "Cargando..." : "Comprar Ahora 💳"}
+      </button>
+
 
         {/* 👇 se posiciona de forma absoluta sobre el botón */}
         <div
