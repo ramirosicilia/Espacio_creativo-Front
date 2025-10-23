@@ -77,10 +77,10 @@ const handlePagar = async () => {
 
     const bricksBuilder = mercadoPago.bricks();
     const container = document.getElementById("wallet_container");
-    if (container) container.innerHTML = ""; // limpiar si ya existe    
+    if (container) container.innerHTML = ""; // limpiar si ya existe
 
     await bricksBuilder.create("wallet", "wallet_container", {
-      initialization: { preferenceId: data.id },
+      initialization: { preferenceId: preferenceId},
       customization: { texts: { valueProp: "smart_option" } },
     });
   } catch (error) {
