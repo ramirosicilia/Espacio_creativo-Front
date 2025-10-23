@@ -80,7 +80,7 @@ const handlePagar = async () => {
     if (container) container.innerHTML = ""; // limpiar si ya existe
 
     await bricksBuilder.create("wallet", "wallet_container", {
-      initialization: { preferenceId: preferenceId},
+      initialization: { preferenceId:data.id},
       customization: { texts: { valueProp: "smart_option" } },
     });
   } catch (error) {
