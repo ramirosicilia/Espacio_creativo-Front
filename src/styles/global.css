@@ -1,0 +1,601 @@
+/* =========================
+   🌟 RESET Y FUENTES
+   ========================= */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap');
+
+
+
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+background: linear-gradient(180deg, #1a1a1a 0%, #2c2c2c 100%);
+
+  color: #222;
+  min-height: 100vh;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 40px;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  font-size: 22px;
+  color: #222;
+  background-color: #fefefe;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+header:hover {
+  background-color: #ffffff;
+}
+
+header nav a {
+  position: relative;
+  font-weight: 500;
+  text-decoration: none;
+  color: #333;
+  transition: color 0.3s ease;
+}
+
+header nav a::after {
+  content: "";
+  position: absolute;
+  bottom: -3px;
+  left: 0;
+  width: 0%;
+  height: 2px;
+  background-color: #2b6cb0;
+  transition: width 0.3s ease;
+}
+
+header nav a:hover {
+  color: #2b6cb0;
+}
+
+header nav a:hover::after {
+  width: 100%;
+} 
+
+
+/* styles.css */
+.nav-link {
+  text-decoration: none;
+  color: #333; /* Color de texto */
+  font-weight: 700;
+  font-size: 16px; /* Tamaño de fuente */
+  font-family: 'Poppins', sans-serif; /* Fuente moderna */
+  padding: 8px 12px; /* Espaciado alrededor del texto */
+  border-radius: 6px; /* Bordes redondeados sutiles */
+  transition: all 0.3s ease; /* Transición suave para hover */
+  position: relative;
+}
+
+/* Efecto de subrayado animado */
+.nav-link::after {
+  content: "";
+  position: absolute;
+  width: 0;
+  height: 2px;
+  bottom: 0;
+  left: 0;
+  background-color: #2b6cb0; /* Color del subrayado */
+  transition: width 0.3s ease;
+}
+
+.nav-link:hover::after {
+  width: 100%; /* Animación al pasar el mouse */
+}
+
+.nav-link:hover {
+  color: #2b6cb0; /* Cambia el color del texto al hacer hover */
+  background-color: rgba(43, 108, 176, 0.1); /* Fondo sutil */
+}
+
+
+.titulo-espacio {
+  font-family: 'Poppins', sans-serif;
+  font-size: 2rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  position: relative;
+  display: inline-block;
+  background: linear-gradient(90deg, #12a4e2, #4d9fff, #1cf0db, #0088ff, #00b4ff);
+  background-size: 300%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: brilloGradiente 6s linear infinite, pulsoLuz 3s ease-in-out infinite;
+  text-shadow: 0 0 10px rgba(0, 204, 255, 0.6), 0 0 20px rgba(0, 4, 255, 0.767);
+  cursor: pointer;
+}
+
+/* Animación del gradiente que viaja */
+@keyframes brilloGradiente {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Pulso de luz (efecto respiración) */
+@keyframes pulsoLuz {
+  0%, 100% {
+    text-shadow: 0 0 10px rgba(0, 204, 255, 0.6),
+                 0 0 20px rgba(0, 4, 255, 0.911),
+                 0 0 40px rgba(0, 102, 255, 0.2);
+    transform: scale(1);
+  }
+  50% {
+    text-shadow: 0 0 25px rgba(0, 81, 255, 0.9),
+                 0 0 50px rgba(0, 38, 255, 0.6),
+                 0 0 80px rgba(0, 38, 255, 0.4);
+    transform: scale(1.03);
+  }
+}
+
+/* Brillo extra al pasar el mouse */
+.titulo-espacio:hover {
+  animation: brilloGradiente 3s linear infinite, pulsoLuz 1.5s ease-in-out infinite;
+  text-shadow: 0 0 25px rgb(0, 47, 255),
+               0 0 50px rgba(25, 0, 255, 0.8),
+               0 0 80px rgb(0, 110, 255);
+  transform: scale(1.05);
+}
+
+.libro-card-container{
+  width: 100%;
+  height: 30rem;
+  display: flex;
+  justify-content: center;
+  padding:1.5rem;
+  align-items: center; 
+  flex-direction: column;
+
+} 
+
+.arrow-down {
+  width: 30px;
+  height: 30px;
+  border-left: 3px solid #fff;
+  border-bottom: 3px solid #fff;
+  transform: rotate(-45deg);
+  margin: 40px auto;
+  animation: bounce 1.5s infinite ease-in-out;
+  opacity: 0.9;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.arrow-down:hover {
+  transform: rotate(-45deg) scale(1.2);
+  opacity: 1;
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: rotate(-45deg) translateY(0);
+  }
+  50% {
+    transform: rotate(-45deg) translateY(10px);
+  }
+}
+
+
+
+
+
+.libro-card {
+  display: flex;
+  align-items: center;
+  width: 55rem;
+  justify-content: space-between;
+
+  gap: 2rem;
+  background: linear-gradient(145deg, #ffffff, #f4f6fb);
+  border-radius: 1.5rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08),
+              inset 0 0 0 1px rgba(255, 255, 255, 0.6);
+  padding: 2rem;
+ 
+  overflow: hidden;
+  cursor: pointer;
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 1s ease-out, transform 1s ease-out;
+  transform: translateY(40px);
+  transition: opacity 1s ease-out, transform 1s ease-out;
+} 
+
+.libro-card.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.libro-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15),
+              0 0 15px rgba(0, 140, 255, 0.1);
+}  
+
+
+.container-text-card{
+  display: flex;
+  flex-direction: column;
+  justify-content:space-between;
+  align-items:center;
+  gap: 2rem;
+
+}
+
+.libro-card img {
+  width: 17rem;
+  height: 17rem;
+  border-radius: 1rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  transition: transform 0.5s ease;
+}
+
+.libro-card:hover img {
+  transform: scale(1.05);
+}
+
+.libro-info {
+  flex: 1;
+  text-align: left;
+  color: #222;
+  font-family: "Poppins", sans-serif;
+}
+
+.libro-info h3 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #1a237e;
+  margin-bottom: 0.5rem;
+  letter-spacing: 0.5px;
+}
+
+.libro-info p {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #555;
+  margin-bottom: 1.5rem;
+}
+
+.libro-actions {
+  display: flex;
+  gap: 1rem;
+}
+
+.libro-actions button {
+  border: none;
+  outline: none;
+  padding: 0.8rem 1.6rem;
+  border-radius: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+} 
+
+.libros-destacados {
+  margin: 40px 0 20px;
+  font-size: 32px; /* más grande para destacar */
+  font-weight: 700;
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(90deg, #ff6a00, #ee0979); /* degradado vibrante */
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.5); /* sombra sutil para resaltar */
+  letter-spacing: 2px;
+  transition: all 0.3s ease;
+}
+
+/* Efecto hover para interacción */
+.libros-destacados:hover {
+  text-shadow: 4px 4px 12px rgba(0, 0, 0, 0.7);
+  transform: scale(1.05);
+}
+
+.btn-leer {
+  background: linear-gradient(135deg, #2196f3, #1976d2);
+  color: #fff;
+}
+
+.btn-leer:hover {
+  background: linear-gradient(135deg, #42a5f5, #1e88e5);
+  box-shadow: 0 0 12px rgba(66, 165, 245, 0.6);
+}
+
+.btn-favorito {
+  background: linear-gradient(135deg, #f50057, #c51162);
+  color: #fff;
+}
+
+.btn-favorito:hover {
+  background: linear-gradient(135deg, #ff4081, #d81b60);
+  box-shadow: 0 0 12px rgba(255, 64, 129, 0.6);
+}
+
+
+button {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+button:hover {
+  transform: scale(1.05);
+}
+
+button:active {
+  transform: scale(0.97);
+}
+
+button:first-of-type {
+  background-color: #3182ce;
+  color: #fff;
+}
+
+button:last-of-type {
+  background-color: #e53e3e;
+  color: #fff;
+}
+
+button:first-of-type:hover {
+  background-color: #2b6cb0;
+}
+
+button:last-of-type:hover {
+  background-color: #c53030;
+}
+
+.slider-container {
+  width: 100%;
+  height: 100%;
+  border-radius: 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px 0;
+  position: relative;
+  background: radial-gradient(circle at center, #111 0%, #000 100%);
+  perspective: 1000px;
+  overflow: hidden;
+}
+
+.slider-container img {
+  width: 50rem;
+  height: 25rem;
+  border-radius: 0.6rem;
+  transition: 
+    transform 1.2s cubic-bezier(0.19, 1, 0.22, 1),
+    box-shadow 1.2s ease,
+    opacity 1s ease;
+  box-shadow: 0 25px 60px rgba(255, 140, 0, 0.4);
+  transform: rotateY(0deg) scale(1);
+  filter: brightness(1.1) contrast(1.2) saturate(1.1);
+}
+
+/* efecto hover más cinematográfico */
+.slider-container:hover img {
+  transform: rotateY(12deg) rotateX(3deg) scale(1.05);
+  box-shadow: 
+    0 0 25px rgba(255, 150, 50, 0.8),
+    0 20px 60px rgba(0, 0, 0, 0.9);
+  filter: brightness(1.3) contrast(1.4) saturate(1.3);
+}
+
+/* reflejo inferior tipo vidrio */
+.slider-container::after {
+  content: "";
+  position: absolute;
+  bottom: -15%;
+  left: 50%;
+  transform: translateX(-50%) scaleY(-1);
+  width: 80%;
+  height: 40%;
+  background: inherit;
+  opacity: 0.2;
+  filter: blur(15px);
+  border-radius: 12px;
+}
+
+/* brillo lateral dinámico */
+.slider-container::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -50%;
+  width: 200%;
+  height: 100%;
+  background: linear-gradient(
+    120deg,
+    rgba(255, 180, 0, 0.05) 0%,
+    rgba(255, 255, 255, 0.1) 50%,
+    rgba(255, 180, 0, 0.05) 100%
+  );
+  animation: lightSweep 6s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes lightSweep {
+  0% {
+    transform: translateX(-50%) rotate(0deg);
+  }
+  100% {
+    transform: translateX(50%) rotate(0deg);
+  }
+} 
+
+
+.capitulo-contenedor {
+  padding: 40px 60px;
+  line-height: 1.8;
+  background-color: #1a1a1a;
+  color: #f5f5f5;
+  border-radius: 14px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+  font-family: 'Poppins', sans-serif;
+  max-width: 900px;
+  margin: 40px auto;
+  transition: all 0.3s ease;
+}
+
+.capitulo-titulo {
+  font-size: 30px;
+  font-weight: 700;
+  margin-bottom: 20px;
+  color: #ff6a00;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
+}
+
+.capitulo-texto {
+  font-size: 1rem;
+  letter-spacing: 1.5rem;
+  letter-spacing: 2px;
+  color: #e0e0e0;
+  text-align: justify;
+  white-space: pre-line;
+}
+
+.capitulo-imagen {
+  width: 100%;
+  max-width: 700px;
+  display: block;
+  margin: 20px auto 30px;
+  border-radius: 12px;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.6);
+}
+
+.boton-siguiente {
+  position: relative;
+  background-color: #ce3158ff;
+  color: white;
+  border: none;
+  padding: 12px 28px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 17px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  overflow: hidden;
+  box-shadow: 0 0 15px rgba(206, 49, 88, 0.6);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.boton-siguiente::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    120deg,
+    transparent,
+    rgba(255, 255, 255, 0.4),
+    transparent
+  );
+  transform: rotate(25deg);
+  animation: brillo 2.5s linear infinite;
+}
+
+@keyframes brillo {
+  0% {
+    transform: translateX(-100%) rotate(25deg);
+  }
+  100% {
+    transform: translateX(100%) rotate(25deg);
+  }
+}
+
+.boton-siguiente:hover {
+  background-color: #e04066;
+  box-shadow: 0 0 25px rgba(255, 90, 120, 0.8);
+  transform: scale(1.05);
+}
+
+.texto-bloqueado {
+  position: relative;
+  opacity: 0.2;
+  filter: blur(2px);
+  transition: all 1s ease;
+  pointer-events: none;
+}
+
+.texto-bloqueado.activo {
+  opacity: 1;
+  filter: none;
+  pointer-events: all;
+}
+
+.overlay {
+  position: absolute;
+  top: 40%;
+  left: 0;
+  right: 0;
+  text-align: center;
+  color: white;
+  font-weight: bold;
+  font-size: 1.3rem;
+  background: rgba(0, 0, 0, 0.7);
+  padding: 20px;
+  border-radius: 10px;
+}
+
+/* ✨ Botón animado */
+.boton-siguiente {
+  background-color: #ce3158ff;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s ease;
+}
+
+.boton-siguiente::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(120deg, transparent, rgba(255,255,255,0.4), transparent);
+  animation: brillo 2s infinite;
+}
+
+@keyframes brillo {
+  0% { left: -100%; }
+  50% { left: 100%; }
+  100% { left: 100%; }
+}
+
+.boton-siguiente:hover {
+  transform: scale(1.05);
+} 
+
+.gap-compra{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 3rem;
+
+}
+
+
+
