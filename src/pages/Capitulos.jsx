@@ -13,24 +13,18 @@ export default function Capitulos() {
     setCapitulo(obtenerCapituloPorLibro(id));
   }, [id]);
 
- 
- 
-if (!capitulo) {
-  return (
-    <div style={{ padding: 20 }}>
-      <h2>No se encontró el contenido del libro con ID {id}.</h2>
-    </div>
-  );
-}
+  if (!capitulo) {
+    return (
+      <div style={{ padding: 20 }}>
+        <h2>No se encontró el contenido del libro con ID {id}.</h2>
+      </div>
+    );
+  }
 
- const [libroId] = capitulo.id.split("-"); 
+  const [libroId] = capitulo.id.split("-");
+  const esCuento = ["4", "5", "6", "7", "8", "9"].includes(libroId); 
 
-const esCuento =
-  capitulo.categoria &&
-  capitulo.categoria.toLowerCase().trim().includes("cuento");
-
-
-
+  
   // 🔓 Verifica si el cuento ya fue pagado (guardado en localStorage)
 const cuentoPagado = localStorage.getItem(`cuento_pagado_${libroId}`) === "true";
 
