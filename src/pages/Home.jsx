@@ -50,7 +50,7 @@ export default function Home() {
       id: 3,
         titulo: "La Tercer Guerra",
         categoria:"Libro",
-       genero:"Ciencia ficción/Romance",
+       genero:"Ciencia ficción/Romance/thriller",
         descripcion: `Año 2065.
   El planeta arde bajo la Tercera Guerra Mundial: 195 naciones enfrentadas por poder, hambre y territorio.
   Entre el fuego y la ruina, Edwards y Erica —dos almas unidas por el amor— son arrancados del uno del otro.
@@ -70,7 +70,7 @@ export default function Home() {
       id: 4,
       titulo: "El cuidador",
       categoria:"Cuento",
-      genero:"Ciencia ficción/Comedio",
+      genero:"Ciencia ficción/Comedia",
       descripcion: `Europa, verano de 2033. La superficie arde bajo temperaturas imposibles, pero lo que nadie imagina es que, en las profundidades del planeta, algo despierta… criaturas ancestrales que han esperado siglos para conquistar la Tierra.
 
       Mientras tanto, en una ciudad cualquiera, Stuart y su inseparable amigo Richard buscan una noche de diversión en un bar lleno de excesos. Pero lo que parecía otra velada de rutina pronto se transforma en una pesadilla. Entre mafiosos, un vagabundo violento y un monstruo salido de las entrañas del mundo, la noche revelará un rostro siniestro donde lo humano y lo inhumano se confunden.

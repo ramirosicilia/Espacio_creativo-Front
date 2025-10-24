@@ -14,7 +14,7 @@ export default function Capitulos() {
   }, [id]);
 
  
-  const [libroId] = capitulo.id.split("-");
+ 
 if (!capitulo) {
   return (
     <div style={{ padding: 20 }}>
@@ -23,7 +23,8 @@ if (!capitulo) {
   );
 }
 
-
+ const [libroId] = capitulo.id.split("-"); 
+ 
 const esCuento = capitulo.categoria && capitulo.categoria.toLowerCase() === "cuento";  // ✅ cambio único
 
 
