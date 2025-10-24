@@ -215,7 +215,6 @@ header nav a:hover::after {
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08),
               inset 0 0 0 1px rgba(255, 255, 255, 0.6);
   padding: 2rem;
- 
   overflow: hidden;
   cursor: pointer;
   opacity: 0;
@@ -242,7 +241,7 @@ header nav a:hover::after {
   flex-direction: column;
   justify-content:space-between;
   align-items:center;
-  gap: 2rem;
+  gap: 1.5rem;
 
 }
 
