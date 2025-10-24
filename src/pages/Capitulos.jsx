@@ -22,8 +22,7 @@ export default function Capitulos() {
   }
 
   const [libroId] = capitulo.id.split("-");
-const esCuento = capitulo.categoria === "Cuento";
-
+  const esCuento = ["4", "5", "6", "7", "8", "9"].includes(libroId); 
 
   // 🔓 Verifica si el cuento ya fue pagado (guardado en localStorage)
 const cuentoPagado = localStorage.getItem(`cuento_pagado_${libroId}`) === "true";
