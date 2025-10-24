@@ -28,117 +28,29 @@ export default function LibrosCard({ libro }) {
   }, []);
 
   return (
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        padding: "1.5rem",
-      }}
-    >
-      <div
-        ref={cardRef}
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          backgroundColor: "#fff",
-          borderRadius: "1rem",
-          boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
-          overflow: "hidden",
-          maxWidth: "900px",
-          transition: "transform 0.3s ease",
-        }}
-        onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.02)")}
-        onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
-      >
-        {/* Imagen del libro */}
-        <div
-          style={{
-            flexShrink: 0,
-            backgroundColor: "#f8f9fa",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            padding: "1rem",
-          }}
-        >
-          <img
-            src={libro.imagen}
-            alt={libro.titulo}
-            style={{
-              borderRadius: "0.75rem",
-              width: "12rem",
-              height: "auto",
-              objectFit: "cover",
-              boxShadow: "0 4px 8px rgba(0,0,0,0.15)",
-            }}
-          />
-        </div>
+    <div className="libro-card-container">
+  <div className="libro-card" ref={cardRef}>
+    <img src={libro.imagen} alt={libro.titulo} />
+    <div className="container-text-card">
+      <h3 style={{ marginTop: "10px", fontSize: "18px", fontWeight: "600" }}>
+        {libro.titulo}
+      </h3>
+      <p style={{ fontSize: "14px", color: "#666" }}>{libro.descripcion}</p>
 
-        {/* Contenido */}
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "space-between",
-            padding: "1.5rem",
-          }}
-        >
-          <div>
-            <h3
-              style={{
-                fontSize: "1.5rem",
-                fontWeight: "600",
-                color: "#343a40",
-                marginBottom: "0.5rem",
-              }}
-            >
-              {libro.titulo}
-            </h3>
-
-            <div
-              style={{
-                backgroundColor: "#0d6efd",
-                color: "white",
-                borderRadius: "0.75rem",
-                padding: "0.75rem",
-                marginBottom: "1rem",
-                boxShadow: "0 1px 4px rgba(0,0,0,0.1)",
-              }}
-            >
-              <h3 style={{ fontSize: "1.1rem", fontWeight: "600", margin: 0 }}>
-                Categoría:{" "}
-                <span style={{ fontWeight: "400" }}>{libro.categoria}</span>
-              </h3>
-              <h3
-                style={{
-                  fontSize: "1.1rem",
-                  fontWeight: "600",
-                  marginTop: "0.5rem",
-                }}
-              >
-                Género: <span style={{ fontWeight: "400" }}>{libro.genero}</span>
-              </h3>
-            </div>
-
-            <p
-              style={{
-                color: "#6c757d",
-                fontSize: "0.9rem",
-                lineHeight: "1.6",
-                marginBottom: 0,
-              }}
-            >
-              {libro.descripcion}
-            </p>
-          </div>
-
-          <div style={{ marginTop: "1.5rem" }}>
-            <BotonesLibro libro={libro} />
-          </div>
-        </div>
+      {/* Nueva sección de categoría y género */}
+      <div style={{ marginTop: "8px" }}>
+        <p style={{ fontSize: "13px", color: "#444", margin: "2px 0" }}>
+          <strong>Categoría:</strong> {libro.categoria}
+        </p>
+        <p style={{ fontSize: "13px", color: "#444", margin: "2px 0" }}>
+          <strong>Género:</strong> {libro.genero}
+        </p>
       </div>
+
+      <BotonesLibro libro={libro} />
     </div>
+  </div>
+</div>
+
   );
-};
-
-
+}

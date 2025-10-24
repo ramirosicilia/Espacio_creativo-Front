@@ -161,6 +161,17 @@ header nav a:hover::after {
 
 } 
 
+.container-text-card p {
+  font-size: 14px;
+  color: #666;
+}
+
+.container-text-card .extra-info p {
+  font-size: 13px;
+  color: #444;
+  margin: 2px 0;
+}
+
 
 .arrow-down {
   width: 30px;
