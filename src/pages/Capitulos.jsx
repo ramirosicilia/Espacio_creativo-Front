@@ -22,7 +22,11 @@ export default function Capitulos() {
   }
 
   const [libroId] = capitulo.id.split("-");
-  const esCuento = ["4", "5", "6", "7", "8", "9"].includes(libroId);
+  const esCuento = ["4", "5", "6", "7", "8", "9"].includes(libroId); 
+
+  // 🔓 Verifica si el cuento ya fue pagado (guardado en localStorage)
+const cuentoPagado = localStorage.getItem(`cuento_pagado_${libroId}`) === "true";
+
 
   // 📘 Leer siguiente capítulo
   const handleLeerSiguiente = () => {
@@ -44,7 +48,7 @@ export default function Capitulos() {
       <h2>{capitulo.titulo}</h2>
 
       {/* 🔹 Texto visible o completo */}
-      {!esCuento ? (
+      {!esCuento || cuentoPagado ? (
         <p style={{ lineHeight: 1.6, whiteSpace: "pre-line" }}>
           {capitulo.contenido}
         </p>
@@ -69,7 +73,7 @@ export default function Capitulos() {
 
       {/* ✅ Botones */}
       <div style={{ marginTop: "40px", textAlign: "center" }}>
-        {!esCuento &&
+        {!esCuento  &&
           (esPrimerCapitulo ? (
             <button className="boton-siguiente" onClick={handleLeerSiguiente}>
               Leer Segundo Capítulo 📖
