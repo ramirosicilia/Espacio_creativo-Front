@@ -42,14 +42,14 @@ export default function LibrosCard({ libro }) {
             display: "flex",
             flexDirection: "column",
             alignItems: "flex-start",
-            gap:"1rem",
+            gap:".8rem",
             padding:".4rem 0px"
           }}
         >
-          <p style={{ fontSize: "13px", color: "#444", margin: "1px 0" }}>
+          <p style={{ fontSize: "13px", color: "#444", margin: ".8px 0" }}>
             <strong>Categoría:</strong> {libro.categoria}
           </p>
-          <p style={{ fontSize: "13px", color: "#444", margin: "1px 0" }}>
+          <p style={{ fontSize: "13px", color: "#444", margin: ".8px 0" }}>
             <strong>Género:</strong> {libro.genero} 
           </p> 
           <p style={{ fontSize: "14px", color: "#666" }}>{libro.descripcion}</p>
