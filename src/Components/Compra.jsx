@@ -19,19 +19,20 @@ export function Compra() {
   const [preferenceId, setPreferenceId] = useState(null);
   const [botonVisible, setBotonVisible] = useState(true);
 
-  // 🟢 agregado: estado para saber si se desbloquearon cuentos
+  // 🟢 agregado: estados
   const [cuentosDesbloqueados, setCuentosDesbloqueados] = useState(false);
+  const [cargando, setCargando] = useState(false); // 👈 nuevo estado
 
   const productos = {
-    1: { titulo: "Los Héroes de la Dimensión Paralela", imagen: libro1, precio: 5.00.toFixed("2") },
-    2: { titulo: "Reconquistando la Tierra", imagen: libro2, precio: 5.00.toFixed("2") },
-    3: { titulo: "La Tercer Guerra", imagen: libro3, precio: 5.00.toFixed("2") },
-    4: { titulo: "El Cuidador", imagen: cuento1,  precio: 5.00.toFixed("2") },
-    5: { titulo: "La Mirada de un Ángel", imagen: cuento2, precio: 5.00.toFixed("2")  },
-    6: { titulo: "El Último Deseo", imagen: cuento3, precio: 5.00.toFixed("2") },
-    7: { titulo: "El Nuevo Despertar", imagen: cuento4, precio: 5.00.toFixed("2") },
-    8: { titulo: "El Infierno de las Apps de Citas", imagen: cuento5,precio: 5.00.toFixed("2") },
-    9: { titulo: "A Través del Espejo", imagen: cuento6,precio: 5.00.toFixed("2") },
+    1: { titulo: "Los Héroes de la Dimensión Paralela", imagen: libro1, precio: 5.0.toFixed("2") },
+    2: { titulo: "Reconquistando la Tierra", imagen: libro2, precio: 5.0.toFixed("2") },
+    3: { titulo: "La Tercer Guerra", imagen: libro3, precio: 5.0.toFixed("2") },
+    4: { titulo: "El Cuidador", imagen: cuento1, precio: 5.0.toFixed("2") },
+    5: { titulo: "La Mirada de un Ángel", imagen: cuento2, precio: 5.0.toFixed("2") },
+    6: { titulo: "El Último Deseo", imagen: cuento3, precio: 5.0.toFixed("2") },
+    7: { titulo: "El Nuevo Despertar", imagen: cuento4, precio: 5.0.toFixed("2") },
+    8: { titulo: "El Infierno de las Apps de Citas", imagen: cuento5, precio: 5.0.toFixed("2") },
+    9: { titulo: "A Través del Espejo", imagen: cuento6, precio: 5.0.toFixed("2") },
   };
 
   const producto = productos[id];
@@ -50,6 +51,7 @@ export function Compra() {
 
   const handlePagar = async () => {
     if (!mercadoPago) return;
+    setCargando(true); // 🟢 inicia carga
 
     try {
       const response = await fetch(`${apiUrl}/create_preference`, {
@@ -88,7 +90,9 @@ export function Compra() {
         },
       });
 
-      // 🟢 agregado: comienza a verificar el estado del pago cada 5 segundos
+      setCargando(false); // 🟢 termina carga
+
+      // 🟢 Verificación de pago
       const intervalo = setInterval(async () => {
         try {
           const res = await fetch(`${apiUrl}/webhook_estado`);
@@ -99,7 +103,6 @@ export function Compra() {
             setCuentosDesbloqueados(true);
             console.log("✅ Pago exitoso recibido, desbloqueando cuentos.");
 
-            // Desbloquear visualmente los cuentos bloqueados
             document.querySelectorAll(".cuento-bloqueado").forEach((c) => {
               c.style.opacity = "1";
               c.style.pointerEvents = "auto";
@@ -111,10 +114,9 @@ export function Compra() {
           console.error("Error al consultar estado del pago:", err);
         }
       }, 5000);
-      // 🟢 fin agregado
-
     } catch (error) {
       console.error("Error al crear la preferencia de pago:", error);
+      setCargando(false);
     }
   };
 
@@ -163,8 +165,14 @@ export function Compra() {
           }}
           onClick={handlePagar}
         >
-          Comprar Ahora 💳
+          {cargando ? "Procesando..." : "Comprar Ahora 💳"}
         </button>
+
+        {cargando && (
+          <p style={{ color: "#fff", marginTop: "10px", fontStyle: "italic" }}>
+            🔄 Cargando Mercado Pago...
+          </p>
+        )}
 
         <div
           id="wallet_container"
