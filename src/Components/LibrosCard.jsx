@@ -28,51 +28,117 @@ export default function LibrosCard({ libro }) {
   }, []);
 
   return (
-
-  <div className="libro-card-container flex justify-center p-6">
     <div
-      className="libro-card flex flex-col md:flex-row bg-white rounded-2xl shadow-lg overflow-hidden max-w-4xl transition-transform duration-300 hover:scale-[1.02]"
-      ref={cardRef}
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        padding: "1.5rem",
+      }}
     >
-      {/* Imagen del libro */}
-      <div className="flex-shrink-0 bg-gray-100 flex justify-center items-center p-4">
-        <img
-          src={libro.imagen}
-          alt={libro.titulo}
-          className="rounded-xl w-48 h-auto object-cover shadow-md"
-        />
+      <div
+        ref={cardRef}
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          backgroundColor: "#fff",
+          borderRadius: "1rem",
+          boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+          overflow: "hidden",
+          maxWidth: "900px",
+          transition: "transform 0.3s ease",
+        }}
+        onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.02)")}
+        onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
+      >
+        {/* Imagen del libro */}
+        <div
+          style={{
+            flexShrink: 0,
+            backgroundColor: "#f8f9fa",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            padding: "1rem",
+          }}
+        >
+          <img
+            src={libro.imagen}
+            alt={libro.titulo}
+            style={{
+              borderRadius: "0.75rem",
+              width: "12rem",
+              height: "auto",
+              objectFit: "cover",
+              boxShadow: "0 4px 8px rgba(0,0,0,0.15)",
+            }}
+          />
+        </div>
+
+        {/* Contenido */}
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "space-between",
+            padding: "1.5rem",
+          }}
+        >
+          <div>
+            <h3
+              style={{
+                fontSize: "1.5rem",
+                fontWeight: "600",
+                color: "#343a40",
+                marginBottom: "0.5rem",
+              }}
+            >
+              {libro.titulo}
+            </h3>
+
+            <div
+              style={{
+                backgroundColor: "#0d6efd",
+                color: "white",
+                borderRadius: "0.75rem",
+                padding: "0.75rem",
+                marginBottom: "1rem",
+                boxShadow: "0 1px 4px rgba(0,0,0,0.1)",
+              }}
+            >
+              <h3 style={{ fontSize: "1.1rem", fontWeight: "600", margin: 0 }}>
+                Categoría:{" "}
+                <span style={{ fontWeight: "400" }}>{libro.categoria}</span>
+              </h3>
+              <h3
+                style={{
+                  fontSize: "1.1rem",
+                  fontWeight: "600",
+                  marginTop: "0.5rem",
+                }}
+              >
+                Género: <span style={{ fontWeight: "400" }}>{libro.genero}</span>
+              </h3>
+            </div>
+
+            <p
+              style={{
+                color: "#6c757d",
+                fontSize: "0.9rem",
+                lineHeight: "1.6",
+                marginBottom: 0,
+              }}
+            >
+              {libro.descripcion}
+            </p>
+          </div>
+
+          <div style={{ marginTop: "1.5rem" }}>
+            <BotonesLibro libro={libro} />
+          </div>
+        </div>
       </div>
-
-```
-  {/* Contenido */}
-  <div className="container-text-card flex flex-col justify-between p-6">
-    <div>
-      <h3 className="text-2xl font-semibold text-gray-800 mb-2">
-        {libro.titulo}
-      </h3>
-
-      <div className="genero-container bg-blue-600 text-white rounded-xl p-3 mb-4 shadow-sm">
-        <h3 className="text-lg font-semibold">
-          Categoría: <span className="font-normal">{libro.categoria}</span>
-        </h3>
-        <h3 className="text-lg font-semibold mt-1">
-          Género: <span className="font-normal">{libro.genero}</span>
-        </h3>
-      </div>
-
-      <p className="text-gray-600 text-sm leading-relaxed">
-        {libro.descripcion}
-      </p>
     </div>
+  );
+};
 
-    <div className="mt-6">
-      <BotonesLibro libro={libro} />
-    </div>
-  </div>
-</div>
-```
 
-  </div>
-);
-
-}
