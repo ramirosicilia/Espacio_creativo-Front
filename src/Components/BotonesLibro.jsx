@@ -20,7 +20,8 @@ export default function BotonesLibro({ libro }) {
   }
 
   localStorage.setItem("libroActual", JSON.stringify(libro));
-  window.open(`/capitulo/${libro.id}`, "_blank");
+window.open(`/capitulo/${libro.categoria}/${libro.id}`, "_blank");
+
 };
 
   const handleFavorito = () => {

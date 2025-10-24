@@ -13,7 +13,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/favoritos" element={<Favoritos />} />
-        <Route path="/capitulo/:id" element={<Capitulos />} />
+       <Route path="/capitulo/:categoria/:id" element={<Capitulos />} />
         <Route path="/comprar/:id" element={<Compra />} /> {/* 👈 nueva ruta */}
       </Routes>
     </>

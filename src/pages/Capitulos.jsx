@@ -11,7 +11,7 @@ export default function Capitulos() {
 
   useEffect(() => {
     // 👇 cambio clave: buscar por categoría + id, no solo por id
-    setCapitulo(obtenerCapituloPorLibro(categoria, id));
+    setCapitulo(obtenerCapituloPorLibro(id));
   }, [categoria, id]);
 
   if (!capitulo) {
