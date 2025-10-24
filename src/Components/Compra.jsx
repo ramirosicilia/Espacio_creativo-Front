@@ -179,8 +179,8 @@ export function Compra() {
           id="wallet_container"
           style={{
             position: "absolute",
-            top: "20px",
-            left: "0",
+            bottom: "0",
+            left: "20px",
             right: "0",
             display: "flex",
             justifyContent: "center",
