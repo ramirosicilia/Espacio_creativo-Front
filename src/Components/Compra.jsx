@@ -36,8 +36,9 @@ export function Compra() {
   };
 
   const producto = productos[id];
-  const apiUrl = "http://localhost:5000";
-  const publicKey = "APP_USR-5001fc0e-9c7b-4549-902e-409778e1ae29";
+   const apiUrl=import.meta.env.VITE_PAYMENT_URL
+    let publicKey=import.meta.env.VITE_MP_PUBLIC_KEY
+
 
   useEffect(() => {
     const script = document.createElement("script");
