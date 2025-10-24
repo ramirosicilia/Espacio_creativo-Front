@@ -24,8 +24,11 @@ if (!capitulo) {
 }
 
  const [libroId] = capitulo.id.split("-"); 
- 
-const esCuento = capitulo.categoria && capitulo.categoria.toLowerCase() === "cuento";  // ✅ cambio único
+
+const esCuento =
+  capitulo.categoria &&
+  capitulo.categoria.toLowerCase().trim().includes("cuento");
+
 
 
   // 🔓 Verifica si el cuento ya fue pagado (guardado en localStorage)
