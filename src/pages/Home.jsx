@@ -178,8 +178,9 @@ export default function Home() {
 
       <div style={{ display: "flex", flexWrap: "wrap", gap: "20px" }}>
         {cuentos.map((cuento) => (
-          <LibrosCard key={cuento.id} libro={cuento} />
-        ))}
+        <LibrosCard key={cuento.id} libro={cuento} categoria={cuento.categoria} />
+      ))}
+
       </div>
     </div>
   );
