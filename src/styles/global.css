@@ -161,6 +161,14 @@ header nav a:hover::after {
 
 } 
 
+.genero-container{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1.5rem;
+  background-color: rgb(0, 110, 255);
+}
+
 .arrow-down {
   width: 30px;
   height: 30px;
@@ -197,7 +205,7 @@ header nav a:hover::after {
   align-items: center;
   width: 55rem;
   justify-content: space-between;
-  gap: 1rem;
+  gap: 1.5rem;
   background: linear-gradient(145deg, #ffffff, #f4f6fb);
   border-radius: 1.5rem;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08),

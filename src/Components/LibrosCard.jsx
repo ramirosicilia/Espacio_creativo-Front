@@ -28,49 +28,27 @@ export default function LibrosCard({ libro }) {
   }, []);
 
   return (
+    <div className="libro-card-container">
+      <div className="libro-card" ref={cardRef}>
+        <img src={libro.imagen} alt={libro.titulo} />
+        <div className="container-text-card">
+          <h3 style={{ marginTop: "10px", fontSize: "18px", fontWeight: "600" }}>
+            {libro.titulo}
+          </h3> 
+          <div className="genero-container"> 
+            <h3 style={{ marginTop: "10px", fontSize: "16px", fontWeight: "600" }}>
+            {libro.categoria}
+          </h3> 
+          <h3 style={{ marginTop: "10px", fontSize: "16px", fontWeight: "600" }}>
+            {libro.genero}
+          </h3>
 
-  <div className="libro-card-container">
-    <div className="libro-card" ref={cardRef}>
-      <img src={libro.imagen} alt={libro.titulo} />
-      <div className="container-text-card">
-        <h3 style={{ marginTop: "10px", fontSize: "18px", fontWeight: "600" }}>
-          {libro.titulo}
-        </h3>
-
-```
-    {/* Categoría y género */}
-    <div style={{ display: "flex", gap: "10px", margin: "8px 0" }}>
-      <span
-        style={{
-          backgroundColor: "#007bff",
-          color: "white",
-          padding: "3px 8px",
-          borderRadius: "12px",
-          fontSize: "12px",
-        }}
-      >
-        {libro.categoria}
-      </span>
-      <span
-        style={{
-          backgroundColor: "#ffb100",
-          color: "black",
-          padding: "3px 8px",
-          borderRadius: "12px",
-          fontSize: "12px",
-        }}
-      >
-        {libro.genero}
-      </span>
+          </div>
+          
+          <p style={{ fontSize: "14px", color: "#666" }}>{libro.descripcion}</p>
+          <BotonesLibro libro={libro} />
+        </div>
+      </div>
     </div>
-
-    <p style={{ fontSize: "14px", color: "#666" }}>{libro.descripcion}</p>
-    <BotonesLibro libro={libro} />
-  </div>
-</div>
-```
-
-  </div>
-);
-
+  );
 }
