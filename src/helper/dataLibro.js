@@ -56,7 +56,8 @@ export function obtenerCapituloPorLibro(id) {
 // 📖 Primer capítulo del Libro 1
 function Capitulo1Libro1() {
   return {
-    id: "1-1", // ✅ actualizado para coherencia con el botón
+    id: "1-1",
+    categoria: "Libro", // 👈 agregado
     titulo: "Capítulo 1 — El Viaje:",
     contenido: dimensionParalela(),
   };
@@ -66,6 +67,7 @@ function Capitulo1Libro1() {
 function CapituloLibro1_2() {
   return {
     id: "1-2",
+    categoria: "Libro",
     titulo: "Capítulo 2 — Bienvenido a la Dimensión Paralela",
     contenido: dimensionParalela2(),
   };
@@ -75,6 +77,7 @@ function CapituloLibro1_2() {
 function Capitulo1Libro2() {
   return {
     id: "2-1",
+    categoria: "Libro",
     titulo: "Capítulo 1 — El día de la esperanza",
     contenido: reconquistandoLaTierra(),
   };
@@ -84,6 +87,7 @@ function Capitulo1Libro2() {
 function CapituloLibro2_2() {
   return {
     id: "2-2",
+    categoria: "Libro",
     titulo: "Capítulo 2 — Los Diez convocados",
     contenido: reconquistandoLaTierra2(),
   };
@@ -93,6 +97,7 @@ function CapituloLibro2_2() {
 function Capitulo1Libro3() {
   return {
     id: "3-1",
+    categoria: "Libro",
     titulo: "Capítulo 1 — Un mundo apocalíptico",
     contenido: laTercerGuerra(),
   };
@@ -102,6 +107,7 @@ function Capitulo1Libro3() {
 function CapituloLibro3_2() {
   return {
     id: "3-2",
+    categoria: "Libro",
     titulo: "Capítulo 2 — Los desaparecidos en Batalla",
     contenido: laTercerGuerra2(),
   };
@@ -111,6 +117,7 @@ function CapituloLibro3_2() {
 function Cuento1() {
   return {
     id: "4",
+    categoria: "Cuento", // 👈 agregado
     titulo: "El Cuidador",
     contenido: elCuidador(),
   };
@@ -119,6 +126,7 @@ function Cuento1() {
 function Cuento2() {
   return {
     id: "5",
+    categoria: "Cuento",
     titulo: "La mirada de un Ángel",
     contenido: laMirada(),
   };
@@ -127,6 +135,7 @@ function Cuento2() {
 function Cuento3() {
   return {
     id: "6",
+    categoria: "Cuento",
     titulo: "El Último Deseo",
     contenido: Deseo(),
   };
@@ -135,6 +144,7 @@ function Cuento3() {
 function Cuento4() {
   return {
     id: "7",
+    categoria: "Cuento",
     titulo: "El Nuevo Despertar",
     contenido: Despertar(),
   };
@@ -143,6 +153,7 @@ function Cuento4() {
 function Cuento5() {
   return {
     id: "8",
+    categoria: "Cuento",
     titulo: "El Infierno de las Apps de Citas",
     contenido: Citas(),
   };
@@ -151,7 +162,9 @@ function Cuento5() {
 function Cuento6() {
   return {
     id: "9",
+    categoria: "Cuento",
     titulo: "A Través del Espejo",
     contenido: Espejo(),
   };
 }
+

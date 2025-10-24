@@ -5,40 +5,43 @@ import { obtenerCapituloPorLibro } from "../helper/dataLibro";
 import "../styles/global.css";
 
 export default function Capitulos() {
-  const { id } = useParams();
+  const { categoria, id } = useParams(); // 👈 ahora obtenemos también la categoría
   const navigate = useNavigate(); // 👈 para navegar a otro componente
   const [capitulo, setCapitulo] = useState(null);
 
   useEffect(() => {
-    setCapitulo(obtenerCapituloPorLibro(id));
-  }, [id]);
+    // 👇 cambio clave: buscar por categoría + id, no solo por id
+    setCapitulo(obtenerCapituloPorLibro(categoria, id));
+  }, [categoria, id]);
 
   if (!capitulo) {
     return (
       <div style={{ padding: 20 }}>
-        <h2>No se encontró el contenido del libro con ID {id}.</h2>
+        <h2>
+          No se encontró el contenido del {categoria?.toLowerCase() || "libro"} con ID {id}.
+        </h2>
       </div>
     );
   }
 
   const [libroId] = capitulo.id.split("-");
-  const esCuento = ["4", "5", "6", "7", "8", "9"].includes(libroId); 
+  const esCuento = categoria === "Cuento" || ["4", "5", "6", "7", "8", "9"].includes(libroId);
 
-  
   // 🔓 Verifica si el cuento ya fue pagado (guardado en localStorage)
-const cuentoPagado = localStorage.getItem(`cuento_pagado_${libroId}`) === "true";
-
+  const cuentoPagado = localStorage.getItem(`cuento_pagado_${libroId}`) === "true";
 
   // 📘 Leer siguiente capítulo
   const handleLeerSiguiente = () => {
     const [libroId, capNum] = capitulo.id.split("-");
-    const siguienteCapId = `${libroId}-${(parseInt(capNum || "1") + 1)}`;
-    window.open(`/capitulo/${siguienteCapId}`, "_blank");
+    const siguienteCapId = `${libroId}-${parseInt(capNum || "1") + 1}`;
+    // 👇 se mantiene igual, pero con categoría
+    window.open(`/capitulo/${categoria}/${siguienteCapId}`, "_blank");
   };
 
   // 💰 Redirigir a la página de compra
   const handleComprar = () => {
-    navigate(`/comprar/${libroId}`); // 👈 lleva al nuevo componente
+    // 👇 mantiene tu lógica, pero con categoría
+    navigate(`/comprar/${categoria}/${libroId}`);
   };
 
   const esPrimerCapitulo = capitulo.id.includes("-1");
@@ -61,11 +64,25 @@ const cuentoPagado = localStorage.getItem(`cuento_pagado_${libroId}`) === "true"
             </p>
           </div>
 
-          <div className="texto-bloqueado">
-            <p style={{ lineHeight: 1.6, whiteSpace: "pre-line" }}>
+          <div className="texto-bloqueado" style={{ position: "relative" }}>
+            <p style={{ lineHeight: 1.6, whiteSpace: "pre-line", opacity: 0.3 }}>
               {capitulo.contenido.slice(800)}
             </p>
-            <div className="overlay">
+            <div
+              className="overlay"
+              style={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                backgroundColor: "rgba(255,255,255,0.8)",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                fontSize: "18px",
+              }}
+            >
               🔒 <em>Compra el cuento para seguir leyendo...</em>
             </div>
           </div>
@@ -74,7 +91,7 @@ const cuentoPagado = localStorage.getItem(`cuento_pagado_${libroId}`) === "true"
 
       {/* ✅ Botones */}
       <div style={{ marginTop: "40px", textAlign: "center" }}>
-        {!esCuento  &&
+        {!esCuento &&
           (esPrimerCapitulo ? (
             <button className="boton-siguiente" onClick={handleLeerSiguiente}>
               Leer Segundo Capítulo 📖
