@@ -42,7 +42,8 @@ export default function LibrosCard({ libro }) {
             display: "flex",
             flexDirection: "column",
             alignItems: "flex-start",
-            padding:".6rem 0px"
+            gap:"1rem",
+            padding:".5rem 0px"
           }}
         >
           <p style={{ fontSize: "13px", color: "#444", margin: "2px 0" }}>

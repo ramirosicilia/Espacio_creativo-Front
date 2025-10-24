@@ -241,7 +241,7 @@ header nav a:hover::after {
   flex-direction: column;
   justify-content:space-between;
   align-items:center;
-  gap:2rem;
+  gap:1.5rem;
 
 }
 
