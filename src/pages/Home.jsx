@@ -15,7 +15,7 @@ export default function Home() {
     {
       id: 1,
       titulo: "Los Héroes de la Dimensión Paralela",
-      categoria:"libro",
+      categoria:"Libro",
       genero:"Ciencia ficción/Romance",
       descripcion: `Una noche. Una luz. Un destino que rompe los límites del mundo.
   Ram, un repartidor sin rumbo, sigue un paquete… y termina desapareciendo en una tormenta de luz.
@@ -32,7 +32,7 @@ export default function Home() {
     {
       id: 2,
       titulo: "Reconquistando la Tierra",
-      categoria:"libro",
+      categoria:"Libro",
       genero:"Ciencia ficción/Aventura",
       descripcion: `Año 3500 d.C.
   La humanidad vive desterrada en las profundidades del océano desde hace ocho siglos.
@@ -49,7 +49,7 @@ export default function Home() {
     {
       id: 3,
         titulo: "La Tercer Guerra",
-        categoria:"libro",
+        categoria:"Libro",
        genero:"Ciencia ficción/Romance",
         descripcion: `Año 2065.
   El planeta arde bajo la Tercera Guerra Mundial: 195 naciones enfrentadas por poder, hambre y territorio.
@@ -69,7 +69,7 @@ export default function Home() {
     {
       id: 4,
       titulo: "El cuidador",
-      categoria:"cuento",
+      categoria:"Cuento",
       genero:"Ciencia ficción/Comedio",
       descripcion: `Europa, verano de 2033. La superficie arde bajo temperaturas imposibles, pero lo que nadie imagina es que, en las profundidades del planeta, algo despierta… criaturas ancestrales que han esperado siglos para conquistar la Tierra.
 
@@ -81,7 +81,7 @@ export default function Home() {
     {
       id: 5,
       titulo: "La mirada de un Ángel",
-      categoria:"libro",
+      categoria:"Cuento",
       genero:"Ciencia ficción/Drama",
       descripcion: `Sandra, enfermera en oncología infantil, vive rodeada del dolor y la esperanza de sus pequeños pacientes.
       Su luz es Tiffany, una niña que sueña con volver a correr, y por quien Sandra lo arriesga todo.
@@ -97,7 +97,7 @@ export default function Home() {
     {
       id: 6,
       titulo: "El último deseo",
-      categoria:"libro",
+      categoria:"Cuento",
       genero:"Drama",
       descripcion: `Medellín, años noventa. Un secuestro rompe para siempre a la familia Garavito.
       Doña Nélida vive con el corazón detenido, esperando el regreso de su hijo.
@@ -114,7 +114,7 @@ export default function Home() {
     {
       id: 7,
       titulo: "El nuevo Despertar",
-      categoria:"libro",
+      categoria:"Cuento",
       genero:"Suspenso",
       descripcion: `Cristian Gómez lo tenía todo: una familia, una carrera prometedora y una vida sin sobresaltos. Hasta que una decisión equivocada lo lanzó a una pesadilla que no parece tener fin.
         Despertar esposado, rodeado de criminales y sombras que respiran violencia, lo enfrenta a una realidad donde la culpa, el miedo y la supervivencia son las únicas leyes.
@@ -127,7 +127,7 @@ export default function Home() {
     {
       id: 8,
       titulo: "El infierno de las Apps de citas",
-      categoria:"libro",
+      categoria:"Cuento",
       genero:"Comedia/Romance",
       descripcion: `En una ciudad dominada por pantallas, dos mujeres aún creen en el amor real.
       Celeste, cansada de promesas vacías, acepta una cita que cambiará su vida.
@@ -144,7 +144,7 @@ export default function Home() {
     {
       id: 9,
       titulo: "A travéz del espejo",
-      categoria:"libro",
+      categoria:"Cuento",
       genero:"Terror/Thriller",
       descripcion: `En los años sesenta, los Miller ocultaban un secreto que ni la muerte pudo enterrar.
        Su casa, en los límites de Oklahoma, sigue respirando entre sombras y murmullos.
