@@ -35,7 +35,8 @@ export default function LibrosCard({ libro }) {
       <h3 style={{ marginTop: "10px", fontSize: "18px", fontWeight: "600" }}>
         {libro.titulo}
       </h3> 
-       <div
+       
+      <div
           style={{
             marginTop: "8px",
             display: "flex",
@@ -47,12 +48,12 @@ export default function LibrosCard({ libro }) {
             <strong>Categoría:</strong> {libro.categoria}
           </p>
           <p style={{ fontSize: "13px", color: "#444", margin: "2px 0" }}>
-            <strong>Género:</strong> {libro.genero}
-          </p>
+            <strong>Género:</strong> {libro.genero} 
+          </p> 
+          <p style={{ fontSize: "14px", color: "#666" }}>{libro.descripcion}</p>
         </div>
-
       
-      <p style={{ fontSize: "14px", color: "#666" }}>{libro.descripcion}</p>
+   
 
       {/* Nueva sección de categoría y género */}
       
