@@ -15,6 +15,8 @@ export default function Home() {
     {
       id: 1,
       titulo: "Los Héroes de la Dimensión Paralela",
+      categoria:"libro",
+      genero:"Ciencia ficción/Romance",
       descripcion: `Una noche. Una luz. Un destino que rompe los límites del mundo.
   Ram, un repartidor sin rumbo, sigue un paquete… y termina desapareciendo en una tormenta de luz.
   Despierta en una Dimensión Paralela, donde la realidad está invertida y la noche domina.
@@ -30,7 +32,9 @@ export default function Home() {
     {
       id: 2,
       titulo: "Reconquistando la Tierra",
-        descripcion: `Año 3500 d.C.
+      categoria:"libro",
+      genero:"Ciencia ficción/Aventura",
+      descripcion: `Año 3500 d.C.
   La humanidad vive desterrada en las profundidades del océano desde hace ocho siglos.
   La superficie pertenece a los Insectoides, criaturas mutantes que convirtieron la Tierra en su nido.
   Entre mares envenenados y monstruos radiactivos, surge una última esperanza: la Bomba Aerox-B26.
@@ -45,6 +49,8 @@ export default function Home() {
     {
       id: 3,
         titulo: "La Tercer Guerra",
+        categoria:"libro",
+       genero:"Ciencia ficción/Romance",
         descripcion: `Año 2065.
   El planeta arde bajo la Tercera Guerra Mundial: 195 naciones enfrentadas por poder, hambre y territorio.
   Entre el fuego y la ruina, Edwards y Erica —dos almas unidas por el amor— son arrancados del uno del otro.
@@ -63,6 +69,8 @@ export default function Home() {
     {
       id: 4,
       titulo: "El cuidador",
+      categoria:"cuento",
+      genero:"Ciencia ficción/Comedio",
       descripcion: `Europa, verano de 2033. La superficie arde bajo temperaturas imposibles, pero lo que nadie imagina es que, en las profundidades del planeta, algo despierta… criaturas ancestrales que han esperado siglos para conquistar la Tierra.
 
       Mientras tanto, en una ciudad cualquiera, Stuart y su inseparable amigo Richard buscan una noche de diversión en un bar lleno de excesos. Pero lo que parecía otra velada de rutina pronto se transforma en una pesadilla. Entre mafiosos, un vagabundo violento y un monstruo salido de las entrañas del mundo, la noche revelará un rostro siniestro donde lo humano y lo inhumano se confunden.
@@ -73,6 +81,8 @@ export default function Home() {
     {
       id: 5,
       titulo: "La mirada de un Ángel",
+      categoria:"libro",
+      genero:"Ciencia ficción/Drama",
       descripcion: `Sandra, enfermera en oncología infantil, vive rodeada del dolor y la esperanza de sus pequeños pacientes.
       Su luz es Tiffany, una niña que sueña con volver a correr, y por quien Sandra lo arriesga todo.
       Cuando logra reunir el dinero para su operación, el destino se lo arrebata en un asalto brutal.
@@ -87,6 +97,8 @@ export default function Home() {
     {
       id: 6,
       titulo: "El último deseo",
+      categoria:"libro",
+      genero:"Drama",
       descripcion: `Medellín, años noventa. Un secuestro rompe para siempre a la familia Garavito.
       Doña Nélida vive con el corazón detenido, esperando el regreso de su hijo.
       Veintiocho años después, un mendigo en El Cairo despierta lo imposible: la esperanza.
@@ -102,6 +114,8 @@ export default function Home() {
     {
       id: 7,
       titulo: "El nuevo Despertar",
+      categoria:"libro",
+      genero:"Suspenso",
       descripcion: `Cristian Gómez lo tenía todo: una familia, una carrera prometedora y una vida sin sobresaltos. Hasta que una decisión equivocada lo lanzó a una pesadilla que no parece tener fin.
         Despertar esposado, rodeado de criminales y sombras que respiran violencia, lo enfrenta a una realidad donde la culpa, el miedo y la supervivencia son las únicas leyes.
         En un mundo donde los inocentes también sangran, Cristian deberá luchar no solo por su vida, sino por conservar su cordura.
@@ -113,6 +127,8 @@ export default function Home() {
     {
       id: 8,
       titulo: "El infierno de las Apps de citas",
+      categoria:"libro",
+      genero:"Comedia/Romance",
       descripcion: `En una ciudad dominada por pantallas, dos mujeres aún creen en el amor real.
       Celeste, cansada de promesas vacías, acepta una cita que cambiará su vida.
       Romina, ilusionada con un “príncipe digital”, descubrirá el rostro oscuro del deseo.
@@ -128,6 +144,8 @@ export default function Home() {
     {
       id: 9,
       titulo: "A travéz del espejo",
+      categoria:"libro",
+      genero:"Terror/Thriller",
       descripcion: `En los años sesenta, los Miller ocultaban un secreto que ni la muerte pudo enterrar.
        Su casa, en los límites de Oklahoma, sigue respirando entre sombras y murmullos.
        Décadas después, Christopher llega buscando paz… y encuentra algo que lo observa.
