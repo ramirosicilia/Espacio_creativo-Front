@@ -9,19 +9,9 @@ export default function Capitulos() {
   const navigate = useNavigate(); // 👈 para navegar a otro componente
   const [capitulo, setCapitulo] = useState(null);
 
-  // 🟢 Desbloqueo automático si ya pagó
-useEffect(() => {
-  const pagado = localStorage.getItem(`cuento_pagado_${id}`) === "true";
-  if (pagado) {
-    document.querySelectorAll(".texto-bloqueado, .overlay").forEach((el) => {
-      el.style.display = "none";
-    });
-    document.querySelectorAll(".texto-visible p").forEach((p) => {
-      p.style.maxHeight = "none";
-      p.style.overflow = "visible";
-    });
-  }
-}, [id]);
+  useEffect(() => {
+    setCapitulo(obtenerCapituloPorLibro(id));
+  }, [id]);
 
   if (!capitulo) {
     return (
