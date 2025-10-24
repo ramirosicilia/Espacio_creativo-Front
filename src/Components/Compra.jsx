@@ -96,7 +96,8 @@ export function Compra() {
       // 🟢 Verificación de pago
       const intervalo = setInterval(async () => {
         try {
-          const res = await fetch(`${apiUrl}/webhook_estado?libroId=${id}`);
+         const res = await fetch(`${apiUrl}/webhook_estado?libroId=${id}`);
+
 
           const estado = await res.json();
 
