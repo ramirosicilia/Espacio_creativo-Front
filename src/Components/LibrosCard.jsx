@@ -34,18 +34,20 @@ export default function LibrosCard({ libro }) {
     <div className="container-text-card">
       <h3 style={{ marginTop: "10px", fontSize: "18px", fontWeight: "600" }}>
         {libro.titulo}
-      </h3>
-      <p style={{ fontSize: "14px", color: "#666" }}>{libro.descripcion}</p>
-
-      {/* Nueva sección de categoría y género */}
-      <div style={{ marginTop: "8px" }}>
+      </h3> 
+       <div style={{ marginTop: "8px" }}>
         <p style={{ fontSize: "13px", color: "#444", margin: "2px 0" }}>
           <strong>Categoría:</strong> {libro.categoria}
         </p>
         <p style={{ fontSize: "13px", color: "#444", margin: "2px 0" }}>
           <strong>Género:</strong> {libro.genero}
         </p>
-      </div>
+      </div> 
+      
+      <p style={{ fontSize: "14px", color: "#666" }}>{libro.descripcion}</p>
+
+      {/* Nueva sección de categoría y género */}
+      
 
       <BotonesLibro libro={libro} />
     </div>
