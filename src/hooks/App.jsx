@@ -14,7 +14,9 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/favoritos" element={<Favoritos />} />
        <Route path="/capitulo/:categoria/:id" element={<Capitulos />} />
-        <Route path="/comprar/:id" element={<Compra />} /> {/* 👈 nueva ruta */}
+       <Route path="/comprar/:categoria/:id" element={<Compra />} />
+
+
       </Routes>
     </>
   );
