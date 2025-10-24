@@ -17,7 +17,10 @@ export function Compra() {
   const { id } = useParams();
   const [mercadoPago, setMercadoPago] = useState(null);
   const [preferenceId, setPreferenceId] = useState(null);
-  const [botonVisible, setBotonVisible] = useState(true); // 👈 nuevo estado para ocultar el botón
+  const [botonVisible, setBotonVisible] = useState(true);
+
+  // 🟢 agregado: estado para saber si se desbloquearon cuentos
+  const [cuentosDesbloqueados, setCuentosDesbloqueados] = useState(false);
 
   const productos = {
     1: { titulo: "Los Héroes de la Dimensión Paralela", imagen: libro1, precio: 5.00.toFixed("2") },
@@ -32,9 +35,9 @@ export function Compra() {
   };
 
   const producto = productos[id];
-  const apiUrl=import.meta.env.VITE_PAYMENT_URL
-  let publicKey=import.meta.env.VITE_MP_PUBLIC_KEY
-  // 🧩 Cargar SDK de Mercado Pago al montar el componente
+  const apiUrl = "http://localhost:5000";
+  const publicKey = "APP_USR-5001fc0e-9c7b-4549-902e-409778e1ae29";
+
   useEffect(() => {
     const script = document.createElement("script");
     script.src = "https://sdk.mercadopago.com/js/v2";
@@ -45,52 +48,81 @@ export function Compra() {
     document.body.appendChild(script);
   }, [publicKey]);
 
-  // 💰 Crear preferencia y renderizar botón de pago
-  const [loading, setLoading] = useState(false); // 🧩 nuevo estado
+  const handlePagar = async () => {
+    if (!mercadoPago) return;
 
-const handlePagar = async () => {
-  if (!mercadoPago || loading) return; // ⛔ evitar múltiples clicks
+    try {
+      const response = await fetch(`${apiUrl}/create_preference`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          mp: [
+            {
+              id: id,
+              name: producto.titulo,
+              quantity: 1,
+              unit_price: producto.precio,
+            },
+          ],
+        }),
+      });
 
-  setLoading(true); // bloquear mientras crea la preferencia
+      const data = await response.json();
+      if (!data.id) throw new Error("No se recibió preferenceId desde el backend");
 
-  try {
-    const response = await fetch(`${apiUrl}/create_preference`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        mp: [
-          {
-            id: id,
-            name: producto.titulo,
-            quantity: 1,
-            unit_price: producto.precio,
+      setPreferenceId(data.id);
+      setBotonVisible(false);
+
+      const bricksBuilder = mercadoPago.bricks();
+      const container = document.getElementById("wallet_container");
+      if (container) container.innerHTML = "";
+
+      await bricksBuilder.create("wallet", "wallet_container", {
+        initialization: {
+          preferenceId: data.id,
+        },
+        customization: {
+          texts: {
+            valueProp: "smart_option",
           },
-        ],
-      }),
-    });
+        },
+      });
 
-    const data = await response.json();
-    if (!data.id) throw new Error("No se recibió preferenceId desde el backend");
+      // 🟢 agregado: comienza a verificar el estado del pago cada 5 segundos
+      const intervalo = setInterval(async () => {
+        try {
+          const res = await fetch(`${apiUrl}/webhook_estado`);
+          const estado = await res.json();
 
-    setPreferenceId(data.id);
-    setBotonVisible(false);
+          if (estado.pago_exitoso) {
+            clearInterval(intervalo);
+            setCuentosDesbloqueados(true);
+            console.log("✅ Pago exitoso recibido, desbloqueando cuentos.");
 
-    const bricksBuilder = mercadoPago.bricks();
-    const container = document.getElementById("wallet_container");
-    if (container) container.innerHTML = ""; // limpiar si ya existe
+            // Desbloquear visualmente los cuentos bloqueados
+            document.querySelectorAll(".cuento-bloqueado").forEach((c) => {
+              c.style.opacity = "1";
+              c.style.pointerEvents = "auto";
+              c.style.filter = "none";
+              c.style.transition = "opacity 0.5s ease";
+            });
+          }
+        } catch (err) {
+          console.error("Error al consultar estado del pago:", err);
+        }
+      }, 5000);
+      // 🟢 fin agregado
 
-    await bricksBuilder.create("wallet", "wallet_container", {
-      initialization: { preferenceId:data.id},
-      customization: { texts: { valueProp: "smart_option" } },
-    });
-  } catch (error) {
-    console.error("Error al crear la preferencia de pago:", error);
-  } finally {
-    setLoading(false); // 🔓 permitir nuevo intento si falló
+    } catch (error) {
+      console.error("Error al crear la preferencia de pago:", error);
+    }
+  };
+
+  if (!producto) {
+    return <h2 style={{ padding: "40px" }}>Producto no encontrado ❌</h2>;
   }
-};
 
- return (
+  return (
     <div
       style={{
         display: "flex",
@@ -113,35 +145,32 @@ const handlePagar = async () => {
       />
 
       <div className="gap-compra" style={{ position: "relative" }}>
-        <h2 style={{ fontSize: "1.8rem", marginBottom: "50px", color: "#fff" }}>
+        <h2 style={{ fontSize: "1.8rem", marginBottom: "30px", color: "#fff" }}>
           {producto.titulo}
         </h2>
         <p style={{ fontSize: "1.3rem", color: "#fff" }}>
           Precio: <strong>${producto.precio} ARS</strong>
         </p>
 
-             <button
-        className="boton-siguiente"
-        style={{
-          marginTop: "20px",
-          padding: "10px 30px",
-          fontSize: "1.1rem",
-          opacity: botonVisible ? 1 : 0,
-          transition: "opacity 0.4s ease",
-        }}
-        onClick={handlePagar}
-        disabled={loading} // ⛔ bloquea el botón mientras carga
-      >
-        {loading ? "Cargando..." : "Comprar Ahora 💳"}
-      </button>
+        <button
+          className="boton-siguiente"
+          style={{
+            marginTop: "20px",
+            padding: "10px 30px",
+            fontSize: "1.1rem",
+            opacity: botonVisible ? 1 : 0,
+            transition: "opacity 0.4s ease",
+          }}
+          onClick={handlePagar}
+        >
+          Comprar Ahora 💳
+        </button>
 
-
-        {/* 👇 se posiciona de forma absoluta sobre el botón */}
         <div
           id="wallet_container"
           style={{
             position: "absolute",
-            bottom: "0px",
+            top: "20px",
             left: "0",
             right: "0",
             display: "flex",
