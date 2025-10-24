@@ -15,6 +15,8 @@ import { laTercerGuerra2 } from "./capitulo2Libro3";
 
 
 export function obtenerCapituloPorLibro(id) {
+  if (id == null) return null; // 👈 agregado: evita error si id es undefined o null
+
   const idStr = id.toString();
 
   // ✅ Soporte para capítulos con formato "X-Y"
@@ -167,4 +169,3 @@ function Cuento6() {
     contenido: Espejo(),
   };
 }
-

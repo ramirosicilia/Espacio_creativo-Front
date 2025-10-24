@@ -13,12 +13,15 @@ export default function BotonesLibro({ libro }) {
 
   // ✅ Abre el capítulo en una nueva pestaña y pasa el libro en localStorage
   const handleLeer = () => {
-    // Guardamos temporalmente el libro en localStorage
-    localStorage.setItem("libroActual", JSON.stringify(libro));
+  if (!libro || !libro.id) {
+    console.error("⚠️ No se puede abrir el capítulo: libro o id no definido.", libro);
+    alert("Este libro no tiene un capítulo disponible todavía.");
+    return;
+  }
 
-    // Abre la página del capítulo en nueva pestaña (target="_blank")
-    window.open(`/capitulo/${libro.id}`, "_blank");
-  };
+  localStorage.setItem("libroActual", JSON.stringify(libro));
+  window.open(`/capitulo/${libro.id}`, "_blank");
+};
 
   const handleFavorito = () => {
     const favoritos = JSON.parse(localStorage.getItem("favoritos")) || [];
