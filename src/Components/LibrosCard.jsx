@@ -28,31 +28,39 @@ export default function LibrosCard({ libro }) {
   }, []);
 
   return (
-    <div className="libro-card-container">
+   <div className="libro-card-container">
   <div className="libro-card" ref={cardRef}>
     <img src={libro.imagen} alt={libro.titulo} />
     <div className="container-text-card">
-      <h3 style={{ marginTop: "10px", fontSize: "18px", fontWeight: "600" }}>
-        {libro.titulo}
-      </h3> 
-       <div style={{ marginTop: "8px" }}>
-        <p style={{ fontSize: "13px", color: "#444", margin: "2px 0" }}>
-          <strong>Categoría:</strong> {libro.categoria}
-        </p>
-        <p style={{ fontSize: "13px", color: "#444", margin: "2px 0" }}>
-          <strong>Género:</strong> {libro.genero}
-        </p>
-      </div> 
-      
-      <p style={{ fontSize: "14px", color: "#666" }}>{libro.descripcion}</p>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "flex-start",
+          marginTop: "10px",
+        }}
+      >
+        <h3 style={{ fontSize: "18px", fontWeight: "600", margin: 0 }}>
+          {libro.titulo}
+        </h3>
 
-      {/* Nueva sección de categoría y género */}
-      
+        {/* Categoría y género al lado derecho */}
+        <div style={{ textAlign: "right" }}>
+          <p style={{ fontSize: "13px", color: "#444", margin: "0" }}>
+            <strong>Categoría:</strong> {libro.categoria}
+          </p>
+          <p style={{ fontSize: "13px", color: "#444", margin: "0" }}>
+            <strong>Género:</strong> {libro.genero}
+          </p>
+        </div>
+      </div>
 
+      <p style={{ fontSize: "14px", color: "#666", marginTop: "8px" }}>
+        {libro.descripcion}
+      </p>
       <BotonesLibro libro={libro} />
     </div>
   </div>
 </div>
-
-  );
+  )
 }
