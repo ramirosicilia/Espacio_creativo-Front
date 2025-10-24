@@ -24,6 +24,14 @@ export default function Capitulos() {
   const [libroId] = capitulo.id.split("-");
   const esCuento = ["4", "5", "6", "7", "8", "9"].includes(libroId);
 
+  // 🟢 Chequear si el cuento ya fue comprado
+  const [yaPagado, setYaPagado] = useState(false);
+
+  useEffect(() => {
+    const pagado = localStorage.getItem(`cuento_pagado_${libroId}`) === "true";
+    setYaPagado(pagado);
+  }, [libroId]);
+
   // 📘 Leer siguiente capítulo
   const handleLeerSiguiente = () => {
     const [libroId, capNum] = capitulo.id.split("-");
@@ -52,18 +60,23 @@ export default function Capitulos() {
         <>
           <div className="texto-visible">
             <p style={{ lineHeight: 1.6, whiteSpace: "pre-line" }}>
-              {capitulo.contenido.slice(0, 800)}
+              {/* Si ya pagó, mostramos todo */}
+              {yaPagado
+                ? capitulo.contenido
+                : capitulo.contenido.slice(0, 800)}
             </p>
           </div>
 
-          <div className="texto-bloqueado">
-            <p style={{ lineHeight: 1.6, whiteSpace: "pre-line" }}>
-              {capitulo.contenido.slice(800)}
-            </p>
-            <div className="overlay">
-              🔒 <em>Compra el cuento para seguir leyendo...</em>
+          {!yaPagado && (
+            <div className="texto-bloqueado">
+              <p style={{ lineHeight: 1.6, whiteSpace: "pre-line" }}>
+                {capitulo.contenido.slice(800)}
+              </p>
+              <div className="overlay">
+                🔒 <em>Compra el cuento para seguir leyendo...</em>
+              </div>
             </div>
-          </div>
+          )}
         </>
       )}
 
@@ -80,7 +93,7 @@ export default function Capitulos() {
             </button>
           ) : null)}
 
-        {esCuento && (
+        {esCuento && !yaPagado && (
           <button className="boton-siguiente" onClick={handleComprar}>
             Comprar Cuento Ahora 💳
           </button>

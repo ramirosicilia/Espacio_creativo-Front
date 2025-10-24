@@ -99,18 +99,15 @@ export function Compra() {
           const res = await fetch(`${apiUrl}/webhook_estado`);
           const estado = await res.json();
 
-          if (estado.pago_exitoso) {
-            clearInterval(intervalo);
-            setCuentosDesbloqueados(true);
-            console.log("✅ Pago exitoso recibido, desbloqueando cuentos.");
+         if (estado.pago_exitoso) {
+              clearInterval(intervalo);
+              setCuentosDesbloqueados(true);
+              console.log("✅ Pago exitoso recibido, desbloqueando cuentos.");
+                    
+              // 🟢 Guarda que el usuario ya pagó este cuento
+              localStorage.setItem(`cuento_pagado_${id}`, "true");
+            }
 
-            document.querySelectorAll(".cuento-bloqueado").forEach((c) => {
-              c.style.opacity = "1";
-              c.style.pointerEvents = "auto";
-              c.style.filter = "none";
-              c.style.transition = "opacity 0.5s ease";
-            });
-          }
         } catch (err) {
           console.error("Error al consultar estado del pago:", err);
         }
