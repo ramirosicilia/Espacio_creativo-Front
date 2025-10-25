@@ -30,7 +30,7 @@ export default function Capitulos() {
   // 🔓 Verifica si el cuento ya fue pagado (guardado en localStorage)
   const cuentoPagado = localStorage.getItem(`cuento_pagado_${libroId}`) === "true";  
 
-  localStorage.setItem(`cuento_pagado_${id}`, "true");
+
 
 
   // 📘 Leer siguiente capítulo
