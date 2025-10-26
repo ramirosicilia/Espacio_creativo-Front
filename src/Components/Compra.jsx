@@ -111,7 +111,7 @@ export function Compra() {
         } catch (err) {
           console.error("Error al consultar estado del pago:", err);
         }
-      }, 3000); // 👈 consulta cada 3 segundos
+      }, 800); // 👈 consulta cada 1 segundos
     } catch (error) {
       console.error("Error al crear la preferencia de pago:", error);
       setCargando(false);
