@@ -105,13 +105,13 @@ export function Compra() {
             console.log("✅ Pago exitoso recibido, desbloqueando cuentos.");
 
             // 🟢 Guarda que el usuario ya pagó este cuento
-            localStorage.setItem(`cuento_pagado_${id}`, "true");
+            localStorage.setItem(`cuento_pagado_${id}`, "true"); 
          
           }
         } catch (err) {
           console.error("Error al consultar estado del pago:", err);
         }
-      }, 800); // 👈 consulta cada 1 segundos
+      }, 3000); // 👈 consulta cada 1 segundos
     } catch (error) {
       console.error("Error al crear la preferencia de pago:", error);
       setCargando(false);
