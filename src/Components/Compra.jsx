@@ -97,9 +97,11 @@ export function Compra() {
       const intervalo = setInterval(async () => {
         try {
          const res = await fetch(`${apiUrl}/webhook_estado?libroId=${id}`);
+         console.log(res)
 
 
           const estado = await res.json();
+          console.log(estado)
 
          if (estado.pago_exitoso) {
               clearInterval(intervalo);
@@ -108,6 +110,7 @@ export function Compra() {
                     
               // 🟢 Guarda que el usuario ya pagó este cuento
               localStorage.setItem(`cuento_pagado_${id}`, "true");
+              alert('comprado')
             }
 
         } catch (err) {
