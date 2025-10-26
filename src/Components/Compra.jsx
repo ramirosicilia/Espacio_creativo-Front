@@ -105,7 +105,15 @@ export function Compra() {
             console.log("✅ Pago exitoso recibido, desbloqueando cuentos.");
 
             // 🟢 Guarda que el usuario ya pagó este cuento
-            localStorage.setItem(`cuento_pagado_${id}`, "true"); 
+         // 🟢 Obtener el array actual de cuentos pagados
+        const cuentosPagados = JSON.parse(localStorage.getItem("cuentos_pagados")) || [];
+                  
+        // 🟢 Agregar el nuevo id solo si no está ya en el array
+        if (!cuentosPagados.includes(id)) {
+          cuentosPagados.push(id);
+          localStorage.setItem("cuentos_pagados", JSON.stringify(cuentosPagados));
+        }
+
          
           }
         } catch (err) {
