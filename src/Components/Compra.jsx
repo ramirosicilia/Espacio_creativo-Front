@@ -106,7 +106,7 @@ export function Compra() {
 
             // 🟢 Guarda que el usuario ya pagó este cuento
             localStorage.setItem(`cuento_pagado_${id}`, "true");
-            alert("¡Compra realizada con éxito! 🎉");
+         
           }
         } catch (err) {
           console.error("Error al consultar estado del pago:", err);
