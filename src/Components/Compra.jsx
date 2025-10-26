@@ -102,12 +102,13 @@ export function Compra() {
           if (estado.pago_exitoso) {
             clearInterval(intervalo);
             setCuentosDesbloqueados(true);
+            alert("Compra")
             console.log("✅ Pago exitoso recibido, desbloqueando cuentos.");
 
             // 🟢 Guarda que el usuario ya pagó este cuento
          // 🟢 Obtener el array actual de cuentos pagados
         const cuentosPagados = JSON.parse(localStorage.getItem("cuentos_pagados")) || [];
-                  
+
         // 🟢 Agregar el nuevo id solo si no está ya en el array
         if (!cuentosPagados.includes(id)) {
           cuentosPagados.push(id);
