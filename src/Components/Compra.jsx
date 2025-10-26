@@ -113,6 +113,7 @@ export function Compra() {
         if (!cuentosPagados.includes(id)) {
           cuentosPagados.push(id);
           localStorage.setItem("cuentos_pagados", JSON.stringify(cuentosPagados));
+            console.log("📦 cuentos_pagados actualizado:", cuentosPagados);
         }
 
          
