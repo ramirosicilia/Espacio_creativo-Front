@@ -97,6 +97,7 @@ export function Compra() {
       const intervalo = setInterval(async () => {
         try {
           const res = await fetch(`${apiUrl}/webhook_estado?libroId=${id}`);
+          console.log(res)
           const estado = await res.json();
           console.log(estado,' el estado')
 
@@ -121,7 +122,7 @@ export function Compra() {
         } catch (err) {
           console.error("Error al consultar estado del pago:", err);
         }
-      }, 3000); // 👈 consulta cada 1 segundos
+      }, 500); // 👈 consulta cada 1 segundos
     } catch (error) {
       console.error("Error al crear la preferencia de pago:", error);
       setCargando(false);
