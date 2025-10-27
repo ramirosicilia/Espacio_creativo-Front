@@ -105,18 +105,19 @@ const esperarPago = async (intentos = 0) => {
     const res = await fetch(`${apiUrl}/webhook_estado?libroId=${id}`);
     const estado = await res.json();
 
-    if (estado.pago_exitoso) {
-      setCuentosDesbloqueados(true);
-      alert("✅ Compra confirmada");
-      console.log("✅ Pago exitoso recibido, desbloqueando cuentos.");
+    if (Array.isArray(estado) && estado.length > 0 && estado[0].status === "approved") {
+  setCuentosDesbloqueados(true);
+  alert("✅ Compra confirmada");
+  console.log("✅ Pago exitoso recibido, desbloqueando cuentos.");
 
-      const cuentosPagados = JSON.parse(localStorage.getItem("cuentos_pagados")) || [];
-      if (!cuentosPagados.includes(id)) {
-        cuentosPagados.push(id);
-        localStorage.setItem("cuentos_pagados", JSON.stringify(cuentosPagados));
-      }
-      return;
-    }
+  const cuentosPagados = JSON.parse(localStorage.getItem("cuentos_pagados")) || [];
+  if (!cuentosPagados.includes(id)) {
+    cuentosPagados.push(id);
+    localStorage.setItem("cuentos_pagados", JSON.stringify(cuentosPagados));
+  }
+  return;
+}
+
 
     console.log("🕓 Aún no hay pago, reintentando...");
     setTimeout(() => esperarPago(intentos + 1), 3000);
