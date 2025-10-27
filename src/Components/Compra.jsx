@@ -36,9 +36,8 @@ export function Compra() {
   };
 
   const producto = productos[id];
-   const apiUrl=import.meta.env.VITE_PAYMENT_URL
-    let publicKey=import.meta.env.VITE_MP_PUBLIC_KEY
-
+  const apiUrl = import.meta.env.VITE_PAYMENT_URL;
+  let publicKey = import.meta.env.VITE_MP_PUBLIC_KEY;
 
   useEffect(() => {
     const script = document.createElement("script");
@@ -93,42 +92,54 @@ export function Compra() {
 
       setCargando(false); // 🟢 termina carga
 
-      // 🟢 Verificación de pago
-      // 🕒 Nueva forma: promesa recursiva con delay
-const esperarPago = async (intentos = 0) => {
-  if (intentos > 10) {  // 10 intentos = ~30 segundos
-    console.warn("⏳ No se detectó pago después de 30 segundos");
-    return;
-  }
+      // 🟢 Verificación de pago (versión mejorada)
+      const esperarPago = async (intentos = 0) => {
+        if (intentos > 13) {
+          console.warn("⏳ No se detectó pago después de 40 segundos");
+          setCargando(false);
+          return;
+        }
 
-  try {
-    const res = await fetch(`${apiUrl}/webhook_estado?libroId=${id}`);
-    const estado = await res.json();
+        try {
+          const res = await fetch(`${apiUrl}/webhook_estado?libroId=${id}`);
+          const estado = await res.json();
+          console.log("📦 Respuesta backend:", estado); // 👈 log detallado
 
-   if (estado.pago_exitoso && estado.data && estado.data.length > 0) {
-  setCuentosDesbloqueados(true);
-  alert("✅ Compra confirmada");
-  console.log("✅ Pago exitoso recibido, desbloqueando cuentos.");
+          if (estado.pago_exitoso && estado.data && estado.data.length > 0) {
+            setCuentosDesbloqueados(true);
+            setCargando(false);
+            alert("✅ Compra confirmada");
+            console.log("✅ Pago exitoso recibido, desbloqueando cuentos.");
 
-  const cuentosPagados = JSON.parse(localStorage.getItem("cuentos_pagados")) || [];
-  if (!cuentosPagados.includes(id)) {
-    cuentosPagados.push(id);
-    localStorage.setItem("cuentos_pagados", JSON.stringify(cuentosPagados));
-  }
-  return;
-}
+            const cuentosPagados =
+              JSON.parse(localStorage.getItem("cuentos_pagados")) || [];
+            if (!cuentosPagados.includes(id)) {
+              cuentosPagados.push(id);
+              localStorage.setItem(
+                "cuentos_pagados",
+                JSON.stringify(cuentosPagados)
+              );
+            }
 
+            alert("✅ Compra confirmada. Tu cuento ya está desbloqueado 🟢");
 
-    console.log("🕓 Aún no hay pago, reintentando...");
-    setTimeout(() => esperarPago(intentos + 1), 3000);
-  } catch (err) {
-    console.error("Error al consultar estado del pago:", err);
-    setTimeout(() => esperarPago(intentos + 1), 3000);
-  }
-};
+            // 🔁 Redirigir automáticamente (opcional)
+            setTimeout(() => {
+              window.location.href = `/cuento/${id}`; // 👈 cambia si tu ruta es distinta
+            }, 1500);
 
-esperarPago(); // 
+            return;
+          }
 
+          console.log(`🕓 Intento ${intentos + 1}: aún no hay pago, reintentando...`);
+          setTimeout(() => esperarPago(intentos + 1), 3000);
+        } catch (err) {
+          console.error("❌ Error al consultar estado del pago:", err);
+          setTimeout(() => esperarPago(intentos + 1), 3000);
+        }
+      };
+
+      esperarPago(); // 
     } catch (error) {
       console.error("Error al crear la preferencia de pago:", error);
       setCargando(false);
