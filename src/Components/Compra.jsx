@@ -105,10 +105,10 @@ export function Compra() {
           const estado = await res.json();
           console.log("📦 Respuesta backend:", estado); // 👈 log detallado
 
-          if (estado.pago_exitoso!=false && estado.data && estado.data.length > 0) {
+          if (estado.pago_exitoso!=false ) {
             setCuentosDesbloqueados(true);
             setCargando(false); 
-            alert("Espero mientras se procesa el pago")
+           
       
             console.log("✅ Pago exitoso recibido, desbloqueando cuentos.");
 
@@ -122,7 +122,7 @@ export function Compra() {
               );
             }
 
-            alert("✅ Compra confirmada. Tu cuento ya está desbloqueado 🟢");
+          
 
             // 🔁 Redirigir automáticamente (opcional)
             setTimeout(() => {
