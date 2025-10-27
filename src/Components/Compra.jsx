@@ -99,7 +99,7 @@ export function Compra() {
           const res = await fetch(`${apiUrl}/webhook_estado?libroId=${id}`);
           const estado = await res.json();
 
-          if (estado.pago_exitoso) {
+          if (estado.pago_exitoso===false) {
             clearInterval(intervalo);
             setCuentosDesbloqueados(true);
             alert("Compra")
