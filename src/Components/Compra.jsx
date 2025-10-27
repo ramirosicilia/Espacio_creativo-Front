@@ -108,7 +108,7 @@ export function Compra() {
           if (estado.pago_exitoso && estado.data && estado.data.length > 0) {
             setCuentosDesbloqueados(true);
             setCargando(false);
-            alert("✅ Compra confirmada");
+      
             console.log("✅ Pago exitoso recibido, desbloqueando cuentos.");
 
             const cuentosPagados =
