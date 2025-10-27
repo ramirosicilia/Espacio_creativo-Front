@@ -36,8 +36,9 @@ export function Compra() {
   };
 
   const producto = productos[id];
-  const apiUrl = import.meta.env.VITE_PAYMENT_URL;
-  let publicKey = import.meta.env.VITE_MP_PUBLIC_KEY;
+   const apiUrl=import.meta.env.VITE_PAYMENT_URL
+    let publicKey=import.meta.env.VITE_MP_PUBLIC_KEY
+
 
   useEffect(() => {
     const script = document.createElement("script");
@@ -92,44 +93,37 @@ export function Compra() {
 
       setCargando(false); // 🟢 termina carga
 
-      // 🟢 Nueva función: verificación del pago con reintentos
-      const verificarPago = async (id, intentos = 5) => {
-        for (let i = 0; i < intentos; i++) {
-          console.log(`🔍 Verificando pago intento ${i + 1}/${intentos}...`);
+      // 🟢 Verificación de pago
+     
+        try {
           const res = await fetch(`${apiUrl}/webhook_estado?libroId=${id}`);
           const estado = await res.json();
-          console.log("🧾 Estado actual:", estado);
+          console.log(estado,"estadooooooo")
 
-          if (estado.pago_exitoso === true) {
+          if (estado.pago_exitoso===true) {
+           
+            setCuentosDesbloqueados(true);
+            alert("Compra")
             console.log("✅ Pago exitoso recibido, desbloqueando cuentos.");
-            return true;
-          }
 
-          // Espera 3 segundos antes de volver a intentar
-          await new Promise((resolve) => setTimeout(resolve, 3000));
-        }
-        return false;
-      };
-
-      // 🟢 Esperar confirmación real desde el backend
-      const pagoConfirmado = await verificarPago(id);
-
-      if (pagoConfirmado) {
-        setCuentosDesbloqueados(true);
-        alert("✅ Compra realizada con éxito");
-
-        // 🟢 Guarda que el usuario ya pagó este cuento
+            // 🟢 Guarda que el usuario ya pagó este cuento
+         // 🟢 Obtener el array actual de cuentos pagados
         const cuentosPagados = JSON.parse(localStorage.getItem("cuentos_pagados")) || [];
+
+        // 🟢 Agregar el nuevo id solo si no está ya en el array
         if (!cuentosPagados.includes(id)) {
           cuentosPagados.push(id);
           localStorage.setItem("cuentos_pagados", JSON.stringify(cuentosPagados));
         }
-      } else {
-        alert("⚠️ No se confirmó el pago todavía. Espera unos segundos y vuelve a intentar.");
-      }
 
+         
+          }
+        } catch (err) {
+          console.error("Error al consultar estado del pago:", err);
+        }
+   
     } catch (error) {
-      console.error("Error al crear la preferencia de pago o verificar:", error);
+      console.error("Error al crear la preferencia de pago:", error);
       setCargando(false);
     }
   };
@@ -204,4 +198,3 @@ export function Compra() {
     </div>
   );
 }
-
