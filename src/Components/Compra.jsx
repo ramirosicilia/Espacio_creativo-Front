@@ -94,33 +94,40 @@ export function Compra() {
       setCargando(false); // 🟢 termina carga
 
       // 🟢 Verificación de pago
-      const intervalo = setInterval(async () => {
-        try {
-          const res = await fetch(`${apiUrl}/webhook_estado?libroId=${id}`);
-          const estado = await res.json();
+      // 🕒 Nueva forma: promesa recursiva con delay
+const esperarPago = async (intentos = 0) => {
+  if (intentos > 10) {  // 10 intentos = ~30 segundos
+    console.warn("⏳ No se detectó pago después de 30 segundos");
+    return;
+  }
 
-          if (estado.pago_exitoso) {
-            clearInterval(intervalo);
-            setCuentosDesbloqueados(true);
-            alert("Compra")
-            console.log("✅ Pago exitoso recibido, desbloqueando cuentos.");
+  try {
+    const res = await fetch(`${apiUrl}/webhook_estado?libroId=${id}`);
+    const estado = await res.json();
 
-            // 🟢 Guarda que el usuario ya pagó este cuento
-         // 🟢 Obtener el array actual de cuentos pagados
-        const cuentosPagados = JSON.parse(localStorage.getItem("cuentos_pagados")) || [];
+    if (estado.pago_exitoso) {
+      setCuentosDesbloqueados(true);
+      alert("✅ Compra confirmada");
+      console.log("✅ Pago exitoso recibido, desbloqueando cuentos.");
 
-        // 🟢 Agregar el nuevo id solo si no está ya en el array
-        if (!cuentosPagados.includes(id)) {
-          cuentosPagados.push(id);
-          localStorage.setItem("cuentos_pagados", JSON.stringify(cuentosPagados));
-        }
+      const cuentosPagados = JSON.parse(localStorage.getItem("cuentos_pagados")) || [];
+      if (!cuentosPagados.includes(id)) {
+        cuentosPagados.push(id);
+        localStorage.setItem("cuentos_pagados", JSON.stringify(cuentosPagados));
+      }
+      return;
+    }
 
-         
-          }
-        } catch (err) {
-          console.error("Error al consultar estado del pago:", err);
-        }
-      }, 3000); // 👈 consulta cada 1 segundos
+    console.log("🕓 Aún no hay pago, reintentando...");
+    setTimeout(() => esperarPago(intentos + 1), 3000);
+  } catch (err) {
+    console.error("Error al consultar estado del pago:", err);
+    setTimeout(() => esperarPago(intentos + 1), 3000);
+  }
+};
+
+esperarPago(); // 
+
     } catch (error) {
       console.error("Error al crear la preferencia de pago:", error);
       setCargando(false);
