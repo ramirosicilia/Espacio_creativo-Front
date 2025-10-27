@@ -98,6 +98,7 @@ export function Compra() {
         try {
           const res = await fetch(`${apiUrl}/webhook_estado?libroId=${id}`);
           const estado = await res.json();
+          console.log(estado,"estadooooooo")
 
           if (estado.pago_exitoso===true) {
            
