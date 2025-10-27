@@ -105,7 +105,7 @@ const esperarPago = async (intentos = 0) => {
     const res = await fetch(`${apiUrl}/webhook_estado?libroId=${id}`);
     const estado = await res.json();
 
-    if (Array.isArray(estado) && estado.length > 0 && estado[0].status === "approved") {
+    if (estado.pago_exitoso===true) {
   setCuentosDesbloqueados(true);
   alert("✅ Compra confirmada");
   console.log("✅ Pago exitoso recibido, desbloqueando cuentos.");
