@@ -94,14 +94,13 @@ export function Compra() {
       setCargando(false); // 🟢 termina carga
 
       // 🟢 Verificación de pago
-     
+      const intervalo = setInterval(async () => {
         try {
           const res = await fetch(`${apiUrl}/webhook_estado?libroId=${id}`);
           const estado = await res.json();
-          console.log(estado,"estadooooooo")
 
-          if (estado.pago_exitoso===true) {
-           
+          if (estado.pago_exitoso) {
+            clearInterval(intervalo);
             setCuentosDesbloqueados(true);
             alert("Compra")
             console.log("✅ Pago exitoso recibido, desbloqueando cuentos.");
@@ -121,7 +120,7 @@ export function Compra() {
         } catch (err) {
           console.error("Error al consultar estado del pago:", err);
         }
-   
+      }, 3000); // 👈 consulta cada 1 segundos
     } catch (error) {
       console.error("Error al crear la preferencia de pago:", error);
       setCargando(false);
