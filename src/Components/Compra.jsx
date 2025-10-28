@@ -49,6 +49,45 @@ export function Compra() {
     document.body.appendChild(script);
   }, [publicKey]);
 
+  // 🟢 Nueva función para verificar pago desde el backend
+  const verificarPagoEnBackend = async (libroId) => {
+    try {
+      const reintentarCada = 2000; // cada 2 segundos
+      const maxIntentos = 10; // espera total ~20s
+
+      for (let intento = 1; intento <= maxIntentos; intento++) {
+        const res = await fetch(`${apiUrl}/webhook_estado?libroId=${libroId}`);
+        const data = await res.json();
+
+        console.log(`🕓 Verificación inmediata ${intento}/${maxIntentos}:`, data);
+
+        if (data.pago_exitoso) {
+          console.log("💚 Pago detectado inmediatamente");
+          setCuentosDesbloqueados(true);
+          setCargando(false);
+
+          const cuentosPagados = JSON.parse(localStorage.getItem("cuentos_pagados")) || [];
+          if (!cuentosPagados.includes(libroId)) {
+            cuentosPagados.push(libroId);
+            localStorage.setItem("cuentos_pagados", JSON.stringify(cuentosPagados));
+          }
+
+          // 🔁 Redirigir automáticamente
+          setTimeout(() => {
+            window.location.href = `/cuento/${libroId}`;
+          }, 1500);
+          return;
+        }
+
+        await new Promise((r) => setTimeout(r, reintentarCada));
+      }
+
+      console.warn("⚠️ No se detectó pago tras verificación inmediata.");
+    } catch (e) {
+      console.error("❌ Error verificando pago:", e);
+    }
+  };
+
   const handlePagar = async () => {
     if (!mercadoPago) return;
     setCargando(true); // 🟢 inicia carga
@@ -86,6 +125,21 @@ export function Compra() {
         customization: {
           texts: {
             valueProp: "smart_option",
+          },
+        },
+        callbacks: {
+          onSubmit: async (cardFormData) => {
+            console.log("💳 Pago iniciado desde Wallet:", cardFormData);
+          },
+          onReady: () => {
+            console.log("🧱 Wallet lista");
+          },
+          onSuccess: async (payment) => {
+            console.log("✅ Pago exitoso desde front:", payment);
+            verificarPagoEnBackend(id); // 👈 llamada directa
+          },
+          onError: (error) => {
+            console.error("❌ Error en el Brick:", error);
           },
         },
       });
