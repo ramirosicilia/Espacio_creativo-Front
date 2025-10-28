@@ -11,7 +11,9 @@ import cuento2 from "../assets/books/Angel.jpg";
 import cuento3 from "../assets/books/Deseo.jpg";
 import cuento4 from "../assets/books/Despertar.jpg";
 import cuento5 from "../assets/books/Citas.jpg";
-import cuento6 from "../assets/books/espejo.jpg";
+import cuento6 from "../assets/books/espejo.jpg";   
+
+
 
 export function Compra() {
   const { id } = useParams();
@@ -103,8 +105,7 @@ export function Compra() {
               name: producto.titulo,
               quantity: 1,
               unit_price: producto.precio,
-              categoria:producto.categoria
-
+              categoria: producto.categoria,
             },
           ],
         }),
@@ -139,6 +140,29 @@ export function Compra() {
           onSuccess: async (payment) => {
             console.log("✅ Pago exitoso desde front:", payment);
             verificarPagoEnBackend(id); // 👈 llamada directa
+
+            // 🟣 agregado: esperar que el backend guarde el pago si tarda MercadoPago
+            console.log("🕓 Esperando confirmación del backend...");
+            for (let i = 1; i <= 20; i++) { // espera hasta ~60s
+              const resp = await fetch(`${apiUrl}/webhook_estado?libroId=${id}`);
+              const estado = await resp.json();
+              console.log(`🔁 Reintento ${i}:`, estado);
+              if (estado.pago_exitoso) {
+                console.log("💚 Pago confirmado en backend!");
+                setCuentosDesbloqueados(true);
+                setCargando(false);
+                const cuentosPagados = JSON.parse(localStorage.getItem("cuentos_pagados")) || [];
+                if (!cuentosPagados.includes(id)) {
+                  cuentosPagados.push(id);
+                  localStorage.setItem("cuentos_pagados", JSON.stringify(cuentosPagados));
+                }
+                setTimeout(() => (window.location.href = `/cuento/${id}`), 1200);
+                return;
+              }
+              await new Promise((r) => setTimeout(r, 3000));
+            }
+            console.warn("⚠️ No se detectó pago luego de esperar al backend.");
+            setCargando(false);
           },
           onError: (error) => {
             console.error("❌ Error en el Brick:", error);
@@ -160,8 +184,8 @@ export function Compra() {
 
             console.log(`🕓 Intento ${intento}:`, estado);
 
-            if (estado.pago_exitoso) { 
-              alert("pago exictoso")
+            if (estado.pago_exitoso) {
+              alert("pago exictoso");
               console.log("✅ Pago confirmado, desbloqueando cuentos...");
               setCuentosDesbloqueados(true);
               setCargando(false);
@@ -170,10 +194,7 @@ export function Compra() {
                 JSON.parse(localStorage.getItem("cuentos_pagados")) || [];
               if (!cuentosPagados.includes(id)) {
                 cuentosPagados.push(id);
-                localStorage.setItem(
-                  "cuentos_pagados",
-                  JSON.stringify(cuentosPagados)
-                );
+                localStorage.setItem("cuentos_pagados", JSON.stringify(cuentosPagados));
               }
 
               // 🔁 Redirigir automáticamente
