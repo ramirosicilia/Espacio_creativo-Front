@@ -158,7 +158,8 @@ export function Compra() {
 
             console.log(`🕓 Intento ${intento}:`, estado);
 
-            if (estado.pago_exitoso) {
+            if (estado.pago_exitoso) { 
+              alert("pago exictoso")
               console.log("✅ Pago confirmado, desbloqueando cuentos...");
               setCuentosDesbloqueados(true);
               setCargando(false);
