@@ -192,6 +192,8 @@ export function Compra() {
 
             console.log(`🕓 Intento ${intento}:`, estado);
 
+            await new Promise((r) => setTimeout(r,2500));
+
             if (estado.pago_exitoso) {
               alert("pago exictoso");
               console.log("✅ Pago confirmado, desbloqueando cuentos...");
