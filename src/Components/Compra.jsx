@@ -103,6 +103,8 @@ export function Compra() {
               name: producto.titulo,
               quantity: 1,
               unit_price: producto.precio,
+              categoria:producto.categoria
+
             },
           ],
         }),
