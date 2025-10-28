@@ -15,6 +15,8 @@ function App() {
         <Route path="/favoritos" element={<Favoritos />} />
        <Route path="/capitulo/:categoria/:id" element={<Capitulos />} />
        <Route path="/comprar/:categoria/:id" element={<Compra />} />
+       <Route path="/cuento/:id" element={<Capitulos />} />
+
 
 
       </Routes>
