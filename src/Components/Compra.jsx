@@ -55,7 +55,7 @@ export function Compra() {
   const verificarPagoEnBackend = async (libroId) => {
     try {
       const reintentarCada = 2000; // cada 2 segundos
-      const maxIntentos = 10; // espera total ~20s
+      const maxIntentos = 20; // espera total ~20s
 
       for (let intento = 1; intento <= maxIntentos; intento++) {
         const res = await fetch(`${apiUrl}/webhook_estado?libroId=${libroId}`);
@@ -182,8 +182,8 @@ export function Compra() {
 
       // 🟢 Verificación de pago (versión mejorada con Promise y await)
       const esperarPago = async () => {
-        const reintentarCada = 4000; // cada 4 segundos
-        const maxIntentos = 15; // espera total ~1 minuto
+        const reintentarCada = 2000; // cada 4 segundos
+        const maxIntentos = 20; // espera total ~1 minuto
 
         for (let intento = 1; intento <= maxIntentos; intento++) {
           try {
@@ -212,7 +212,9 @@ export function Compra() {
                 window.location.href = `/cuento/${id}`;
               }, 1500);
               return;
-            }
+            } 
+
+                await new Promise((r) => setTimeout(r, reintentarCada));
 
             console.log(`🕓 Aún no hay pago, reintentando (${intento}/${maxIntentos})...`);
             await new Promise((r) => setTimeout(r, reintentarCada));
