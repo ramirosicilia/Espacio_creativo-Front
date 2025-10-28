@@ -92,55 +92,54 @@ export function Compra() {
 
       setCargando(false); // 🟢 termina carga
 
-      // 🟢 Verificación de pago (versión mejorada)
-      const esperarPago = async (intentos = 0) => {
-        if (intentos > 13) {
-          console.warn("⏳ No se detectó pago después de 40 segundos");
-          setCargando(false);
-          return;
-        }
+      // 🟢 Verificación de pago (versión mejorada con Promise y await)
+      const esperarPago = async () => {
+        const reintentarCada = 4000; // cada 4 segundos
+        const maxIntentos = 15; // espera total ~1 minuto
 
-        try {
-          const res = await fetch(`${apiUrl}/webhook_estado?libroId=${id}`);
-          const estado = await res.json();
-          console.log("📦 Respuesta backend:", estado); // 👈 log detallado
+        for (let intento = 1; intento <= maxIntentos; intento++) {
+          try {
+            const res = await fetch(`${apiUrl}/webhook_estado?libroId=${id}`);
+            const estado = await res.json();
 
-          if (estado.pago_exitoso!=false ) {
-            setCuentosDesbloqueados(true);
-            setCargando(false); 
-           
-      
-            console.log("✅ Pago exitoso recibido, desbloqueando cuentos.");
+            console.log(`🕓 Intento ${intento}:`, estado);
 
-            const cuentosPagados =
-              JSON.parse(localStorage.getItem("cuentos_pagados")) || [];
-            if (!cuentosPagados.includes(id)) {
-              cuentosPagados.push(id);
-              localStorage.setItem(
-                "cuentos_pagados",
-                JSON.stringify(cuentosPagados)
-              );
+            if (estado.pago_exitoso) {
+              console.log("✅ Pago confirmado, desbloqueando cuentos...");
+              setCuentosDesbloqueados(true);
+              setCargando(false);
+
+              const cuentosPagados =
+                JSON.parse(localStorage.getItem("cuentos_pagados")) || [];
+              if (!cuentosPagados.includes(id)) {
+                cuentosPagados.push(id);
+                localStorage.setItem(
+                  "cuentos_pagados",
+                  JSON.stringify(cuentosPagados)
+                );
+              }
+
+              // 🔁 Redirigir automáticamente
+              setTimeout(() => {
+                window.location.href = `/cuento/${id}`;
+              }, 1500);
+              return;
             }
 
-          
-
-            // 🔁 Redirigir automáticamente (opcional)
-            setTimeout(() => {
-              window.location.href = `/cuento/${id}`; // 👈 cambia si tu ruta es distinta
-            }, 1500);
-
-            return;
+            console.log(`🕓 Aún no hay pago, reintentando (${intento}/${maxIntentos})...`);
+            await new Promise((r) => setTimeout(r, reintentarCada));
+          } catch (err) {
+            console.error("❌ Error al consultar estado del pago:", err);
+            await new Promise((r) => setTimeout(r, reintentarCada));
           }
-
-          console.log(`🕓 Intento ${intentos + 1}: aún no hay pago, reintentando...`);
-          setTimeout(() => esperarPago(intentos + 1), 3000);
-        } catch (err) {
-          console.error("❌ Error al consultar estado del pago:", err);
-          setTimeout(() => esperarPago(intentos + 1), 3000);
         }
+
+        console.warn("⚠️ No se detectó pago después del tiempo máximo de espera.");
+        setCargando(false);
       };
 
-      esperarPago(); // 
+      // Iniciar verificación
+      esperarPago();
     } catch (error) {
       console.error("Error al crear la preferencia de pago:", error);
       setCargando(false);
