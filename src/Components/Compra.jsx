@@ -25,15 +25,6 @@ export function Compra() {
   const [cuentosDesbloqueados, setCuentosDesbloqueados] = useState(false);
   const [cargando, setCargando] = useState(false); // 👈 nuevo estado
 
-  // 🟢 agregado: verificar si ya está pagado
-  useEffect(() => {
-    const cuentosPagados = JSON.parse(localStorage.getItem("cuentos_pagados")) || [];
-    if (cuentosPagados.includes(id)) {
-      setCuentosDesbloqueados(true);
-      setBotonVisible(true); // mantenemos visible el botón, pero cambia su texto
-    }
-  }, [id]);
-
   const productos = {
     1: { titulo: "Los Héroes de la Dimensión Paralela", imagen: libro1, precio: 5.0.toFixed("2") },
     2: { titulo: "Reconquistando la Tierra", imagen: libro2, precio: 5.0.toFixed("2") },
@@ -275,7 +266,6 @@ export function Compra() {
           Precio: <strong>${producto.precio} ARS</strong>
         </p>
 
-        {/* 🟢 agregado: botón cambia según si ya está pagado */}
         <button
           className="boton-siguiente"
           style={{
@@ -285,19 +275,9 @@ export function Compra() {
             opacity: botonVisible ? 1 : 0,
             transition: "opacity 0.4s ease",
           }}
-          onClick={() => {
-            if (cuentosDesbloqueados) {
-              window.location.href = `/cuento/${id}`;
-            } else {
-              handlePagar();
-            }
-          }}
+          onClick={handlePagar}
         >
-          {cargando
-            ? "Procesando..."
-            : cuentosDesbloqueados
-            ? "Desbloquear Aquí 🔓"
-            : "Comprar Ahora 💳"}
+          {cargando ? "Procesando..." : "Comprar Ahora 💳"}
         </button>
 
         {cargando && (
