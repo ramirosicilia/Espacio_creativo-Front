@@ -163,6 +163,14 @@ export function Compra() {
             }
             console.warn("⚠️ No se detectó pago luego de esperar al backend.");
             setCargando(false);
+
+            // 🟢 NUEVO: reintento automático 7 segundos después si aún no se detectó pago
+            setTimeout(async () => {
+              if (!cuentosDesbloqueados) {
+                console.log("⏳ Reintentando verificación automática...");
+                await verificarPagoEnBackend(id);
+              }
+            }, 7000);
           },
           onError: (error) => {
             console.error("❌ Error en el Brick:", error);
