@@ -156,7 +156,7 @@ export function Compra() {
                   cuentosPagados.push(id);
                   localStorage.setItem("cuentos_pagados", JSON.stringify(cuentosPagados));
                 }
-                setTimeout(() => (window.location.href = `/cuento/${id}`), 1200);
+                setTimeout(() => (window.location.href = `capitulo/cuento/${id}`), 1200);
                 return;
               }
               await new Promise((r) => setTimeout(r, 3000));
