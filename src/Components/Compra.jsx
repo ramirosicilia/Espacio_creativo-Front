@@ -192,7 +192,7 @@ export function Compra() {
 
             console.log(`🕓 Intento ${intento}:`, estado);
 
-            await new Promise((r) => setTimeout(r,2500));
+            await new Promise((r) => setTimeout(r,800));
 
             if (estado.pago_exitoso) {
               alert("pago exictoso");
