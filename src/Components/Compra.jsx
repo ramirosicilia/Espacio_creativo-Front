@@ -2,6 +2,7 @@ import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import "../styles/global.css";
 
+
 // 📘 Imágenes (las mismas que pasaste)
 import libro1 from "../assets/books/portada ganadora.png";
 import libro2 from "../assets/books/portada.jpg";
@@ -15,15 +16,14 @@ import cuento6 from "../assets/books/espejo.jpg";
 
 
 
+
 export function Compra() {
   const { id } = useParams();
   const [mercadoPago, setMercadoPago] = useState(null);
   const [preferenceId, setPreferenceId] = useState(null);
   const [botonVisible, setBotonVisible] = useState(true);
-
-  // 🟢 agregado: estados
   const [cuentosDesbloqueados, setCuentosDesbloqueados] = useState(false);
-  const [cargando, setCargando] = useState(false); // 👈 nuevo estado
+  const [cargando, setCargando] = useState(false);
 
   const productos = {
     1: { titulo: "Los Héroes de la Dimensión Paralela", imagen: libro1, precio: 5.0.toFixed("2") },
@@ -39,8 +39,9 @@ export function Compra() {
 
   const producto = productos[id];
   const apiUrl = import.meta.env.VITE_PAYMENT_URL;
-  let publicKey = import.meta.env.VITE_MP_PUBLIC_KEY;
+  const publicKey = import.meta.env.VITE_MP_PUBLIC_KEY;
 
+  // 🟢 Cargar SDK de Mercado Pago
   useEffect(() => {
     const script = document.createElement("script");
     script.src = "https://sdk.mercadopago.com/js/v2";
@@ -51,11 +52,56 @@ export function Compra() {
     document.body.appendChild(script);
   }, [publicKey]);
 
-  // 🟢 Nueva función para verificar pago desde el backend
+  // 🧩 Función para desbloquear cuento
+  const desbloquearCuento = (libroId) => {
+    console.log("✅ Desbloqueando cuento", libroId);
+    setCuentosDesbloqueados(true);
+    setCargando(false);
+
+    const cuentosPagados = JSON.parse(localStorage.getItem("cuentos_pagados")) || [];
+    if (!cuentosPagados.includes(libroId)) {
+      cuentosPagados.push(libroId);
+      localStorage.setItem("cuentos_pagados", JSON.stringify(cuentosPagados));
+    }
+
+    setTimeout(() => {
+      window.location.href = `/cuento/${libroId}`;
+    }, 1500);
+  };
+
+  // 🟢 Verificación continua estilo "real time" (sin Supabase)
+  useEffect(() => {
+    if (!id) return;
+
+    let activo = true;
+    const verificar = async () => {
+      while (activo) {
+        try {
+          const res = await fetch(`${apiUrl}/webhook_estado?libroId=${id}`);
+          const data = await res.json();
+          if (data.pago_exitoso) {
+            alert("✅ Pago detectado (polling rápido)");
+            desbloquearCuento(id);
+            break;
+          }
+        } catch (err) {
+          console.error("Error verificando pago:", err);
+        }
+        await new Promise((r) => setTimeout(r, 1500)); // cada 1.5 s
+      }
+    };
+
+    verificar();
+    return () => {
+      activo = false;
+    };
+  }, [id]);
+
+  // 🟢 Verificación manual desde backend (respaldo)
   const verificarPagoEnBackend = async (libroId) => {
     try {
-      const reintentarCada = 2000; // cada 2 segundos
-      const maxIntentos = 20; // espera total ~20s
+      const reintentarCada = 2000;
+      const maxIntentos = 20;
 
       for (let intento = 1; intento <= maxIntentos; intento++) {
         const res = await fetch(`${apiUrl}/webhook_estado?libroId=${libroId}`);
@@ -65,19 +111,7 @@ export function Compra() {
 
         if (data.pago_exitoso) {
           console.log("💚 Pago detectado inmediatamente");
-          setCuentosDesbloqueados(true);
-          setCargando(false);
-
-          const cuentosPagados = JSON.parse(localStorage.getItem("cuentos_pagados")) || [];
-          if (!cuentosPagados.includes(libroId)) {
-            cuentosPagados.push(libroId);
-            localStorage.setItem("cuentos_pagados", JSON.stringify(cuentosPagados));
-          }
-
-          // 🔁 Redirigir automáticamente
-          setTimeout(() => {
-            window.location.href = `/cuento/${libroId}`;
-          }, 1500);
+          desbloquearCuento(libroId);
           return;
         }
 
@@ -90,9 +124,10 @@ export function Compra() {
     }
   };
 
+  // 💳 Manejar compra
   const handlePagar = async () => {
     if (!mercadoPago) return;
-    setCargando(true); // 🟢 inicia carga
+    setCargando(true);
 
     try {
       const response = await fetch(`${apiUrl}/create_preference`, {
@@ -117,121 +152,29 @@ export function Compra() {
       setPreferenceId(data.id);
       setBotonVisible(false);
 
+      // 🟢 Empieza a verificar enseguida
+      verificarPagoEnBackend(id);
+
       const bricksBuilder = mercadoPago.bricks();
       const container = document.getElementById("wallet_container");
       if (container) container.innerHTML = "";
 
       await bricksBuilder.create("wallet", "wallet_container", {
-        initialization: {
-          preferenceId: data.id,
-        },
-        customization: {
-          texts: {
-            valueProp: "smart_option",
-          },
-        },
+        initialization: { preferenceId: data.id },
+        customization: { texts: { valueProp: "smart_option" } },
         callbacks: {
-          onSubmit: async (cardFormData) => {
-            console.log("💳 Pago iniciado desde Wallet:", cardFormData);
-          },
-          onReady: () => {
-            console.log("🧱 Wallet lista");
-          },
+          onReady: () => console.log("🧱 Wallet lista"),
           onSuccess: async (payment) => {
             console.log("✅ Pago exitoso desde front:", payment);
-            verificarPagoEnBackend(id); // 👈 llamada directa
-
-            // 🟣 agregado: esperar que el backend guarde el pago si tarda MercadoPago
-            console.log("🕓 Esperando confirmación del backend...");
-            for (let i = 1; i <= 20; i++) { // espera hasta ~60s
-              const resp = await fetch(`${apiUrl}/webhook_estado?libroId=${id}`);
-              const estado = await resp.json();
-              console.log(`🔁 Reintento ${i}:`, estado);
-              if (estado.pago_exitoso) {
-                console.log("💚 Pago confirmado en backend!");
-                setCuentosDesbloqueados(true);
-                setCargando(false);
-                const cuentosPagados = JSON.parse(localStorage.getItem("cuentos_pagados")) || [];
-                if (!cuentosPagados.includes(id)) {
-                  cuentosPagados.push(id);
-                  localStorage.setItem("cuentos_pagados", JSON.stringify(cuentosPagados));
-                }
-                setTimeout(() => (window.location.href = `/cuento/${id}`), 1200);
-                return;
-              }
-              await new Promise((r) => setTimeout(r, 3000));
-            }
-            console.warn("⚠️ No se detectó pago luego de esperar al backend.");
-            setCargando(false);
-
-            // 🟢 NUEVO: reintento automático 7 segundos después si aún no se detectó pago
-            setTimeout(async () => {
-              if (!cuentosDesbloqueados) {
-                console.log("⏳ Reintentando verificación automática...");
-                await verificarPagoEnBackend(id);
-              }
-            }, 7000);
+            verificarPagoEnBackend(id);
           },
-          onError: (error) => {
-            console.error("❌ Error en el Brick:", error);
-          },
+          onError: (error) => console.error("❌ Error en el Brick:", error),
         },
       });
 
-      setCargando(false); // 🟢 termina carga
-
-      // 🟢 Verificación de pago (versión mejorada con Promise y await)
-      const esperarPago = async () => {
-        const reintentarCada = 2000; // cada 4 segundos
-        const maxIntentos = 20; // espera total ~1 minuto
-
-        for (let intento = 1; intento <= maxIntentos; intento++) {
-          try {
-            const res = await fetch(`${apiUrl}/webhook_estado?libroId=${id}`);
-            const estado = await res.json();
-
-            console.log(`🕓 Intento ${intento}:`, estado);
-
-            await new Promise((r) => setTimeout(r,800));
-
-            if (estado.pago_exitoso) {
-              alert("pago exictoso");
-              console.log("✅ Pago confirmado, desbloqueando cuentos...");
-              setCuentosDesbloqueados(true);
-              setCargando(false);
-
-              const cuentosPagados =
-                JSON.parse(localStorage.getItem("cuentos_pagados")) || [];
-              if (!cuentosPagados.includes(id)) {
-                cuentosPagados.push(id);
-                localStorage.setItem("cuentos_pagados", JSON.stringify(cuentosPagados));
-              }
-
-              // 🔁 Redirigir automáticamente
-              setTimeout(() => {
-                window.location.href = `/cuento/${id}`;
-              }, 1500);
-              return;
-            } 
-
-                await new Promise((r) => setTimeout(r, reintentarCada));
-
-            console.log(`🕓 Aún no hay pago, reintentando (${intento}/${maxIntentos})...`);
-            await new Promise((r) => setTimeout(r, reintentarCada));
-          } catch (err) {
-            console.error("❌ Error al consultar estado del pago:", err);
-            await new Promise((r) => setTimeout(r, reintentarCada));
-          }
-        }
-
-        console.warn("⚠️ No se detectó pago después del tiempo máximo de espera.");
-        setCargando(false);
-      };
-
-      // Iniciar verificación
-      esperarPago();
+      setCargando(false);
     } catch (error) {
-      console.error("Error al crear la preferencia de pago:", error);
+      console.error("Error al crear la preferencia:", error);
       setCargando(false);
     }
   };
@@ -306,4 +249,3 @@ export function Compra() {
     </div>
   );
 }
-
