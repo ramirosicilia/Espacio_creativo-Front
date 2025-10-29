@@ -1,6 +1,7 @@
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import "../styles/global.css";
+import { supabase } from "../helper/DB.js";
 
 // 📘 Imágenes (las mismas que pasaste)
 import libro1 from "../assets/books/portada ganadora.png";
@@ -12,6 +13,7 @@ import cuento3 from "../assets/books/Deseo.jpg";
 import cuento4 from "../assets/books/Despertar.jpg";
 import cuento5 from "../assets/books/Citas.jpg";
 import cuento6 from "../assets/books/espejo.jpg";   
+
 
 
 
