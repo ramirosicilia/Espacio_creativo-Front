@@ -80,7 +80,7 @@ export function Compra() {
           const res = await fetch(`${apiUrl}/webhook_estado?libroId=${id}`);
           const data = await res.json();
           if (data.pago_exitoso) {
-            alert("✅ Pago detectado (polling rápido)");
+            alert("✅ Hace click para desbloquear el cuento");
             desbloquearCuento(id);
             break;
           }
