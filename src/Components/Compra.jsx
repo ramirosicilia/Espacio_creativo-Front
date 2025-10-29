@@ -1,7 +1,6 @@
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import "../styles/global.css";
-import { supabase } from "../helper/DB.js";
 
 // 📘 Imágenes (las mismas que pasaste)
 import libro1 from "../assets/books/portada ganadora.png";
@@ -16,7 +15,6 @@ import cuento6 from "../assets/books/espejo.jpg";
 
 
 
-
 export function Compra() {
   const { id } = useParams();
   const [mercadoPago, setMercadoPago] = useState(null);
@@ -26,31 +24,6 @@ export function Compra() {
   // 🟢 agregado: estados
   const [cuentosDesbloqueados, setCuentosDesbloqueados] = useState(false);
   const [cargando, setCargando] = useState(false); // 👈 nuevo estado
-
-  // 🔵 Suscripción a Supabase Realtime para detectar pago aprobado instantáneamente
-  useEffect(() => {
-    const subscription = supabase
-      .from(`pagos:libro_id=eq.${id}`)
-      .on('INSERT', payload => {
-        const pago = payload.new;
-        if (pago.status === 'approved') {
-          console.log('📢 Pago detectado en Realtime:', pago);
-          setCuentosDesbloqueados(true);
-          setCargando(false);
-
-          const cuentosPagados = JSON.parse(localStorage.getItem('cuentos_pagados')) || [];
-          if (!cuentosPagados.includes(id)) {
-            cuentosPagados.push(id);
-            localStorage.setItem('cuentos_pagados', JSON.stringify(cuentosPagados));
-          }
-
-          setTimeout(() => window.location.href = `/cuento/${id}`, 1000);
-        }
-      })
-      .subscribe();
-
-    return () => supabase.removeSubscription(subscription);
-  }, [id]);
 
   const productos = {
     1: { titulo: "Los Héroes de la Dimensión Paralela", imagen: libro1, precio: 5.0.toFixed("2") },
@@ -333,3 +306,4 @@ export function Compra() {
     </div>
   );
 }
+
