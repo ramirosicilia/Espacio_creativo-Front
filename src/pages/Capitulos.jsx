@@ -28,11 +28,14 @@ export default function Capitulos() {
   const esCuento = categoria === "Cuento" || ["4", "5", "6", "7", "8", "9"].includes(libroId);
 
   // 🔓 Verifica si el cuento ya fue pagado (guardado en localStorage)
-const cuentosPagados = JSON.parse(localStorage.getItem("cuentos_pagados")) || [];
-const cuentoPagado = cuentosPagados.includes(libroId);
+  const cuentosPagados = JSON.parse(localStorage.getItem("cuentos_pagados")) || [];
+  const cuentoPagado = cuentosPagados.includes(libroId);
 
-
-
+  // 🆕 ------------------------------------------------------------
+  // 🆕 Lógica paralela para libros comprados
+  const librosComprados = JSON.parse(localStorage.getItem("libros_comprados")) || [];
+  const libroComprado = librosComprados.includes(libroId);
+  // 🆕 ------------------------------------------------------------
 
   // 📘 Leer siguiente capítulo
   const handleLeerSiguiente = () => {
@@ -93,6 +96,48 @@ const cuentoPagado = cuentosPagados.includes(libroId);
         </>
       )}
 
+      {/* 🆕 ------------------------------------------------------------ */}
+      {/* 🆕 Mostrar contenido completo si es un libro ya comprado */}
+      {categoria === "Libro" && libroComprado && (
+        <p style={{ lineHeight: 1.6, whiteSpace: "pre-line" }}>
+          {capitulo.contenido}
+        </p>
+      )}
+
+      {/* 🆕 Bloquear parte del texto si el libro NO fue comprado */}
+      {categoria === "Libro" && !libroComprado && (
+        <>
+          <div className="texto-visible">
+            <p style={{ lineHeight: 1.6, whiteSpace: "pre-line" }}>
+              {capitulo.contenido.slice(0, 1000)}
+            </p>
+          </div>
+          <div className="texto-bloqueado" style={{ position: "relative" }}>
+            <p style={{ lineHeight: 1.6, whiteSpace: "pre-line", opacity: 0.3 }}>
+              {capitulo.contenido.slice(1000)}
+            </p>
+            <div
+              className="overlay"
+              style={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                backgroundColor: "rgba(255,255,255,0.8)",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                fontSize: "18px",
+              }}
+            >
+              🔒 <em>Compra el libro para continuar leyendo...</em>
+            </div>
+          </div>
+        </>
+      )}
+      {/* 🆕 ------------------------------------------------------------ */}
+
       {/* ✅ Botones */}
       <div style={{ marginTop: "40px", textAlign: "center" }}>
         {!esCuento &&
@@ -109,6 +154,13 @@ const cuentoPagado = cuentosPagados.includes(libroId);
         {esCuento && (
           <button className="boton-siguiente" onClick={handleComprar}>
             Comprar Cuento Ahora 💳
+          </button>
+        )}
+
+        {/* 🆕 Botón de compra específico para libros */}
+        {categoria === "Libro" && !libroComprado && (
+          <button className="boton-siguiente" onClick={handleComprar}>
+            Comprar Libro Completo 💳
           </button>
         )}
       </div>

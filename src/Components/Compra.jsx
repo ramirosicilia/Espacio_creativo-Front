@@ -26,15 +26,15 @@ export function Compra() {
   const [cargando, setCargando] = useState(false);
 
   const productos = {
-    1: { titulo: "Los Héroes de la Dimensión Paralela", imagen: libro1, precio: 5.0.toFixed("2") },
-    2: { titulo: "Reconquistando la Tierra", imagen: libro2, precio: 5.0.toFixed("2") },
-    3: { titulo: "La Tercer Guerra", imagen: libro3, precio: 5.0.toFixed("2") },
-    4: { titulo: "El Cuidador", imagen: cuento1, precio: 5.0.toFixed("2") },
-    5: { titulo: "La Mirada de un Ángel", imagen: cuento2, precio: 5.0.toFixed("2") },
-    6: { titulo: "El Último Deseo", imagen: cuento3, precio: 5.0.toFixed("2") },
-    7: { titulo: "El Nuevo Despertar", imagen: cuento4, precio: 5.0.toFixed("2") },
-    8: { titulo: "El Infierno de las Apps de Citas", imagen: cuento5, precio: 5.0.toFixed("2") },
-    9: { titulo: "A Través del Espejo", imagen: cuento6, precio: 5.0.toFixed("2") },
+    1: { titulo: "Los Héroes de la Dimensión Paralela", imagen: libro1, precio: 5.0.toFixed("2"), categoria: "Libro" },
+    2: { titulo: "Reconquistando la Tierra", imagen: libro2, precio: 5.0.toFixed("2"), categoria: "Libro" },
+    3: { titulo: "La Tercer Guerra", imagen: libro3, precio: 5.0.toFixed("2"), categoria: "Libro" },
+    4: { titulo: "El Cuidador", imagen: cuento1, precio: 5.0.toFixed("2"), categoria: "Cuento" },
+    5: { titulo: "La Mirada de un Ángel", imagen: cuento2, precio: 5.0.toFixed("2"), categoria: "Cuento" },
+    6: { titulo: "El Último Deseo", imagen: cuento3, precio: 5.0.toFixed("2"), categoria: "Cuento" },
+    7: { titulo: "El Nuevo Despertar", imagen: cuento4, precio: 5.0.toFixed("2"), categoria: "Cuento" },
+    8: { titulo: "El Infierno de las Apps de Citas", imagen: cuento5, precio: 5.0.toFixed("2"), categoria: "Cuento" },
+    9: { titulo: "A Través del Espejo", imagen: cuento6, precio: 5.0.toFixed("2"), categoria: "Cuento" },
   };
 
   const producto = productos[id];
@@ -69,6 +69,26 @@ export function Compra() {
     }, 1500);
   };
 
+  // 🆕 ----------------------------------------------------------------
+  // 🆕 Función paralela para desbloquear libro
+  const desbloquearLibro = (libroId) => {
+    console.log("✅ Desbloqueando libro", libroId);
+    setCuentosDesbloqueados(true);
+    setCargando(false);
+
+    const librosComprados = JSON.parse(localStorage.getItem("libros_comprados")) || [];
+    if (!librosComprados.includes(libroId)) {
+      librosComprados.push(libroId);
+      localStorage.setItem("libros_comprados", JSON.stringify(librosComprados));
+    }
+
+    alert("📚 Libro desbloqueado con éxito");
+    setTimeout(() => {
+      window.location.href = `/capitulo/Libro/${libroId}-1`;
+    }, 1500);
+  };
+  // 🆕 ----------------------------------------------------------------
+
   // 🟢 Verificación continua estilo "real time" (sin Supabase)
   useEffect(() => {
     if (!id) return;
@@ -80,8 +100,13 @@ export function Compra() {
           const res = await fetch(`${apiUrl}/webhook_estado?libroId=${id}`);
           const data = await res.json();
           if (data.pago_exitoso) {
-            alert("✅ Hace click para desbloquear el cuento");
-            desbloquearCuento(id);
+            alert("✅ Hace click para desbloquear el contenido");
+            // 🆕 Detecta si es libro o cuento
+            if (producto.categoria === "Libro") {
+              desbloquearLibro(id);
+            } else {
+              desbloquearCuento(id);
+            }
             break;
           }
         } catch (err) {
@@ -111,7 +136,12 @@ export function Compra() {
 
         if (data.pago_exitoso) {
           console.log("💚 Pago detectado inmediatamente");
-          desbloquearCuento(libroId);
+          // 🆕 Detecta si es libro o cuento
+          if (producto.categoria === "Libro") {
+            desbloquearLibro(libroId);
+          } else {
+            desbloquearCuento(libroId);
+          }
           return;
         }
 
@@ -140,7 +170,7 @@ export function Compra() {
               name: producto.titulo,
               quantity: 1,
               unit_price: producto.precio,
-              categoria: producto.categoria,
+              categoria: producto.categoria, // 🆕 Se envía categoría real
             },
           ],
         }),
@@ -166,7 +196,12 @@ export function Compra() {
           onReady: () => console.log("🧱 Wallet lista"),
           onSuccess: async (payment) => {
             console.log("✅ Pago exitoso desde front:", payment);
-            verificarPagoEnBackend(id);
+            // 🆕 Detecta tipo
+            if (producto.categoria === "Libro") {
+              desbloquearLibro(id);
+            } else {
+              desbloquearCuento(id);
+            }
           },
           onError: (error) => console.error("❌ Error en el Brick:", error),
         },
