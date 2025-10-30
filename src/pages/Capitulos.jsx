@@ -28,11 +28,12 @@ export default function Capitulos() {
   const esCuento = categoria === "Cuento" || ["4", "5", "6", "7", "8", "9"].includes(libroId);
 
   // 🔓 Verifica si el cuento ya fue pagado (guardado en localStorage)
-const cuentosPagados = JSON.parse(localStorage.getItem("cuentos_pagados")) || [];
-const cuentoPagado = cuentosPagados.includes(libroId);
+  const cuentosPagados = JSON.parse(localStorage.getItem("cuentos_pagados")) || [];
+  const cuentoPagado = cuentosPagados.includes(libroId);
 
-
-
+  // 🟢 NUEVO: Verifica si el libro fue comprado
+  const librosPagados = JSON.parse(localStorage.getItem("libros_pagados")) || [];
+  const libroPagado = librosPagados.includes(libroId);
 
   // 📘 Leer siguiente capítulo
   const handleLeerSiguiente = () => {
@@ -46,6 +47,34 @@ const cuentoPagado = cuentosPagados.includes(libroId);
   const handleComprar = () => {
     // 👇 mantiene tu lógica, pero con categoría
     navigate(`/comprar/${categoria}/${libroId}`);
+  };
+
+  // 🟢 NUEVO: Descargar PDF si el libro ya está pagado
+  const handleDescargarPDF = async () => {
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/rest/v1/libros_urls?libro_id=eq.${libroId}`,
+        {
+          headers: {
+            apikey: import.meta.env.VITE_SUPABASE_KEY,
+            Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_KEY}`,
+          },
+        }
+      );
+      const result = await response.json();
+      if (result.length > 0 && result[0].url_publica) {
+        const link = document.createElement("a");
+        link.href = result[0].url_publica;
+        link.download = result[0].archivo || "Libro.pdf";
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+      } else {
+        alert("⚠️ No se encontró el PDF del libro en la base de datos.");
+      }
+    } catch (e) {
+      console.error("❌ Error al intentar descargar el PDF:", e);
+    }
   };
 
   const esPrimerCapitulo = capitulo.id.includes("-1");
@@ -101,9 +130,16 @@ const cuentoPagado = cuentosPagados.includes(libroId);
               Leer Segundo Capítulo 📖
             </button>
           ) : esSegundoCapitulo ? (
-            <button className="boton-siguiente" onClick={handleComprar}>
-              Comprar Libro Ahora 💳
-            </button>
+            // 🟢 NUEVO: si es libro y ya fue comprado → botón de descarga
+            categoria === "libro" && libroPagado ? (
+              <button className="boton-siguiente" onClick={handleDescargarPDF}>
+                📘 Descargar Libro
+              </button>
+            ) : (
+              <button className="boton-siguiente" onClick={handleComprar}>
+                Comprar Libro Ahora 💳
+              </button>
+            )
           ) : null)}
 
         {esCuento && (
