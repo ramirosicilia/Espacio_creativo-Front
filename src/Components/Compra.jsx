@@ -17,6 +17,8 @@ import cuento6 from "../assets/books/espejo.jpg";
 
 
 
+
+
 export function Compra() {
   const { id } = useParams();
   const [mercadoPago, setMercadoPago] = useState(null);
@@ -26,15 +28,15 @@ export function Compra() {
   const [cargando, setCargando] = useState(false);
 
   const productos = {
-    1: { titulo: "Los Héroes de la Dimensión Paralela", imagen: libro1, precio: 5.0.toFixed("2") },
-    2: { titulo: "Reconquistando la Tierra", imagen: libro2, precio: 5.0.toFixed("2") },
-    3: { titulo: "La Tercer Guerra", imagen: libro3, precio: 5.0.toFixed("2") },
-    4: { titulo: "El Cuidador", imagen: cuento1, precio: 5.0.toFixed("2") },
-    5: { titulo: "La Mirada de un Ángel", imagen: cuento2, precio: 5.0.toFixed("2") },
-    6: { titulo: "El Último Deseo", imagen: cuento3, precio: 5.0.toFixed("2") },
-    7: { titulo: "El Nuevo Despertar", imagen: cuento4, precio: 5.0.toFixed("2") },
-    8: { titulo: "El Infierno de las Apps de Citas", imagen: cuento5, precio: 5.0.toFixed("2") },
-    9: { titulo: "A Través del Espejo", imagen: cuento6, precio: 5.0.toFixed("2") },
+    1: { titulo: "Los Héroes de la Dimensión Paralela", imagen: libro1, precio: 5.0.toFixed(2) },
+    2: { titulo: "Reconquistando la Tierra", imagen: libro2, precio: 5.0.toFixed(2) },
+    3: { titulo: "La Tercer Guerra", imagen: libro3, precio: 5.0.toFixed(2) },
+    4: { titulo: "El Cuidador", imagen: cuento1, precio: 5.0.toFixed(2) },
+    5: { titulo: "La Mirada de un Ángel", imagen: cuento2, precio: 5.0.toFixed(2) },
+    6: { titulo: "El Último Deseo", imagen: cuento3, precio: 5.0.toFixed(2) },
+    7: { titulo: "El Nuevo Despertar", imagen: cuento4, precio: 5.0.toFixed(2) },
+    8: { titulo: "El Infierno de las Apps de Citas", imagen: cuento5, precio: 5.0.toFixed(2) },
+    9: { titulo: "A Través del Espejo", imagen: cuento6, precio: 5.0.toFixed(2) },
   };
 
   const producto = productos[id];
@@ -52,8 +54,8 @@ export function Compra() {
     document.body.appendChild(script);
   }, [publicKey]);
 
-  // 🧩 Función para desbloquear cuento
-  const desbloquearCuento = (libroId) => {
+  // 🧩 Desbloquear cuento y pedir PDF
+  const desbloquearCuento = async (libroId) => {
     console.log("✅ Desbloqueando cuento", libroId);
     setCuentosDesbloqueados(true);
     setCargando(false);
@@ -64,12 +66,33 @@ export function Compra() {
       localStorage.setItem("cuentos_pagados", JSON.stringify(cuentosPagados));
     }
 
+    // 🧾 Ahora el FRONT pide el PDF al backend
+    try {
+      const res = await fetch(`${apiUrl}/pdf/${libroId}`);
+      if (res.ok) {
+        const blob = await res.blob();
+        const url = URL.createObjectURL(blob);
+
+        // Abre el PDF o lo descarga
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `${producto.titulo}.pdf`;
+        a.click();
+        URL.revokeObjectURL(url);
+      } else {
+        console.warn("⚠️ No se pudo obtener el PDF, redirigiendo al cuento...");
+      }
+    } catch (err) {
+      console.error("❌ Error al pedir el PDF:", err);
+    }
+
+    // Luego redirige al cuento
     setTimeout(() => {
       window.location.href = `/cuento/${libroId}`;
     }, 1500);
   };
 
-  // 🟢 Verificación continua estilo "real time" (sin Supabase)
+  // 🟢 Verificación continua "real time"
   useEffect(() => {
     if (!id) return;
 
@@ -80,7 +103,7 @@ export function Compra() {
           const res = await fetch(`${apiUrl}/webhook_estado?libroId=${id}`);
           const data = await res.json();
           if (data.pago_exitoso) {
-            alert("✅ Hace click para desbloquear el cuento");
+            alert("✅ Pago aprobado. Hace click para desbloquear el cuento");
             desbloquearCuento(id);
             break;
           }
@@ -97,7 +120,7 @@ export function Compra() {
     };
   }, [id]);
 
-  // 🟢 Verificación manual desde backend (respaldo)
+  // 🟢 Verificación manual inmediata
   const verificarPagoEnBackend = async (libroId) => {
     try {
       const reintentarCada = 2000;
@@ -124,7 +147,7 @@ export function Compra() {
     }
   };
 
-  // 💳 Manejar compra
+  // 💳 Comprar
   const handlePagar = async () => {
     if (!mercadoPago) return;
     setCargando(true);
@@ -139,7 +162,7 @@ export function Compra() {
               id: id,
               name: producto.titulo,
               quantity: 1,
-              unit_price: producto.precio,
+              unit_price: parseFloat(producto.precio),
               categoria: producto.categoria,
             },
           ],
@@ -152,7 +175,7 @@ export function Compra() {
       setPreferenceId(data.id);
       setBotonVisible(false);
 
-      // 🟢 Empieza a verificar enseguida
+      // 🕒 Empieza a verificar enseguida
       verificarPagoEnBackend(id);
 
       const bricksBuilder = mercadoPago.bricks();
