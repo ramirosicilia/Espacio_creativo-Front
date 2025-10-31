@@ -109,11 +109,26 @@ export function Compra() {
 
         console.log(`🕓 Verificación inmediata ${intento}/${maxIntentos}:`, data);
 
-        if (data.pago_exitoso) {
-          console.log("💚 Pago detectado inmediatamente");
-          desbloquearCuento(libroId);
-          return;
-        }
+       if (data.pago_exitoso) {
+  const pagoInfo = data.data[0]; // Primer registro del pago
+  const pdfUrl = pagoInfo?.pdf_url;
+
+  alert("✅ Pago confirmado, tu libro se descargará automáticamente.");
+
+  if (pdfUrl) {
+    const link = document.createElement("a");
+    link.href = pdfUrl;
+    link.download = pdfUrl.split("/").pop();
+    link.click();
+    console.log("📄 Descargando PDF desde Supabase:", pdfUrl);
+  } else {
+    console.warn("⚠️ No se encontró URL del PDF en la respuesta del backend.");
+  }
+
+  desbloquearCuento(id);
+  break;
+}
+
 
         await new Promise((r) => setTimeout(r, reintentarCada));
       }
