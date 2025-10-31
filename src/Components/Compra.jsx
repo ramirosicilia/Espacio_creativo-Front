@@ -26,15 +26,15 @@ export function Compra() {
   const [cargando, setCargando] = useState(false);
 
   const productos = {
-    1: { titulo: "Los Héroes de la Dimensión Paralela", imagen: libro1, precio: 5.0.toFixed("2"), categoria: "libro" },
-    2: { titulo: "Reconquistando la Tierra", imagen: libro2, precio: 5.0.toFixed("2"), categoria: "libro" },
-    3: { titulo: "La Tercer Guerra", imagen: libro3, precio: 5.0.toFixed("2"), categoria: "libro" },
-    4: { titulo: "El Cuidador", imagen: cuento1, precio: 5.0.toFixed("2"), categoria: "cuento" },
-    5: { titulo: "La Mirada de un Ángel", imagen: cuento2, precio: 5.0.toFixed("2"), categoria: "cuento" },
-    6: { titulo: "El Último Deseo", imagen: cuento3, precio: 5.0.toFixed("2"), categoria: "cuento" },
-    7: { titulo: "El Nuevo Despertar", imagen: cuento4, precio: 5.0.toFixed("2"), categoria: "cuento" },
-    8: { titulo: "El Infierno de las Apps de Citas", imagen: cuento5, precio: 5.0.toFixed("2"), categoria: "cuento" },
-    9: { titulo: "A Través del Espejo", imagen: cuento6, precio: 5.0.toFixed("2"), categoria: "cuento" },
+    1: { titulo: "Los Héroes de la Dimensión Paralela", imagen: libro1, precio: 5.0.toFixed("2") },
+    2: { titulo: "Reconquistando la Tierra", imagen: libro2, precio: 5.0.toFixed("2") },
+    3: { titulo: "La Tercer Guerra", imagen: libro3, precio: 5.0.toFixed("2") },
+    4: { titulo: "El Cuidador", imagen: cuento1, precio: 5.0.toFixed("2") },
+    5: { titulo: "La Mirada de un Ángel", imagen: cuento2, precio: 5.0.toFixed("2") },
+    6: { titulo: "El Último Deseo", imagen: cuento3, precio: 5.0.toFixed("2") },
+    7: { titulo: "El Nuevo Despertar", imagen: cuento4, precio: 5.0.toFixed("2") },
+    8: { titulo: "El Infierno de las Apps de Citas", imagen: cuento5, precio: 5.0.toFixed("2") },
+    9: { titulo: "A Través del Espejo", imagen: cuento6, precio: 5.0.toFixed("2") },
   };
 
   const producto = productos[id];
@@ -111,46 +111,6 @@ export function Compra() {
 
         if (data.pago_exitoso) {
           console.log("💚 Pago detectado inmediatamente");
-
-          // 🔹 NUEVO: Si la categoría es libro, descargar PDF
-          if (producto.categoria === "libro") {
-            try {
-              // consultamos la URL del PDF en Supabase
-              const response = await fetch(
-                `${import.meta.env.VITE_SUPABASE_URL}/rest/v1/libros_urls?libro_id=eq.${libroId}`,
-                {
-                  headers: {
-                    apikey: import.meta.env.VITE_SUPABASE_KEY,
-                    Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_KEY}`,
-                  },
-                }
-              );
-              const result = await response.json();
-
-              if (result.length > 0 && result[0].url_publica) {
-                const pdfUrl = result[0].url_publica;
-                console.log("📘 Descargando PDF desde:", pdfUrl);
-
-                // Fuerza la descarga
-                const link = document.createElement("a");
-                link.href = pdfUrl;
-                link.download = result[0].archivo || "Libro.pdf";
-                document.body.appendChild(link);
-                link.click();
-                link.remove();
-                alert("✅ Libro comprado. Se descargará el PDF automáticamente.");
-              } else {
-                alert("⚠️ No se encontró el PDF del libro en la base de datos.");
-              }
-            } catch (e) {
-              console.error("❌ Error al intentar descargar el PDF:", e);
-            }
-
-            setCargando(false);
-            return;
-          }
-
-          // 🔹 Si es cuento, mantiene tu lógica de desbloqueo
           desbloquearCuento(libroId);
           return;
         }
