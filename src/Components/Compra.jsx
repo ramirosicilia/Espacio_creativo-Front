@@ -69,6 +69,19 @@ export function Compra() {
     }, 1500);
   };
 
+  // 🟢 AGREGADO: Función para descargar automáticamente un PDF desde URL
+  const descargarPDF = (pdfUrl, nombreArchivo = "libro.pdf") => {
+    if (!pdfUrl) return console.warn("⚠️ No hay URL de PDF para descargar");
+    const link = document.createElement("a");
+    link.href = pdfUrl;
+    link.download = nombreArchivo;
+    link.target = "_blank";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    console.log("📚 Descarga automática iniciada:", pdfUrl);
+  };
+
   // 🟢 Verificación continua estilo "real time" (sin Supabase)
   useEffect(() => {
     if (!id) return;
@@ -82,6 +95,13 @@ export function Compra() {
           if (data.pago_exitoso) {
             alert("✅ Hace click para desbloquear el cuento");
             desbloquearCuento(id);
+
+            // 🟢 NUEVO: Si viene pdf_url del backend, descarga automática
+            if (data.pdf_url) {
+              console.log("🟢 URL PDF recibida:", data.pdf_url);
+              descargarPDF(data.pdf_url, `${producto.titulo}.pdf`);
+            }
+
             break;
           }
         } catch (err) {
@@ -109,26 +129,18 @@ export function Compra() {
 
         console.log(`🕓 Verificación inmediata ${intento}/${maxIntentos}:`, data);
 
-       if (data.pago_exitoso) {
-  const pagoInfo = data.data[0]; // Primer registro del pago
-  const pdfUrl = pagoInfo?.pdf_url;
+        if (data.pago_exitoso) {
+          console.log("💚 Pago detectado inmediatamente");
+          desbloquearCuento(libroId);
 
-  alert("✅ Pago confirmado, tu libro se descargará automáticamente.");
+          // 🟢 NUEVO: descarga automática si viene URL
+          if (data.pdf_url) {
+            console.log("🟢 Descargando PDF desde verificación inmediata...");
+            descargarPDF(data.pdf_url, `${producto.titulo}.pdf`);
+          }
 
-  if (pdfUrl) {
-    const link = document.createElement("a");
-    link.href = pdfUrl;
-    link.download = pdfUrl.split("/").pop();
-    link.click();
-    console.log("📄 Descargando PDF desde Supabase:", pdfUrl);
-  } else {
-    console.warn("⚠️ No se encontró URL del PDF en la respuesta del backend.");
-  }
-
-  desbloquearCuento(id);
-  break;
-}
-
+          return;
+        }
 
         await new Promise((r) => setTimeout(r, reintentarCada));
       }
