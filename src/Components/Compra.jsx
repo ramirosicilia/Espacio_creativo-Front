@@ -17,6 +17,7 @@ import cuento6 from "../assets/books/espejo.jpg";
 
 
 
+// 🟢 versión actualizada: usa "url_publica" en vez de "pdf_url"
 export function Compra() {
   const { id } = useParams();
   const [mercadoPago, setMercadoPago] = useState(null);
@@ -26,22 +27,21 @@ export function Compra() {
   const [cargando, setCargando] = useState(false);
 
   const productos = {
-    1: { titulo: "Los Héroes de la Dimensión Paralela", imagen: libro1, precio: 5.0.toFixed("2") },
-    2: { titulo: "Reconquistando la Tierra", imagen: libro2, precio: 5.0.toFixed("2") },
-    3: { titulo: "La Tercer Guerra", imagen: libro3, precio: 5.0.toFixed("2") },
-    4: { titulo: "El Cuidador", imagen: cuento1, precio: 5.0.toFixed("2") },
-    5: { titulo: "La Mirada de un Ángel", imagen: cuento2, precio: 5.0.toFixed("2") },
-    6: { titulo: "El Último Deseo", imagen: cuento3, precio: 5.0.toFixed("2") },
-    7: { titulo: "El Nuevo Despertar", imagen: cuento4, precio: 5.0.toFixed("2") },
-    8: { titulo: "El Infierno de las Apps de Citas", imagen: cuento5, precio: 5.0.toFixed("2") },
-    9: { titulo: "A Través del Espejo", imagen: cuento6, precio: 5.0.toFixed("2") },
+    1: { titulo: "Los Héroes de la Dimensión Paralela", imagen: libro1, precio: 5.0.toFixed("2"), categoria: "libros" },
+    2: { titulo: "Reconquistando la Tierra", imagen: libro2, precio: 5.0.toFixed("2"), categoria: "libros" },
+    3: { titulo: "La Tercer Guerra", imagen: libro3, precio: 5.0.toFixed("2"), categoria: "libros" },
+    4: { titulo: "El Cuidador", imagen: cuento1, precio: 5.0.toFixed("2"), categoria: "cuentos" },
+    5: { titulo: "La Mirada de un Ángel", imagen: cuento2, precio: 5.0.toFixed("2"), categoria: "cuentos" },
+    6: { titulo: "El Último Deseo", imagen: cuento3, precio: 5.0.toFixed("2"), categoria: "cuentos" },
+    7: { titulo: "El Nuevo Despertar", imagen: cuento4, precio: 5.0.toFixed("2"), categoria: "cuentos" },
+    8: { titulo: "El Infierno de las Apps de Citas", imagen: cuento5, precio: 5.0.toFixed("2"), categoria: "cuentos" },
+    9: { titulo: "A Través del Espejo", imagen: cuento6, precio: 5.0.toFixed("2"), categoria: "cuentos" },
   };
 
   const producto = productos[id];
   const apiUrl = import.meta.env.VITE_PAYMENT_URL;
   const publicKey = import.meta.env.VITE_MP_PUBLIC_KEY;
 
-  // 🟢 Cargar SDK de Mercado Pago
   useEffect(() => {
     const script = document.createElement("script");
     script.src = "https://sdk.mercadopago.com/js/v2";
@@ -52,7 +52,6 @@ export function Compra() {
     document.body.appendChild(script);
   }, [publicKey]);
 
-  // 🧩 Función para desbloquear cuento
   const desbloquearCuento = (libroId) => {
     console.log("✅ Desbloqueando cuento", libroId);
     setCuentosDesbloqueados(true);
@@ -69,7 +68,18 @@ export function Compra() {
     }, 1500);
   };
 
-  // 🟢 Verificación continua estilo "real time" (sin Supabase)
+  // 🟢 NUEVO: función para descargar el PDF del libro
+  const descargarLibro = (urlPublica) => {
+    console.log("📚 Descargando libro desde:", urlPublica);
+    const link = document.createElement("a");
+    link.href = urlPublica;
+    link.download = "libro.pdf";
+    link.target = "_blank";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   useEffect(() => {
     if (!id) return;
 
@@ -79,15 +89,25 @@ export function Compra() {
         try {
           const res = await fetch(`${apiUrl}/webhook_estado?libroId=${id}`);
           const data = await res.json();
+
           if (data.pago_exitoso) {
-            alert("✅ Hace click para desbloquear el cuento");
-            desbloquearCuento(id);
+            // 🟢 Si es cuento → alerta y redirige
+            if (producto.categoria === "cuentos") {
+              alert("✅ Hace click para desbloquear el cuento");
+              desbloquearCuento(id);
+            }
+            // 🟢 Si es libro → descarga PDF automáticamente
+            else if (producto.categoria === "libros" && data.data?.[0]?.url_publica) {
+              alert("📘 ¡Gracias por tu compra! Se descargará el libro automáticamente.");
+              descargarLibro(data.data[0].url_publica);
+            }
+
             break;
           }
         } catch (err) {
           console.error("Error verificando pago:", err);
         }
-        await new Promise((r) => setTimeout(r, 1500)); // cada 1.5 s
+        await new Promise((r) => setTimeout(r, 1500));
       }
     };
 
@@ -97,7 +117,6 @@ export function Compra() {
     };
   }, [id]);
 
-  // 🟢 Verificación manual desde backend (respaldo)
   const verificarPagoEnBackend = async (libroId) => {
     try {
       const reintentarCada = 2000;
@@ -110,8 +129,11 @@ export function Compra() {
         console.log(`🕓 Verificación inmediata ${intento}/${maxIntentos}:`, data);
 
         if (data.pago_exitoso) {
-          console.log("💚 Pago detectado inmediatamente");
-          desbloquearCuento(libroId);
+          if (producto.categoria === "cuentos") {
+            desbloquearCuento(libroId);
+          } else if (producto.categoria === "libros" && data.data?.[0]?.url_publica) {
+            descargarLibro(data.data[0].url_publica);
+          }
           return;
         }
 
@@ -124,7 +146,6 @@ export function Compra() {
     }
   };
 
-  // 💳 Manejar compra
   const handlePagar = async () => {
     if (!mercadoPago) return;
     setCargando(true);
@@ -140,7 +161,7 @@ export function Compra() {
               name: producto.titulo,
               quantity: 1,
               unit_price: producto.precio,
-              categoria: producto.categoria,
+              categoria: producto.categoria, // 🟢 categoría agregada
             },
           ],
         }),
@@ -152,7 +173,6 @@ export function Compra() {
       setPreferenceId(data.id);
       setBotonVisible(false);
 
-      // 🟢 Empieza a verificar enseguida
       verificarPagoEnBackend(id);
 
       const bricksBuilder = mercadoPago.bricks();
