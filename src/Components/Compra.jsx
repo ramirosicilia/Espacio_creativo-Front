@@ -26,22 +26,28 @@ export function Compra() {
   const [cuentosDesbloqueados, setCuentosDesbloqueados] = useState(false);
   const [cargando, setCargando] = useState(false);
 
+  // ======================================================
+  // 📚 PRODUCTOS
+  // ======================================================
   const productos = {
-    1: { titulo: "Los Héroes de la Dimensión Paralela", imagen: libro1, precio: 5.0.toFixed("2"), categoria: "libros" },
-    2: { titulo: "Reconquistando la Tierra", imagen: libro2, precio: 5.0.toFixed("2"), categoria: "libros" },
-    3: { titulo: "La Tercer Guerra", imagen: libro3, precio: 5.0.toFixed("2"), categoria: "libros" },
-    4: { titulo: "El Cuidador", imagen: cuento1, precio: 5.0.toFixed("2"), categoria: "cuentos" },
-    5: { titulo: "La Mirada de un Ángel", imagen: cuento2, precio: 5.0.toFixed("2"), categoria: "cuentos" },
-    6: { titulo: "El Último Deseo", imagen: cuento3, precio: 5.0.toFixed("2"), categoria: "cuentos" },
-    7: { titulo: "El Nuevo Despertar", imagen: cuento4, precio: 5.0.toFixed("2"), categoria: "cuentos" },
-    8: { titulo: "El Infierno de las Apps de Citas", imagen: cuento5, precio: 5.0.toFixed("2"), categoria: "cuentos" },
-    9: { titulo: "A Través del Espejo", imagen: cuento6, precio: 5.0.toFixed("2"), categoria: "cuentos" },
+    1: { titulo: "Los Héroes de la Dimensión Paralela", imagen: libro1, precio: 5.0.toFixed(2), categoria: "libros" },
+    2: { titulo: "Reconquistando la Tierra", imagen: libro2, precio: 5.0.toFixed(2), categoria: "libros" },
+    3: { titulo: "La Tercer Guerra", imagen: libro3, precio: 5.0.toFixed(2), categoria: "libros" },
+    4: { titulo: "El Cuidador", imagen: cuento1, precio: 5.0.toFixed(2), categoria: "cuentos" },
+    5: { titulo: "La Mirada de un Ángel", imagen: cuento2, precio: 5.0.toFixed(2), categoria: "cuentos" },
+    6: { titulo: "El Último Deseo", imagen: cuento3, precio: 5.0.toFixed(2), categoria: "cuentos" },
+    7: { titulo: "El Nuevo Despertar", imagen: cuento4, precio: 5.0.toFixed(2), categoria: "cuentos" },
+    8: { titulo: "El Infierno de las Apps de Citas", imagen: cuento5, precio: 5.0.toFixed(2), categoria: "cuentos" },
+    9: { titulo: "A Través del Espejo", imagen: cuento6, precio: 5.0.toFixed(2), categoria: "cuentos" },
   };
 
   const producto = productos[id];
   const apiUrl = import.meta.env.VITE_PAYMENT_URL;
   const publicKey = import.meta.env.VITE_MP_PUBLIC_KEY;
 
+  // ======================================================
+  // 🔹 Cargar SDK MercadoPago
+  // ======================================================
   useEffect(() => {
     const script = document.createElement("script");
     script.src = "https://sdk.mercadopago.com/js/v2";
@@ -52,6 +58,9 @@ export function Compra() {
     document.body.appendChild(script);
   }, [publicKey]);
 
+  // ======================================================
+  // 🔓 Desbloquear cuento
+  // ======================================================
   const desbloquearCuento = (libroId) => {
     console.log("✅ Desbloqueando cuento", libroId);
     setCuentosDesbloqueados(true);
@@ -68,9 +77,11 @@ export function Compra() {
     }, 1500);
   };
 
-  // 🟢 NUEVO: función para descargar el PDF del libro
+  // ======================================================
+  // 📥 Descargar libro (PDF)
+  // ======================================================
   const descargarLibro = (urlPublica) => {
-    console.log("📚 Descargando libro desde:", urlPublica);
+    console.log("📘 Descargando libro desde:", urlPublica);
     const link = document.createElement("a");
     link.href = urlPublica;
     link.download = "libro.pdf";
@@ -80,11 +91,13 @@ export function Compra() {
     document.body.removeChild(link);
   };
 
-  // 🟢 CORRECCIÓN: asegurar que se consulte libroId como string (no número)
+  // ======================================================
+  // 🔄 Verificación de pago periódica (cuando entra la vista)
+  // ======================================================
   useEffect(() => {
     if (!id) return;
-
     let activo = true;
+
     const verificar = async () => {
       while (activo) {
         try {
@@ -92,23 +105,19 @@ export function Compra() {
           const data = await res.json();
 
           if (data.pago_exitoso) {
-            // 🟢 Si es cuento → alerta y redirige
             if (producto.categoria === "cuentos") {
               alert("✅ Hace click para desbloquear el cuento");
               desbloquearCuento(id);
-            }
-            // 🟢 Si es libro → descarga PDF automáticamente
-            else if (producto.categoria === "libros" && data.data?.[0]?.url_publica) {
+            } else if (producto.categoria === "libros" && data.data?.[0]?.url_publica) {
               alert("📘 ¡Gracias por tu compra! Se descargará el libro automáticamente.");
               descargarLibro(data.data[0].url_publica);
             }
-
             break;
           }
         } catch (err) {
           console.error("Error verificando pago:", err);
         }
-        await new Promise((r) => setTimeout(r, 1500));
+        await new Promise((r) => setTimeout(r, 2000)); // 2 seg entre verificaciones
       }
     };
 
@@ -118,7 +127,9 @@ export function Compra() {
     };
   }, [id]);
 
-  // 🟢 Ajuste menor: quitar conversión numérica para libroId
+  // ======================================================
+  // ⚙️ Verificación puntual tras iniciar el pago
+  // ======================================================
   const verificarPagoEnBackend = async (libroId) => {
     try {
       const reintentarCada = 2000;
@@ -148,6 +159,9 @@ export function Compra() {
     }
   };
 
+  // ======================================================
+  // 💳 Iniciar compra con MercadoPago
+  // ======================================================
   const handlePagar = async () => {
     if (!mercadoPago) return;
     setCargando(true);
@@ -159,11 +173,11 @@ export function Compra() {
         body: JSON.stringify({
           mp: [
             {
-              id: id,
+              id,
               name: producto.titulo,
               quantity: 1,
               unit_price: producto.precio,
-              categoria: producto.categoria, // 🟢 categoría agregada
+              categoria: producto.categoria,
             },
           ],
         }),
@@ -174,7 +188,6 @@ export function Compra() {
 
       setPreferenceId(data.id);
       setBotonVisible(false);
-
       verificarPagoEnBackend(id);
 
       const bricksBuilder = mercadoPago.bricks();
@@ -201,10 +214,16 @@ export function Compra() {
     }
   };
 
+  // ======================================================
+  // 🚫 Producto no encontrado
+  // ======================================================
   if (!producto) {
-    return <h2 style={{ padding: "40px" }}>Producto no encontrado ❌</h2>;
+    return <h2 style={{ padding: "40px", color: "#fff" }}>Producto no encontrado ❌</h2>;
   }
 
+  // ======================================================
+  // 🎨 Render
+  // ======================================================
   return (
     <div
       style={{
@@ -227,7 +246,7 @@ export function Compra() {
         }}
       />
 
-      <div className="gap-compra" style={{ position: "relative" }}>
+      <div style={{ position: "relative" }}>
         <h2 style={{ fontSize: "1.8rem", marginBottom: "30px", color: "#fff" }}>
           {producto.titulo}
         </h2>
@@ -245,6 +264,7 @@ export function Compra() {
             transition: "opacity 0.4s ease",
           }}
           onClick={handlePagar}
+          disabled={cargando}
         >
           {cargando ? "Procesando..." : "Comprar Ahora 💳"}
         </button>
