@@ -225,69 +225,93 @@ export function Compra() {
   // 🎨 Render
   // ======================================================
   return (
+  <div
+    style={{
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "flex-start",
+      padding: "60px",
+      gap: "60px",
+      flexWrap: "wrap",
+      backgroundColor: "#0d1117", // opcional, mejora contraste
+    }}
+  >
+    <img
+      src={producto.imagen}
+      alt={producto.titulo}
+      style={{
+        width: "300px",
+        height: "440px",
+        objectFit: "cover",
+        borderRadius: "16px",
+        boxShadow: "0 4px 20px rgba(0,0,0,0.4)",
+      }}
+    />
+
     <div
       style={{
         display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        padding: "60px",
-        gap: "40px",
+        flexDirection: "column",
+        alignItems: "flex-start",
+        justifyContent: "flex-start",
+        gap: "20px", // 🔹 separa título, precio, botones, etc.
+        color: "#fff",
+        maxWidth: "350px",
       }}
     >
-      <img
-        src={producto.imagen}
-        alt={producto.titulo}
+      <h2
         style={{
-          width: "280px",
-          height: "400px",
-          objectFit: "cover",
-          borderRadius: "12px",
-          boxShadow: "0 0 15px rgba(0,0,0,0.3)",
+          fontSize: "2rem",
+          margin: 0,
+          fontWeight: "600",
         }}
-      />
+      >
+        {producto.titulo}
+      </h2>
 
-      <div style={{ position: "relative" }}>
-        <h2 style={{ fontSize: "1.8rem", marginBottom: "30px", color: "#fff" }}>
-          {producto.titulo}
-        </h2>
-        <p style={{ fontSize: "1.3rem", color: "#fff" }}>
-          Precio: <strong>${producto.precio} ARS</strong>
+      <p style={{ fontSize: "1.4rem", margin: 0 }}>
+        Precio: <strong>${producto.precio} ARS</strong>
+      </p>
+
+      <button
+        className="boton-siguiente"
+        style={{
+          marginTop: "10px",
+          padding: "12px 36px",
+          fontSize: "1.1rem",
+          borderRadius: "10px",
+          border: "none",
+          background: "#00a8ff",
+          color: "#fff",
+          cursor: "pointer",
+          boxShadow: "0 4px 10px rgba(0,0,0,0.3)",
+          opacity: botonVisible ? 1 : 0,
+          transition: "opacity 0.4s ease",
+        }}
+        onClick={handlePagar}
+        disabled={cargando}
+      >
+        {cargando ? "Procesando..." : "Comprar Ahora 💳"}
+      </button>
+
+      {cargando && (
+        <p style={{ color: "#ccc", marginTop: "5px", fontStyle: "italic" }}>
+          🔄 Cargando Mercado Pago...
         </p>
+      )}
 
-        <button
-          className="boton-siguiente"
-          style={{
-            marginTop: "20px",
-            padding: "10px 30px",
-            fontSize: "1.1rem",
-            opacity: botonVisible ? 1 : 0,
-            transition: "opacity 0.4s ease",
-          }}
-          onClick={handlePagar}
-          disabled={cargando}
-        >
-          {cargando ? "Procesando..." : "Comprar Ahora 💳"}
-        </button>
-
-        {cargando && (
-          <p style={{ color: "#fff", marginTop: "10px", fontStyle: "italic" }}>
-            🔄 Cargando Mercado Pago...
-          </p>
-        )}
-
-        <div
-          id="wallet_container"
-          style={{
-            position: "absolute",
-            bottom: "0",
-            left: "20px",
-            right: "0",
-            display: "flex",
-            justifyContent: "center",
-            pointerEvents: botonVisible ? "none" : "auto",
-          }}
-        ></div>
-      </div>
+      <div
+        id="wallet_container"
+        style={{
+          width: "100%",
+          marginTop: "10px",
+          display: "flex",
+          justifyContent: "center",
+          pointerEvents: botonVisible ? "none" : "auto",
+        }}
+      ></div>
     </div>
-  );
+  </div>
+);
+
 }
