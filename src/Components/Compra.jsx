@@ -109,7 +109,7 @@ export function Compra() {
               alert("✅ Hace click para desbloquear el cuento");
               desbloquearCuento(id);
             } else if (producto.categoria === "libros" && data.data?.[0]?.url_publica) {
-              alert("📘 ¡Gracias por tu compra! Se descargará el libro automáticamente.");
+              alert("📘 ¡Gracias por tu compra! El codigo de desbloqueo es: migueletes2372");
               descargarLibro(data.data[0].url_publica);
             }
             break;
