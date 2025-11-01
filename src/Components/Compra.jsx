@@ -80,6 +80,7 @@ export function Compra() {
     document.body.removeChild(link);
   };
 
+  // 🟢 CORRECCIÓN: asegurar que se consulte libroId como string (no número)
   useEffect(() => {
     if (!id) return;
 
@@ -87,7 +88,7 @@ export function Compra() {
     const verificar = async () => {
       while (activo) {
         try {
-          const res = await fetch(`${apiUrl}/webhook_estado?libroId=${id}`);
+          const res = await fetch(`${apiUrl}/webhook_estado?libroId=${encodeURIComponent(id)}`);
           const data = await res.json();
 
           if (data.pago_exitoso) {
@@ -117,13 +118,14 @@ export function Compra() {
     };
   }, [id]);
 
+  // 🟢 Ajuste menor: quitar conversión numérica para libroId
   const verificarPagoEnBackend = async (libroId) => {
     try {
       const reintentarCada = 2000;
       const maxIntentos = 20;
 
       for (let intento = 1; intento <= maxIntentos; intento++) {
-        const res = await fetch(`${apiUrl}/webhook_estado?libroId=${libroId}`);
+        const res = await fetch(`${apiUrl}/webhook_estado?libroId=${encodeURIComponent(libroId)}`);
         const data = await res.json();
 
         console.log(`🕓 Verificación inmediata ${intento}/${maxIntentos}:`, data);
