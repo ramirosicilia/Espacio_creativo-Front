@@ -253,8 +253,8 @@ export function Compra() {
         display: "flex",
         flexDirection: "column",
         alignItems: "flex-start",
-        justifyContent: "flex-start",
-        gap: "3rem", // 🔹 separa título, precio, botones, etc.
+        justifyContent: "space-between",
+        gap: "1.5rem", // 🔹 separa título, precio, botones, etc.
         color: "#fff",
         maxWidth: "350px",
       }}
