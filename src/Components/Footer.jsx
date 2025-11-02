@@ -40,7 +40,7 @@ export default function Footer() {
 
         {/* Facebook */}
         <a
-         href="https://www.facebook.com/profile.php?id=61579275134722/posts"
+         href="https://www.facebook.com"
           target="_blank"
           rel="noopener noreferrer"
           className="footer-icon footer-facebook"
