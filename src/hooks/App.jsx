@@ -4,7 +4,8 @@ import Favoritos from "../pages/Favoritos";
 import Capitulos from "../pages/Capitulos";
 import { Routes, Route } from "react-router-dom";
 import { Compra } from "../Components/Compra";
-import { Footer } from "../Components/Footer";
+import Footer from "../Components/Footer";
+
 
 
 function App() {
