@@ -4,6 +4,7 @@ import Favoritos from "../pages/Favoritos";
 import Capitulos from "../pages/Capitulos";
 import { Routes, Route } from "react-router-dom";
 import { Compra } from "../Components/Compra";
+import { Footer } from "../Components/Footer";
 
 
 function App() {
@@ -17,8 +18,12 @@ function App() {
        <Route path="/comprar/:categoria/:id" element={<Compra />} />
        <Route path="/cuento/:id" element={<Capitulos />} />
 
-      </Routes>
-    </>
+      </Routes> 
+
+          <Footer/> 
+    </>  
+
+
   );
 }
 
