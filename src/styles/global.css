@@ -903,5 +903,235 @@ button:last-of-type:hover {
 }
 
 
+/* =======================================================
+   📱 MEDIA QUERIES - ENFOQUE DESKTOP FIRST
+   ======================================================= */
 
+/* Extra extra large (xxl) - hasta 1399.98px */
+@media (max-width: 1199.98px) {
+  header {
+    padding: 20px 30px;
+  }
 
+  .libro-card {
+    width: 45rem;
+    gap: 1rem;
+  }
+
+  .slider-container img {
+    width: 40rem;
+    height: 22rem;
+  }
+
+  .producto-container {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}
+
+/* 🟨 Large (lg) - hasta 991.98px */
+@media (max-width: 991.98px) {
+  header {
+    padding: 15px 25px;
+  }
+
+  .nav {
+    gap: 10px;
+  }
+
+  .libro-card {
+    flex-direction: column;
+    align-items: center;
+    width: 90%;
+    height: auto;
+    text-align: center;
+  }
+
+  .libro-card img {
+    width: 100%;
+    height: auto;
+  }
+
+  .slider-container img {
+    width: 90%;
+    height: auto;
+  }
+
+  .producto-container {
+    flex-direction: column;
+    align-items: center;
+    gap: 40px;
+  }
+
+  .producto-detalle {
+    text-align: center;
+    align-items: center;
+  }
+
+  .titulo-espacio {
+    font-size: 1.8rem;
+  }
+
+  .footer-title {
+    font-size: 1.4rem;
+  }
+}
+
+/* 🟧 Medium (md) - hasta 767.98px */
+@media (max-width: 767.98px) {
+  header {
+    flex-direction: column;
+    gap: 10px;
+    padding: 15px;
+  }
+
+  .nav {
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .titulo-espacio {
+    font-size: 1.5rem;
+    text-align: center;
+  }
+
+  .libro-card {
+    width: 100%;
+    padding: 1.5rem;
+  }
+
+  .capitulo-contenedor {
+    padding: 20px;
+    font-size: 0.95rem;
+  }
+
+  .producto-imagen {
+    width: 80%;
+    height: auto;
+  }
+
+  .slider-container img {
+    width: 100%;
+  }
+
+  .footer-title {
+    font-size: 1.2rem;
+  }
+
+  .footer-icons {
+    gap: 1rem;
+  }
+
+  .footer-icon {
+    font-size: 1.5rem;
+  }
+}
+
+/* 🟥 Small (sm) - hasta 575.98px */
+@media (max-width: 575.98px) {
+  header {
+    padding: 10px 20px;
+  }
+
+  .titulo-espacio {
+    font-size: 1.3rem;
+  }
+
+  .nav-link {
+    font-size: 14px;
+  }
+
+  .libro-card {
+    width: 100%;
+    flex-direction: column;
+    text-align: center;
+    padding: 1rem;
+  }
+
+  .libro-card img {
+    width: 100%;
+    height: auto;
+  }
+
+  .slider-container img {
+    width: 100%;
+  }
+
+  .producto-container {
+    padding: 20px;
+  }
+
+  .producto-detalle {
+    font-size: 0.9rem;
+    align-items: center;
+  }
+
+  .producto-titulo {
+    font-size: 1.5rem;
+  }
+
+  .producto-precio {
+    font-size: 1.1rem;
+  }
+
+  .boton-comprar {
+    font-size: 1rem;
+    padding: 10px 28px;
+  }
+
+  .footer-title {
+    font-size: 1.2rem;
+  }
+
+  .footer-copy {
+    font-size: 0.8rem;
+  }
+}
+
+/* ⚫ Extra Small (xs) - hasta 400px */
+@media (max-width: 400px) {
+  header {
+    padding: 8px 15px;
+  }
+
+  .titulo-espacio {
+    font-size: 1.1rem;
+    text-align: center;
+  }
+
+  .nav {
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .libro-card {
+    padding: 0.8rem;
+    gap: 0.8rem;
+  }
+
+  .libro-info h3 {
+    font-size: 1.3rem;
+  }
+
+  .libro-info p {
+    font-size: 0.9rem;
+  }
+
+  .producto-container {
+    gap: 20px;
+  }
+
+  .producto-imagen {
+    width: 90%;
+    height: auto;
+  }
+
+  .footer-title {
+    font-size: 1rem;
+  }
+
+  .footer-icon {
+    font-size: 1.3rem;
+  }
+}
