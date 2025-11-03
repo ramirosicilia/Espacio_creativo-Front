@@ -53,7 +53,7 @@ const cuentoPagado = cuentosPagados.includes(libroId);
 
   return (
     <div className="capitulo-contenedor" >
-      <h2>{capitulo.titulo}</h2>
+      <h2 className="capitule-title">{capitulo.titulo}</h2>
 
       {/* 🔹 Texto visible o completo */}
       {!esCuento || cuentoPagado ? (
