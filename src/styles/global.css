@@ -930,52 +930,116 @@ button:last-of-type:hover {
 }
 
 /* 🟨 Large (lg) - hasta 991.98px */
+/* 🟨 Large (lg) - hasta 991.98px */
 @media (max-width: 991.98px) {
-  header {
-    padding: 15px 25px;
-  }
-
-  .nav {
-    gap: 10px;
-  }
-
   .libro-card {
+    display: flex;
     flex-direction: column;
     align-items: center;
-    width: 90%;
+    width: 95%;
+    max-width: 700px;
     height: auto;
+    margin: 0 auto;
     text-align: center;
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
   }
 
   .libro-card img {
     width: 100%;
     height: auto;
+    border-radius: 8px;
   }
 
-  .slider-container img {
-    width: 90%;
-    height: auto;
+  .container-text-card {
+    width: 100%;
+    margin-top: 1rem;
   }
 
-  .producto-container {
-    flex-direction: column;
-    align-items: center;
-    gap: 40px;
+  .title-book {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
   }
 
-  .producto-detalle {
-    text-align: center;
-    align-items: center;
+  .book-container {
+    text-align: left;
+    padding: 0.5rem 1rem;
   }
 
-  .titulo-espacio {
-    font-size: 1.8rem;
+  .libro-categoria,
+  .libro-genero {
+    font-size: 1rem;
+    margin: 0.3rem 0;
   }
 
-  .footer-title {
-    font-size: 1.4rem;
+  .libro-descripcion {
+    font-size: 0.95rem;
+    line-height: 1.4;
+    color: #444;
+  }
+
+  .botones-libro,
+  .container-botones {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-top: 1rem;
   }
 }
+
+/* 🟥 Small (sm) - hasta 575.98px */
+@media (max-width: 575.98px) {
+  .libro-card {
+    width: 90%;
+    padding: 1rem;
+  }
+
+  .title-book {
+    font-size: 1.3rem;
+  }
+
+  .book-container {
+    padding: 0.5rem;
+  }
+
+  .libro-categoria,
+  .libro-genero {
+    font-size: 0.95rem;
+  }
+
+  .libro-descripcion {
+    font-size: 0.9rem;
+  }
+
+  .botones-libro button {
+    font-size: 0.9rem;
+    padding: 0.6rem 1rem;
+  }
+}
+
+/* ⚫ Extra Small (xs) - hasta 400px */
+@media (max-width: 400px) {
+  .title-book {
+    font-size: 1.1rem;
+  }
+
+  .libro-descripcion {
+    font-size: 0.85rem;
+  }
+
+  .botones-libro {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .botones-libro button {
+    width: 100%;
+  }
+}
+
 
 /* 🟧 Medium (md) - hasta 767.98px */
 @media (max-width: 767.98px) {
