@@ -929,8 +929,10 @@ button:last-of-type:hover {
   }
 }
 
-/* 🟨 Large (lg) - hasta 991.98px */
-/* 🟨 Large (lg) - hasta 991.98px */
+
+
+
+/* 🔶 Large (lg) - hasta 991.98px */
 @media (max-width: 991.98px) {
   .libro-card {
     display: flex;
@@ -990,57 +992,6 @@ button:last-of-type:hover {
   }
 }
 
-/* 🟥 Small (sm) - hasta 575.98px */
-@media (max-width: 575.98px) {
-  .libro-card {
-    width: 90%;
-    padding: 1rem;
-  }
-
-  .title-book {
-    font-size: 1.3rem;
-  }
-
-  .book-container {
-    padding: 0.5rem;
-  }
-
-  .libro-categoria,
-  .libro-genero {
-    font-size: 0.95rem;
-  }
-
-  .libro-descripcion {
-    font-size: 0.9rem;
-  }
-
-  .botones-libro button {
-    font-size: 0.9rem;
-    padding: 0.6rem 1rem;
-  }
-}
-
-/* ⚫ Extra Small (xs) - hasta 400px */
-@media (max-width: 400px) {
-  .title-book {
-    font-size: 1.1rem;
-  }
-
-  .libro-descripcion {
-    font-size: 0.85rem;
-  }
-
-  .botones-libro {
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .botones-libro button {
-    width: 100%;
-  }
-}
-
-
 /* 🟧 Medium (md) - hasta 767.98px */
 @media (max-width: 767.98px) {
   header {
@@ -1062,7 +1013,7 @@ button:last-of-type:hover {
 
   .libro-card {
     width: 100%;
-    padding: 1.5rem;
+    padding: 1.2rem;
   }
 
   .capitulo-contenedor {
@@ -1107,10 +1058,11 @@ button:last-of-type:hover {
   }
 
   .libro-card {
-    width: 100%;
+    width: 92%;
     flex-direction: column;
     text-align: center;
     padding: 1rem;
+    margin: 0 auto;
   }
 
   .libro-card img {
@@ -1172,23 +1124,24 @@ button:last-of-type:hover {
   .libro-card {
     padding: 0.8rem;
     gap: 0.8rem;
+    width: 95%;
   }
 
-  .libro-info h3 {
-    font-size: 1.3rem;
+  .title-book {
+    font-size: 1.1rem;
   }
 
-  .libro-info p {
-    font-size: 0.9rem;
+  .libro-descripcion {
+    font-size: 0.85rem;
   }
 
-  .producto-container {
-    gap: 20px;
+  .botones-libro {
+    flex-direction: column;
+    align-items: center;
   }
 
-  .producto-imagen {
-    width: 90%;
-    height: auto;
+  .botones-libro button {
+    width: 100%;
   }
 
   .footer-title {
