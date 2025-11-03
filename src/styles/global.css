@@ -67,11 +67,11 @@ header nav a:hover::after {
 
 
 /* styles.css */
-.nav-link {
+.nav-link a{
   text-decoration: none;
   color: #333; /* Color de texto */
   font-weight: 700;
-  font-size: 16px; /* Tamaño de fuente */
+  font-size: 15px; /* Tamaño de fuente */
   font-family: 'Poppins', sans-serif; /* Fuente moderna */
   padding: 8px 12px; /* Espaciado alrededor del texto */
   border-radius: 6px; /* Bordes redondeados sutiles */
