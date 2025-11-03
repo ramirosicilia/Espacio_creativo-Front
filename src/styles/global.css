@@ -41,7 +41,7 @@ header:hover {
 header nav a {
   position: relative;
   font-weight: 500;
-  font-size: 17px;
+  font-size: 16px;
   text-decoration: none;
   color: #333;
   transition: color 0.3s ease;
@@ -55,6 +55,7 @@ header nav a::after {
   width: 0%;
   height: 2px;
   background-color: #2b6cb0;
+   font-size: 16pxx;
   transition: width 0.3s ease;
 }
 
@@ -83,7 +84,7 @@ header nav a:hover::after {
   text-decoration: none;
   color: #333; /* Color de texto */
   font-weight: 700;
-  font-size: 12px; /* Tamaño de fuente */
+  font-size: 16px; /* Tamaño de fuente */
   font-family: 'Poppins', sans-serif; /* Fuente moderna */
   padding: 8px 12px; /* Espaciado alrededor del texto */
   border-radius: 6px; /* Bordes redondeados sutiles */
@@ -97,6 +98,7 @@ header nav a:hover::after {
   position: absolute;
   width: 0;
   height: 2px;
+  font-size: 16px;
   bottom: 0;
   left: 0;
   background-color: #2b6cb0; /* Color del subrayado */
@@ -523,7 +525,7 @@ button:last-of-type:hover {
 }
 
 .capitule-title{
-  font-size: 18px;
+  font-size: 20px;
 }
 
 .capitulo-titulo {
