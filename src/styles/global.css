@@ -166,7 +166,7 @@ header nav a:hover::after {
 
 .title-book {
   margin-top: 10px;
-  font-size: 18px;
+  font-size: 21px;
   font-weight: 600;
 }
 
@@ -275,12 +275,10 @@ header nav a:hover::after {
 } 
 
 
-
 .container-favoritos{
   padding: 20px 40px;
 
 } 
-
 
 
 .contenedor-favoritos{
