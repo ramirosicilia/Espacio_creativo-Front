@@ -244,6 +244,7 @@ header nav a:hover::after {
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08),
               inset 0 0 0 1px rgba(255, 255, 255, 0.6);
   padding: 2rem;
+  overflow: hidden;
   cursor: pointer;
   opacity: 0;
   transform: translateY(40px);
@@ -906,7 +907,7 @@ button:last-of-type:hover {
    📱 MEDIA QUERIES - ENFOQUE DESKTOP FIRST
    ======================================================= */
 
-/* 🟣 Extra extra large (xxl) - hasta 1399.98px */
+/* Extra extra large (xxl) - hasta 1399.98px */
 @media (max-width: 1199.98px) {
   header {
     padding: 20px 30px;
@@ -915,7 +916,6 @@ button:last-of-type:hover {
   .libro-card {
     width: 45rem;
     gap: 1rem;
-    height: 30rem; /* ✅ mantiene proporción, no se aplasta */
   }
 
   .slider-container img {
@@ -929,6 +929,9 @@ button:last-of-type:hover {
   }
 }
 
+
+
+
 /* 🔶 Large (lg) - hasta 991.98px */
 @media (max-width: 991.98px) {
   .libro-card {
@@ -937,29 +940,24 @@ button:last-of-type:hover {
     align-items: center;
     width: 95%;
     max-width: 700px;
-    min-height: 32rem; /* ✅ mantiene altura base */
+    height: auto;
     margin: 0 auto;
     text-align: center;
     background-color: #fff;
     border-radius: 10px;
     padding: 1.5rem;
     box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-    overflow: visible !important;
   }
 
   .libro-card img {
     width: 100%;
     height: auto;
     border-radius: 8px;
-    object-fit: cover;
   }
 
   .container-text-card {
     width: 100%;
     margin-top: 1rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
   }
 
   .title-book {
@@ -967,12 +965,21 @@ button:last-of-type:hover {
     margin-bottom: 0.5rem;
   }
 
+  .book-container {
+    text-align: left;
+    padding: 0.5rem 1rem;
+  }
+
+  .libro-categoria,
+  .libro-genero {
+    font-size: 1rem;
+    margin: 0.3rem 0;
+  }
+
   .libro-descripcion {
     font-size: 0.95rem;
-    line-height: 1.5;
+    line-height: 1.4;
     color: #444;
-    white-space: normal;
-    word-wrap: break-word;
   }
 
   .botones-libro,
@@ -982,51 +989,80 @@ button:last-of-type:hover {
     gap: 1rem;
     flex-wrap: wrap;
     margin-top: 1rem;
-    width: 100%;
-  }
-
-  .botones-libro button {
-    min-width: 130px;
-    padding: 0.6rem 1.2rem;
-    font-size: 0.9rem;
   }
 }
 
 /* 🟧 Medium (md) - hasta 767.98px */
 @media (max-width: 767.98px) {
+  header {
+    flex-direction: column;
+    gap: 10px;
+    padding: 15px;
+  }
+
+  .nav {
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .titulo-espacio {
+    font-size: 1.5rem;
+    text-align: center;
+  }
+
   .libro-card {
     width: 100%;
     padding: 1.2rem;
-    min-height: 30rem; /* ✅ conserva altura visual */
   }
 
-  .container-text-card {
-    text-align: left;
-    gap: 0.7rem;
+  .capitulo-contenedor {
+    padding: 20px;
+    font-size: 0.95rem;
   }
 
-  .libro-descripcion {
-    font-size: 0.9rem;
-    line-height: 1.4;
+  .producto-imagen {
+    width: 80%;
+    height: auto;
   }
 
-  .botones-libro {
-    justify-content: center;
-    gap: 0.8rem;
-    flex-wrap: wrap;
+  .slider-container img {
+    width: 100%;
+  }
+
+  .footer-title {
+    font-size: 1.2rem;
+  }
+
+  .footer-icons {
+    gap: 1rem;
+  }
+
+  .footer-icon {
+    font-size: 1.5rem;
   }
 }
 
 /* 🟥 Small (sm) - hasta 575.98px */
 @media (max-width: 575.98px) {
+  header {
+    padding: 10px 20px;
+  }
+
+  .titulo-espacio {
+    font-size: 1.3rem;
+  }
+
+  .nav-link {
+    font-size: 14px;
+  }
+
   .libro-card {
     width: 92%;
     flex-direction: column;
     text-align: center;
     padding: 1rem;
     margin: 0 auto;
-    min-height: 32rem; /* ✅ altura uniforme en móviles */
-    overflow: visible !important;
   }
 
   .libro-card img {
@@ -1034,33 +1070,85 @@ button:last-of-type:hover {
     height: auto;
   }
 
-  .container-text-card {
-    gap: 0.6rem;
+  .slider-container img {
+    width: 100%;
   }
 
-  .libro-descripcion {
+  .producto-container {
+    padding: 20px;
+  }
+
+  .producto-detalle {
     font-size: 0.9rem;
-    line-height: 1.5;
+    align-items: center;
+  }
+
+  .producto-titulo {
+    font-size: 1.5rem;
+  }
+
+  .producto-precio {
+    font-size: 1.1rem;
+  }
+
+  .boton-comprar {
+    font-size: 1rem;
+    padding: 10px 28px;
+  }
+
+  .footer-title {
+    font-size: 1.2rem;
+  }
+
+  .footer-copy {
+    font-size: 0.8rem;
   }
 }
 
 /* ⚫ Extra Small (xs) - hasta 400px */
 @media (max-width: 400px) {
+  header {
+    padding: 8px 15px;
+  }
+
+  .titulo-espacio {
+    font-size: 1.1rem;
+    text-align: center;
+  }
+
+  .nav {
+    flex-direction: column;
+    gap: 6px;
+  }
+
   .libro-card {
     padding: 0.8rem;
     gap: 0.8rem;
     width: 95%;
-    min-height: 30rem; /* ✅ mantiene proporción sin cortarse */
   }
 
-  .container-text-card {
-    align-items: center;
-    text-align: center;
-    gap: 0.6rem;
+  .title-book {
+    font-size: 1.1rem;
   }
 
   .libro-descripcion {
     font-size: 0.85rem;
-    text-align: justify;
+  }
+
+  .botones-libro {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .botones-libro button {
+    width: 100%;
+  }
+
+  .footer-title {
+    font-size: 1rem;
+  }
+
+  .footer-icon {
+    font-size: 1.3rem;
   }
 }
