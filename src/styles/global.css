@@ -908,6 +908,7 @@ button:last-of-type:hover {
    ======================================================= */
 
 /* Extra extra large (xxl) - hasta 1399.98px */
+/* 🟣 Extra extra large (xxl) - hasta 1399.98px */
 @media (max-width: 1199.98px) {
   header {
     padding: 20px 30px;
@@ -916,6 +917,7 @@ button:last-of-type:hover {
   .libro-card {
     width: 45rem;
     gap: 1rem;
+    height: auto; /* ✅ antes podía quedar fija */
   }
 
   .slider-container img {
@@ -929,9 +931,6 @@ button:last-of-type:hover {
   }
 }
 
-
-
-
 /* 🔶 Large (lg) - hasta 991.98px */
 @media (max-width: 991.98px) {
   .libro-card {
@@ -940,24 +939,29 @@ button:last-of-type:hover {
     align-items: center;
     width: 95%;
     max-width: 700px;
-    height: auto;
+    height: auto !important; /* ✅ evita cortes de contenido */
     margin: 0 auto;
     text-align: center;
     background-color: #fff;
     border-radius: 10px;
     padding: 1.5rem;
     box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    overflow: visible !important; /* ✅ asegura que el texto no se esconda */
   }
 
   .libro-card img {
     width: 100%;
     height: auto;
     border-radius: 8px;
+    object-fit: cover;
   }
 
   .container-text-card {
     width: 100%;
     margin-top: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
   }
 
   .title-book {
@@ -978,8 +982,10 @@ button:last-of-type:hover {
 
   .libro-descripcion {
     font-size: 0.95rem;
-    line-height: 1.4;
+    line-height: 1.5;
     color: #444;
+    white-space: normal;
+    word-wrap: break-word;
   }
 
   .botones-libro,
@@ -989,6 +995,13 @@ button:last-of-type:hover {
     gap: 1rem;
     flex-wrap: wrap;
     margin-top: 1rem;
+    width: 100%;
+  }
+
+  .botones-libro button {
+    min-width: 130px;
+    padding: 0.6rem 1.2rem;
+    font-size: 0.9rem;
   }
 }
 
@@ -1014,6 +1027,23 @@ button:last-of-type:hover {
   .libro-card {
     width: 100%;
     padding: 1.2rem;
+    height: auto !important;
+  }
+
+  .container-text-card {
+    text-align: left;
+    gap: 0.7rem;
+  }
+
+  .libro-descripcion {
+    font-size: 0.9rem;
+    line-height: 1.4;
+  }
+
+  .botones-libro {
+    justify-content: center;
+    gap: 0.8rem;
+    flex-wrap: wrap;
   }
 
   .capitulo-contenedor {
@@ -1063,11 +1093,22 @@ button:last-of-type:hover {
     text-align: center;
     padding: 1rem;
     margin: 0 auto;
+    height: auto !important;
+    overflow: visible !important;
   }
 
   .libro-card img {
     width: 100%;
     height: auto;
+  }
+
+  .container-text-card {
+    gap: 0.6rem;
+  }
+
+  .libro-descripcion {
+    font-size: 0.9rem;
+    line-height: 1.5;
   }
 
   .slider-container img {
@@ -1094,6 +1135,11 @@ button:last-of-type:hover {
   .boton-comprar {
     font-size: 1rem;
     padding: 10px 28px;
+  }
+
+  .botones-libro button {
+    width: 100%;
+    font-size: 0.9rem;
   }
 
   .footer-title {
@@ -1125,6 +1171,13 @@ button:last-of-type:hover {
     padding: 0.8rem;
     gap: 0.8rem;
     width: 95%;
+    height: auto !important;
+  }
+
+  .container-text-card {
+    align-items: center;
+    text-align: center;
+    gap: 0.6rem;
   }
 
   .title-book {
@@ -1133,11 +1186,13 @@ button:last-of-type:hover {
 
   .libro-descripcion {
     font-size: 0.85rem;
+    text-align: justify;
   }
 
   .botones-libro {
     flex-direction: column;
     align-items: center;
+    gap: 0.7rem;
   }
 
   .botones-libro button {
