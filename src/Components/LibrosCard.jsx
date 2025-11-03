@@ -32,27 +32,22 @@ export default function LibrosCard({ libro }) {
   <div className="libro-card" ref={cardRef}>
     <img src={libro.imagen} alt={libro.titulo} />
     <div className="container-text-card">
-      <h3 style={{ marginTop: "10px", fontSize: "18px", fontWeight: "600" }}>
+      <h3 className="title-book">
         {libro.titulo}
       </h3> 
        
       <div
-          style={{
-            marginTop: "8px",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "flex-start",
-            gap:".8rem",
-            padding:".4rem 0px"
-          }}
+         className="book-container"
         >
-          <p style={{ fontSize: "13px", color: "#444", margin: ".8px 0" }}>
-            <strong>Categoría:</strong> {libro.categoria}
-          </p>
-          <p style={{ fontSize: "13px", color: "#444", margin: ".8px 0" }}>
-            <strong>Género:</strong> {libro.genero} 
-          </p> 
-          <p style={{ fontSize: "14px", color: "#666" }}>{libro.descripcion}</p>
+                     <p class="libro-categoria">
+                     <strong>Categoría:</strong> {libro.categoria}
+                    </p>
+            <p class="libro-genero">
+              <strong>Género:</strong> {libro.genero}
+            </p>
+            <p class="libro-descripcion">
+              {libro.descripcion}
+            </p>
         </div>
       
    

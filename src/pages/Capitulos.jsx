@@ -16,7 +16,7 @@ export default function Capitulos() {
 
   if (!capitulo) {
     return (
-      <div style={{ padding: 20 }}>
+      <div className="contenido-capitulo">
         <h2>
           No se encontró el contenido del {categoria?.toLowerCase() || "libro"} con ID {id}.
         </h2>
@@ -52,40 +52,29 @@ const cuentoPagado = cuentosPagados.includes(libroId);
   const esSegundoCapitulo = capitulo.id.includes("-2");
 
   return (
-    <div className="capitulo-contenedor" style={{ padding: "20px" }}>
+    <div className="capitulo-contenedor" >
       <h2>{capitulo.titulo}</h2>
 
       {/* 🔹 Texto visible o completo */}
       {!esCuento || cuentoPagado ? (
-        <p style={{ lineHeight: 1.6, whiteSpace: "pre-line" }}>
+        <p className="cap">
           {capitulo.contenido}
         </p>
       ) : (
         <>
           <div className="texto-visible">
-            <p style={{ lineHeight: 1.6, whiteSpace: "pre-line" }}>
+            <p className="texto-parrafo">
               {capitulo.contenido.slice(0, 800)}
             </p>
           </div>
 
-          <div className="texto-bloqueado" style={{ position: "relative" }}>
-            <p style={{ lineHeight: 1.6, whiteSpace: "pre-line", opacity: 0.3 }}>
+          <div className="texto-bloqueado" >
+            <p className="texto-oculto">
               {capitulo.contenido.slice(800)}
             </p>
             <div
               className="overlay"
-              style={{
-                position: "absolute",
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0,
-                backgroundColor: "rgba(255,255,255,0.8)",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                fontSize: "18px",
-              }}
+            
             >
               🔒 <em>Compra el cuento para seguir leyendo...</em>
             </div>
@@ -94,7 +83,7 @@ const cuentoPagado = cuentosPagados.includes(libroId);
       )}
 
       {/* ✅ Botones */}
-      <div style={{ marginTop: "40px", textAlign: "center" }}>
+      <div className="capitulos-container">
         {!esCuento &&
           (esPrimerCapitulo ? (
             <button className="boton-siguiente" onClick={handleLeerSiguiente}>

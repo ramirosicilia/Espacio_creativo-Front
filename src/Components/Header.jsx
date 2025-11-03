@@ -5,7 +5,7 @@ export default function Header() {
     <header>
       
       <span className="titulo-espacio">Espacio Creativo</span>
-      <nav style={{ display: "flex", gap: "20px" }}>
+      <nav className="nav">
         <Link to="/" className="nav-link">Inicio</Link>
         <Link to="/favoritos" className="nav-link">Favoritos</Link>
       </nav>

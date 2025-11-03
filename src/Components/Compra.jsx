@@ -224,70 +224,23 @@ export function Compra() {
   // ======================================================
   // 🎨 Render
   // ======================================================
-  return (
-  <div
-    style={{
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "flex-start",
-      padding: "60px",
-      gap: "60px",
-      flexWrap: "wrap",
-      backgroundColor: "#0d1117", // opcional, mejora contraste
-    }}
-  >
+ return (
+  <div className="producto-container">
     <img
       src={producto.imagen}
       alt={producto.titulo}
-      style={{
-        width: "300px",
-        height: "440px",
-        objectFit: "cover",
-        borderRadius: "16px",
-        boxShadow: "0 4px 20px rgba(0,0,0,0.4)",
-      }}
+      className="producto-imagen"
     />
 
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "flex-start",
-        justifyContent: "space-between",
-        gap: "2.5rem", // 🔹 separa título, precio, botones, etc.
-        color: "#fff",
-        maxWidth: "350px",
-      }}
-    >
-      <h2
-        style={{
-          fontSize: "2rem",
-          margin: 0,
-          fontWeight: "600",
-        }}
-      >
-        {producto.titulo}
-      </h2>
+    <div className="producto-detalle">
+      <h2 className="producto-titulo">{producto.titulo}</h2>
 
-      <p style={{ fontSize: "1.4rem", margin: 0 }}>
+      <p className="producto-precio">
         Precio: <strong>${producto.precio} ARS</strong>
       </p>
 
       <button
-        className="boton-siguiente"
-        style={{
-          marginTop: "10px",
-          padding: "12px 36px",
-          fontSize: "1.1rem",
-          borderRadius: "10px",
-          border: "none",
-          background: "#00a8ff",
-          color: "#fff",
-          cursor: "pointer",
-          boxShadow: "0 4px 10px rgba(0,0,0,0.3)",
-          opacity: botonVisible ? 1 : 0,
-          transition: "opacity 0.4s ease",
-        }}
+        className={`boton-comprar ${botonVisible ? "visible" : ""}`}
         onClick={handlePagar}
         disabled={cargando}
       >
@@ -295,20 +248,12 @@ export function Compra() {
       </button>
 
       {cargando && (
-        <p style={{ color: "#ccc", marginTop: "5px", fontStyle: "italic" }}>
-          🔄 Cargando Mercado Pago...
-        </p>
+        <p className="texto-cargando">🔄 Cargando Mercado Pago...</p>
       )}
 
       <div
         id="wallet_container"
-        style={{
-          width: "100%",
-          marginTop: "10px",
-          display: "flex",
-          justifyContent: "center",
-          pointerEvents: botonVisible ? "none" : "auto",
-        }}
+        className={`wallet-container ${botonVisible ? "bloqueado" : ""}`}
       ></div>
     </div>
   </div>

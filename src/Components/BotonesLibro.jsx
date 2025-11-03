@@ -46,41 +46,20 @@ window.open(`/capitulo/${libro.categoria}/${libro.id}`, "_blank");
   };
 
   return (
-    <div
-      style={{
-        marginTop: "10px",
-        display: "flex",
-        justifyContent: "center",
-        gap: "10px",
-      }}
-    >
-      <button
-        onClick={handleLeer}
-        style={{
-          backgroundColor: "#3182ce",
-          color: "#fff",
-          border: "none",
-          padding: "8px 12px",
-          borderRadius: "6px",
-          cursor: "pointer",
-        }}
-      >
-        Leer Capítulo
-      </button>
+  <div className="acciones-container">
+    <button onClick={handleLeer} className="boton-accion boton-leer">
+      Leer Capítulo
+    </button>
 
-      <button
-        onClick={handleFavorito}
-        style={{
-          backgroundColor: esFavorito ? "#a0aec0" : "#e53e3e",
-          color: "#fff",
-          border: "none",
-          padding: "8px 12px",
-          borderRadius: "6px",
-          cursor: "pointer",
-        }}
-      >
-        {esFavorito ? "Quitar de Favoritos 💔" : "Agregar a Favoritos ❤️"}
-      </button>
-    </div>
-  );
+    <button
+      onClick={handleFavorito}
+      className={`boton-accion boton-favorito ${
+        esFavorito ? "favorito-activo" : ""
+      }`}
+    >
+      {esFavorito ? "Quitar de Favoritos 💔" : "Agregar a Favoritos ❤️"}
+    </button>
+  </div>
+);
+
 }

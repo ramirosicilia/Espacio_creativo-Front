@@ -4,13 +4,13 @@ export default function Favoritos() {
   const favoritos = JSON.parse(localStorage.getItem("favoritos")) || [];
 
   return (
-    <div style={{ padding: "20px 40px" }}>
+    <div  className="container-favoritos">
       <h2 className="libros-destacados">Tus Favoritos ❤️</h2>
-      <div style={{ display: "flex", flexWrap: "wrap", gap: "20px", marginTop: "20px" }}>
+      <div className="contenedor-favoritos">
         {favoritos.length > 0 ? (
           favoritos.map((libro) => <LibrosCard key={libro.id} libro={libro} />)
         ) : (
-          <p>No tienes libros en favoritos aún.</p>
+          <p className="favoritos-vacios">No tienes libros en favoritos aún.</p>
         )}
       </div>
     </div>

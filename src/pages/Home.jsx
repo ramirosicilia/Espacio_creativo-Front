@@ -161,13 +161,13 @@ export default function Home() {
   ];
 
   return (
-    <div style={{ padding: "60px 40px" }}>
+    <div className="home-contenedor">
       <Sliders />
 
       <h2 className="libros-destacados">Libros Destacados</h2>
       <div class="arrow-down"></div>
 
-      <div style={{ display: "flex", flexWrap: "wrap", gap: "20px" }}>
+      <div className="libros-contenedor">
         {libros.map((libro) => (
           <LibrosCard key={libro.id} libro={libro} />
         ))}
@@ -176,7 +176,7 @@ export default function Home() {
       <h2 className="libros-destacados">Cuentos cortos y largos</h2>
         <div class="arrow-down"></div>
 
-      <div style={{ display: "flex", flexWrap: "wrap", gap: "20px" }}>
+      <div className="container-cuentos">
         {cuentos.map((cuento) => (
         <LibrosCard key={cuento.id} libro={cuento} categoria={cuento.categoria} />
       ))}
