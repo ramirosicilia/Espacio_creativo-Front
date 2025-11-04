@@ -80,81 +80,60 @@ export function Compra() {
   // ======================================================
   // 📥 Descargar libro (PDF)
   // ======================================================
-  const descargarLibro = (urlPublica) => {
-  // 🧾 Recuperar el último pago guardado (objeto o string)
-  const payment = JSON.parse(localStorage.getItem("payment")) || localStorage.getItem("ultimoPaymentId");
+  const descargarLibro = (urlPublica) => {   
 
-  if (!payment) {
-    console.log("🚫 No hay registro de pago válido, no se descarga el libro.");
+    const payment=JSON.parse(localStorage.getItem("payment")) 
+
+   if (!payment) { 
+    console.log("🚫 No hay registro de pago, no se descarga el libro.");
     return;
   }
 
-  console.log("📘 Descargando libro desde:", urlPublica);
-  const link = document.createElement("a");
-  link.href = urlPublica;
-  link.download = "libro.pdf";
-  link.target = "_blank";
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-};
+    console.log("📘 Descargando libro desde:", urlPublica);
+    const link = document.createElement("a");
+    link.href = urlPublica;
+    link.download = "libro.pdf";
+    link.target = "_blank";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
-// ======================================================
-// 🔄 Verificación de pago periódica (cuando entra la vista)
-// ======================================================
-useEffect(() => {
-  if (!id) return;
-  let activo = true;
+  // ======================================================
+  // 🔄 Verificación de pago periódica (cuando entra la vista)
+  // ======================================================
+  useEffect(() => {
+    if (!id) return;
+    let activo = true;
 
-  const verificar = async () => {
-    while (activo) {
-      try {
-        // 👇 Buscar el paymentId actual
-        const paymentId = JSON.parse(localStorage.getItem("payment")) || localStorage.getItem("ultimoPaymentId");
+    const verificar = async () => {
+      while (activo) {
+        try {
+          const res = await fetch(`${apiUrl}/webhook_estado?libroId=${encodeURIComponent(id)}`);
+          const data = await res.json();
 
-        if (!paymentId) {
-          console.error("❌ No se encontró paymentId. No se puede verificar el pago.");
-          return;
-        }
-
-        const res = await fetch(
-          `${apiUrl}/webhook_estado?libroId=${encodeURIComponent(id)}&paymentId=${encodeURIComponent(paymentId)}`
-        );
-
-        const data = await res.json();
-        console.log("📡 Respuesta de webhook_estado:", data);
-
-        if (data.pago_exitoso) {
-          if (producto.categoria === "cuentos") {
-            alert("✅ Hace click para desbloquear el cuento");
-            desbloquearCuento(id);
-          } else if (producto.categoria === "libros" && data.data?.[0]?.url_publica) {
-            alert("📘 ¡Gracias por tu compra! El código de desbloqueo es: migueletes2372");
-
-            // 🧠 Guardar el paymentId válido
-            localStorage.setItem("payment", JSON.stringify(paymentId));
-            localStorage.setItem("ultimoPaymentId", paymentId);
-
-            // ✅ Solo descarga si el payment está presente
-            descargarLibro(data.data[0].url_publica);
+          if (data.pago_exitoso) {
+            if (producto.categoria === "cuentos") {
+              alert("✅ Hace click para desbloquear el cuento");
+              desbloquearCuento(id);
+            } else if (producto.categoria === "libros" && data.data?.[0]?.url_publica) {
+              alert("📘 ¡Gracias por tu compra! El codigo de desbloqueo es: migueletes2372");
+              descargarLibro(data.data[0].url_publica);
+            }
+            break;
           }
-        } else {
-          console.log("⚠️ No hay pago aprobado para este libro/payment_id");
+        } catch (err) {
+          console.error("Error verificando pago:", err);
         }
-      } catch (err) {
-        console.error("Error verificando pago:", err);
+        await new Promise((r) => setTimeout(r, 2000)); // 2 seg entre verificaciones
       }
+    };
 
-      // Espera 2 segundos entre verificaciones
-      await new Promise((r) => setTimeout(r, 2000));
-    }
-  };
-
-  verificar();
-  return () => {
-    activo = false;
-  };
-}, [id]);
+    verificar();
+    return () => {
+      activo = false;
+    };
+  }, [id]);
 
   // ======================================================
   // ⚙️ Verificación puntual tras iniciar el pago
