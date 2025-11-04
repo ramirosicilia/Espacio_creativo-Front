@@ -78,18 +78,17 @@ export function Compra() {
   };
 
   // ======================================================
-  // 📥 Descargar libro (PDF)
+  // 📥 Descargar libro (PDF) -> usa payment_id_actual
   // ======================================================
-  const descargarLibro = (urlPublica) => {   
+  const descargarLibro = (urlPublica) => {
+    const paymentIdStored = localStorage.getItem("payment_id_actual");
 
-    const payment=JSON.parse(localStorage.getItem("payment")) 
+    if (!paymentIdStored) {
+      console.log("🚫 No hay registro de pago (payment_id_actual), no se descarga el libro.");
+      return;
+    }
 
-   if (!payment) { 
-    console.log("🚫 No hay registro de pago, no se descarga el libro.");
-    return;
-  }
-
-    console.log("📘 Descargando libro desde:", urlPublica);
+    console.log("📘 Descargando libro desde:", urlPublica, "payment_id:", paymentIdStored);
     const link = document.createElement("a");
     link.href = urlPublica;
     link.download = "libro.pdf";
@@ -97,35 +96,50 @@ export function Compra() {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+
+    // Opcional: limpiar el payment_id_actual después de la descarga
+    // localStorage.removeItem("payment_id_actual");
   };
 
   // ======================================================
   // 🔄 Verificación de pago periódica (cuando entra la vista)
+  // exige payment_id_actual
   // ======================================================
   useEffect(() => {
     if (!id) return;
     let activo = true;
 
     const verificar = async () => {
+      const paymentIDStored = localStorage.getItem("payment_id_actual");
+      if (!paymentIDStored) {
+        console.log("🔍 No hay payment_id_actual en storage — no se inicia verificación periódica.");
+        return;
+      }
+
       while (activo) {
         try {
-          const res = await fetch(`${apiUrl}/webhook_estado?libroId=${encodeURIComponent(id)}`);
-          const data = await res.json();
+          const libroId = producto.id || id;
+          const response = await fetch(
+            `${apiUrl}/webhook_estado?libroId=${encodeURIComponent(libroId)}&payment_id=${encodeURIComponent(paymentIDStored)}`
+          );
+          const data = await response.json();
+
+          console.log("⏱ Verificación periódica:", data);
 
           if (data.pago_exitoso) {
             if (producto.categoria === "cuentos") {
               alert("✅ Hace click para desbloquear el cuento");
               desbloquearCuento(id);
             } else if (producto.categoria === "libros" && data.data?.[0]?.url_publica) {
-              alert("📘 ¡Gracias por tu compra! El codigo de desbloqueo es: migueletes2372");
+              alert("📘 ¡Gracias por tu compra! Descarga comenzando...");
               descargarLibro(data.data[0].url_publica);
             }
             break;
           }
         } catch (err) {
-          console.error("Error verificando pago:", err);
+          console.error("Error verificando pago periódicamente:", err);
         }
-        await new Promise((r) => setTimeout(r, 2000)); // 2 seg entre verificaciones
+        await new Promise((r) => setTimeout(r, 2000));
       }
     };
 
@@ -133,18 +147,23 @@ export function Compra() {
     return () => {
       activo = false;
     };
-  }, [id]);
+  }, [id, apiUrl, producto]);
 
   // ======================================================
   // ⚙️ Verificación puntual tras iniciar el pago
+  // ahora acepta paymentId opcional y lo envía al backend si lo tiene
   // ======================================================
-  const verificarPagoEnBackend = async (libroId) => {
+  const verificarPagoEnBackend = async (libroId, paymentId = null) => {
     try {
       const reintentarCada = 2000;
       const maxIntentos = 20;
 
       for (let intento = 1; intento <= maxIntentos; intento++) {
-        const res = await fetch(`${apiUrl}/webhook_estado?libroId=${encodeURIComponent(libroId)}`);
+        const url = new URL(`${apiUrl}/webhook_estado`, window.location.origin);
+        url.searchParams.append("libroId", libroId);
+        if (paymentId) url.searchParams.append("payment_id", paymentId);
+
+        const res = await fetch(url.toString());
         const data = await res.json();
 
         console.log(`🕓 Verificación inmediata ${intento}/${maxIntentos}:`, data);
@@ -152,27 +171,24 @@ export function Compra() {
         if (data.pago_exitoso) {
           if (producto.categoria === "cuentos") {
             desbloquearCuento(libroId);
-          } else if (producto.categoria === "libros" && data.data?.[0]?.url_publica) { 
-              const paymentID = data.data?.[0]?.payment_id; 
-
-              localStorage.setItem("payment",JSON.stringify(paymentID))
+          } else if (producto.categoria === "libros" && data.data?.[0]?.url_publica) {
+            const paymentID = data.data?.[0]?.payment_id;
+            if (paymentID) localStorage.setItem("payment_id_actual", paymentID);
             descargarLibro(data.data[0].url_publica);
           }
-          return;
+          return true;
         }
 
         await new Promise((r) => setTimeout(r, reintentarCada));
       }
 
       console.warn("⚠️ No se detectó pago tras verificación inmediata.");
+      return false;
     } catch (e) {
       console.error("❌ Error verificando pago:", e);
+      return false;
     }
-  }; 
-
-
-
-  
+  };
 
   // ======================================================
   // 💳 Iniciar compra con MercadoPago
@@ -203,7 +219,9 @@ export function Compra() {
 
       setPreferenceId(data.id);
       setBotonVisible(false);
-      verificarPagoEnBackend(id);
+
+      // Si querés, podes iniciar verificaciones sin payment_id (pero pueden false positives)
+      // verificarPagoEnBackend(id);
 
       const bricksBuilder = mercadoPago.bricks();
       const container = document.getElementById("wallet_container");
@@ -215,8 +233,24 @@ export function Compra() {
         callbacks: {
           onReady: () => console.log("🧱 Wallet lista"),
           onSuccess: async (payment) => {
-            console.log("✅ Pago exitoso desde front:", payment);
-            verificarPagoEnBackend(id);
+            console.log("✅ Pago exitoso desde front (raw):", payment);
+
+            // Intentamos extraer distintas formas del payment id
+            const paymentIdFromMP =
+              (payment && (payment.id || payment.payment_id || payment.payment?.id || payment.response?.id || payment.collection_id)) ||
+              null;
+
+            if (paymentIdFromMP) {
+              console.log("💾 Guardando payment_id_actual:", paymentIdFromMP);
+              localStorage.setItem("payment_id_actual", paymentIdFromMP);
+
+              // Verificamos en backend con el payment_id recién obtenido
+              await verificarPagoEnBackend(id, paymentIdFromMP);
+            } else {
+              console.warn("⚠️ No se pudo extraer payment_id desde onSuccess:", payment);
+              // Intentamos ver si backend reconoce algo sin payment_id (menos seguro)
+              await verificarPagoEnBackend(id, null);
+            }
           },
           onError: (error) => console.error("❌ Error en el Brick:", error),
         },
@@ -239,39 +273,29 @@ export function Compra() {
   // ======================================================
   // 🎨 Render
   // ======================================================
- return (
-  <div className="producto-container">
-    <img
-      src={producto.imagen}
-      alt={producto.titulo}
-      className="producto-imagen"
-    />
+  return (
+    <div className="producto-container">
+      <img src={producto.imagen} alt={producto.titulo} className="producto-imagen" />
 
-    <div className="producto-detalle">
-      <h2 className="producto-titulo">{producto.titulo}</h2>
+      <div className="producto-detalle">
+        <h2 className="producto-titulo">{producto.titulo}</h2>
 
-      <p className="producto-precio">
-        Precio: <strong>${producto.precio} ARS</strong>
-      </p>
+        <p className="producto-precio">
+          Precio: <strong>${producto.precio} ARS</strong>
+        </p>
 
-      <button
-        className={`boton-comprar ${botonVisible ? "visible" : ""}`}
-        onClick={handlePagar}
-        disabled={cargando}
-      >
-        {cargando ? "Procesando..." : "Comprar Ahora 💳"}
-      </button>
+        <button
+          className={`boton-comprar ${botonVisible ? "visible" : ""}`}
+          onClick={handlePagar}
+          disabled={cargando}
+        >
+          {cargando ? "Procesando..." : "Comprar Ahora 💳"}
+        </button>
 
-      {cargando && (
-        <p className="texto-cargando">🔄 Cargando Mercado Pago...</p>
-      )}
+        {cargando && <p className="texto-cargando">🔄 Cargando Mercado Pago...</p>}
 
-      <div
-        id="wallet_container"
-        className={`wallet-container ${botonVisible ? "bloqueado" : ""}`}
-      ></div>
+        <div id="wallet_container" className={`wallet-container ${botonVisible ? "bloqueado" : ""}`}></div>
+      </div>
     </div>
-  </div>
-);
-
+  );
 }
