@@ -80,95 +80,106 @@ export function Compra() {
   // ======================================================
   // 📥 Descargar libro (PDF)
   // ======================================================
-  const descargarLibro = (urlPublica) => {   
+  // ======================================================
+// 📘 Función: Descargar libro solo si tiene pago registrado
+// ======================================================
+const descargarLibro = (urlPublica, libroId) => {
+  const payment = JSON.parse(localStorage.getItem(`payment_${libroId}`));
 
-    const payment=JSON.parse(localStorage.getItem("payment")) 
-
-   if (!payment) { 
-    console.log("🚫 No hay registro de pago, no se descarga el libro.");
+  if (!payment) { 
+    console.log(`🚫 No hay registro de pago para el libro ${libroId}, no se descarga.`);
     return;
   }
 
-    console.log("📘 Descargando libro desde:", urlPublica);
-    const link = document.createElement("a");
-    link.href = urlPublica;
-    link.download = "libro.pdf";
-    link.target = "_blank";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
+  console.log(`📘 Descargando libro ${libroId} desde:`, urlPublica);
+  const link = document.createElement("a");
+  link.href = urlPublica;
+  link.download = "libro.pdf";
+  link.target = "_blank";
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+};
 
-  // ======================================================
-  // 🔄 Verificación de pago periódica (cuando entra la vista)
-  // ======================================================
-  useEffect(() => {
-    if (!id) return;
-    let activo = true;
+// ======================================================
+// 🔄 Verificación de pago periódica (al entrar en la vista)
+// ======================================================
+useEffect(() => {
+  if (!id) return;
+  let activo = true;
 
-    const verificar = async () => {
-      while (activo) {
-        try {
-          const res = await fetch(`${apiUrl}/webhook_estado?libroId=${encodeURIComponent(id)}`);
-          const data = await res.json();
-
-          if (data.pago_exitoso) {
-            if (producto.categoria === "cuentos") {
-              alert("✅ Hace click para desbloquear el cuento");
-              desbloquearCuento(id);
-            } else if (producto.categoria === "libros" && data.data?.[0]?.url_publica) {
-              alert("📘 ¡Gracias por tu compra! El codigo de desbloqueo es: migueletes2372");
-              descargarLibro(data.data[0].url_publica);
-            }
-            break;
-          }
-        } catch (err) {
-          console.error("Error verificando pago:", err);
-        }
-        await new Promise((r) => setTimeout(r, 2000)); // 2 seg entre verificaciones
-      }
-    };
-
-    verificar();
-    return () => {
-      activo = false;
-    };
-  }, [id]);
-
-  // ======================================================
-  // ⚙️ Verificación puntual tras iniciar el pago
-  // ======================================================
-  const verificarPagoEnBackend = async (libroId) => {
-    try {
-      const reintentarCada = 2000;
-      const maxIntentos = 20;
-
-      for (let intento = 1; intento <= maxIntentos; intento++) {
-        const res = await fetch(`${apiUrl}/webhook_estado?libroId=${encodeURIComponent(libroId)}`);
+  const verificar = async () => {
+    while (activo) {
+      try {
+        const res = await fetch(`${apiUrl}/webhook_estado?libroId=${encodeURIComponent(id)}`);
         const data = await res.json();
-
-        console.log(`🕓 Verificación inmediata ${intento}/${maxIntentos}:`, data);
 
         if (data.pago_exitoso) {
           if (producto.categoria === "cuentos") {
-            desbloquearCuento(libroId);
-          } else if (producto.categoria === "libros" && data.data?.[0]?.url_publica) { 
-              const paymentID = data.data?.[0]?.payment_id; 
-
-              localStorage.setItem("payment",JSON.stringify(paymentID))
-            descargarLibro(data.data[0].url_publica);
+            alert("✅ Hace click para desbloquear el cuento");
+            desbloquearCuento(id);
+          } else if (producto.categoria === "libros" && data.data?.[0]?.url_publica) {
+            alert("📘 ¡Gracias por tu compra! El código de desbloqueo es: migueletes2372");
+            descargarLibro(data.data[0].url_publica, id);
           }
-          return;
+          break;
         }
-
-        await new Promise((r) => setTimeout(r, reintentarCada));
+      } catch (err) {
+        console.error("Error verificando pago:", err);
       }
-
-      console.warn("⚠️ No se detectó pago tras verificación inmediata.");
-    } catch (e) {
-      console.error("❌ Error verificando pago:", e);
+      await new Promise((r) => setTimeout(r, 2000)); // 2 seg entre verificaciones
     }
   };
+
+  verificar();
+  return () => { activo = false };
+}, [id]);
+
+// ======================================================
+// ⚙️ Verificación puntual tras iniciar el pago
+// ======================================================
+const verificarPagoEnBackend = async (libroId) => {
+  try {
+    const reintentarCada = 2000;
+    const maxIntentos = 20;
+
+    for (let intento = 1; intento <= maxIntentos; intento++) {
+      const res = await fetch(`${apiUrl}/webhook_estado?libroId=${encodeURIComponent(libroId)}`);
+      const data = await res.json();
+
+      console.log(`🕓 Verificación inmediata ${intento}/${maxIntentos}:`, data);
+
+      if (data.pago_exitoso) {
+        if (producto.categoria === "cuentos") {
+          desbloquearCuento(libroId);
+        } else if (producto.categoria === "libros" && data.data?.[0]?.url_publica) { 
+          const paymentID = data.data?.[0]?.payment_id;
+
+          // 💾 Guarda el payment_id por libro
+          if (!localStorage.getItem(`payment_${libroId}`)) {
+            localStorage.setItem(`payment_${libroId}`, JSON.stringify(paymentID));
+            console.log(`💾 Guardado payment_id para libro ${libroId}:`, paymentID);
+          }
+
+          descargarLibro(data.data[0].url_publica, libroId);
+        }
+        return;
+      }
+
+      await new Promise((r) => setTimeout(r, reintentarCada));
+    }
+
+    console.warn("⚠️ No se detectó pago tras verificación inmediata.");
+  } catch (e) {
+    console.error("❌ Error verificando pago:", e);
+  }
+};
+
+
+
+
+
+
 
   // ======================================================
   // 💳 Iniciar compra con MercadoPago
