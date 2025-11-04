@@ -97,54 +97,57 @@ export function Compra() {
   useEffect(() => {
   if (!id) return;
   let activo = true;
+
   const verificar = async () => {
-    let primerChequeo = true;
+    let ultimoPaymentId = null; // 🧠 recordamos el último payment_id conocido
     let intentos = 0;
-    const maxIntentos = 20; // 🧭 unos 40 segundos aprox (20 * 2s)
+    const maxIntentos = 20;
 
     while (activo && intentos < maxIntentos) {
       try {
         const res = await fetch(`${apiUrl}/webhook_estado?libroId=${encodeURIComponent(id)}`);
         const data = await res.json();
 
-        if (data.pago_exitoso) {
-          if (primerChequeo) {
-            console.log("🟡 Pago previo detectado, no mostrar alerta.");
+        if (data.pago_exitoso && data.data?.length > 0) {
+          const pago = data.data[0];
+          const nuevoPaymentId = pago.payment_id;
+
+          // 🧩 Si es un pago nuevo (distinto al último visto)
+          if (nuevoPaymentId && nuevoPaymentId !== ultimoPaymentId) {
+            ultimoPaymentId = nuevoPaymentId;
+
             if (producto.categoria === "cuentos") {
-              setCuentosDesbloqueados(true);
+              alert("✅ Hace click para desbloquear el cuento");
+              desbloquearCuento(id);
+            } else if (producto.categoria === "libros" && pago.url_publica) {
+              alert("📘 ¡Gracias por tu compra! El código de desbloqueo es: migueletes2372");
+              descargarLibro(pago.url_publica);
             }
+            break; // 🔚 salimos del bucle
+          } else {
+            console.log("🟡 Mismo payment_id detectado, no mostrar alerta.");
             break;
           }
-
-          // 🔥 Pago aprobado en tiempo real
-          if (producto.categoria === "cuentos") {
-            alert("✅ Hace click para desbloquear el cuento");
-            desbloquearCuento(id);
-          } else if (producto.categoria === "libros" && data.data?.[0]?.url_publica) {
-            alert("📘 ¡Gracias por tu compra! El código de desbloqueo es: migueletes2372");
-            descargarLibro(data.data[0].url_publica);
-          }
-          break;
         }
       } catch (err) {
         console.error("Error verificando pago:", err);
       }
 
-      primerChequeo = false;
       intentos++;
       await new Promise((r) => setTimeout(r, 2000));
     }
 
-    // 🔚 Si llega acá sin éxito, salimos del estado de “procesando”
     if (intentos >= maxIntentos) {
-      console.log("⏹ Tiempo de espera agotado para verificar el pago.");
-      setBotonVisible(true); // muestra el botón otra vez si lo ocultás
+      console.log("⏹ Tiempo de espera agotado.");
     }
   };
 
   verificar();
-  return () => { activo = false; };
+  return () => {
+    activo = false;
+  };
 }, [id]);
+
 
   // ======================================================
   // ⚙️ Verificación puntual tras iniciar el pago
