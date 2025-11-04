@@ -97,27 +97,26 @@ export function Compra() {
   useEffect(() => {
   if (!id) return;
   let activo = true;
-  let primerChequeo = true;
-  const reintentarCada = 2000;
-  const maxIntentos = 20;
-
   const verificar = async () => {
-    for (let intento = 1; intento <= maxIntentos && activo; intento++) {
+    let primerChequeo = true;
+    let intentos = 0;
+    const maxIntentos = 20; // 🧭 unos 40 segundos aprox (20 * 2s)
+
+    while (activo && intentos < maxIntentos) {
       try {
         const res = await fetch(`${apiUrl}/webhook_estado?libroId=${encodeURIComponent(id)}`);
         const data = await res.json();
 
         if (data.pago_exitoso) {
-          // 🟡 Ya estaba pagado antes de entrar
           if (primerChequeo) {
-            console.log("🟡 Pago previo detectado. No mostrar alerta.");
+            console.log("🟡 Pago previo detectado, no mostrar alerta.");
             if (producto.categoria === "cuentos") {
               setCuentosDesbloqueados(true);
             }
-            break; // salir del bucle
+            break;
           }
 
-          // 🔥 Pago aprobado durante la verificación
+          // 🔥 Pago aprobado en tiempo real
           if (producto.categoria === "cuentos") {
             alert("✅ Hace click para desbloquear el cuento");
             desbloquearCuento(id);
@@ -127,21 +126,24 @@ export function Compra() {
           }
           break;
         }
-
-        primerChequeo = false;
-        await new Promise((r) => setTimeout(r, reintentarCada));
       } catch (err) {
         console.error("Error verificando pago:", err);
-        await new Promise((r) => setTimeout(r, reintentarCada));
       }
+
+      primerChequeo = false;
+      intentos++;
+      await new Promise((r) => setTimeout(r, 2000));
+    }
+
+    // 🔚 Si llega acá sin éxito, salimos del estado de “procesando”
+    if (intentos >= maxIntentos) {
+      console.log("⏹ Tiempo de espera agotado para verificar el pago.");
+      setBotonVisible(true); // muestra el botón otra vez si lo ocultás
     }
   };
 
   verificar();
-
-  return () => {
-    activo = false;
-  };
+  return () => { activo = false; };
 }, [id]);
 
   // ======================================================
