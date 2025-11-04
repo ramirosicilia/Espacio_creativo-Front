@@ -109,9 +109,7 @@ export function Compra() {
     const verificar = async () => {
       while (activo) {
         try {
-        const payment = JSON.parse(localStorage.getItem("payment"));
-        const res = await fetch(`${apiUrl}/webhook_estado?libroId=${id}&paymentId=${payment || ''}`);
-
+          const res = await fetch(`${apiUrl}/webhook_estado?libroId=${encodeURIComponent(id)}`);
           const data = await res.json();
 
           if (data.pago_exitoso) {
