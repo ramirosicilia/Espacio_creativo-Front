@@ -79,62 +79,76 @@ export function Compra() {
 
   // ======================================================
   // 📥 Descargar libro (PDF)
-  // ======================================================
-  const descargarLibro = (urlPublica) => {
-    console.log("📘 Descargando libro desde:", urlPublica);
-    const link = document.createElement("a");
-    link.href = urlPublica;
-    link.download = "libro.pdf";
-    link.target = "_blank";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
+  const descargarLibro = (urlPublica, paymentId, libroId) => {
+  console.log("📘 Intentando descargar libro...");
+
+  // 🧩 Recuperar pagos procesados
+  const pagosProcesados = JSON.parse(localStorage.getItem("pagos_procesados") || "[]");
+
+  // 🚫 Si este pago ya fue procesado, no descarga
+  if (pagosProcesados.includes(paymentId)) {
+    console.warn("⚠️ Pago ya procesado, no se descargará nuevamente.");
+    alert("⚠️ Ya descargaste este libro anteriormente.");
+    return;
+  }
+
+  // ✅ Guardamos el paymentId como usado
+  pagosProcesados.push(paymentId);
+  localStorage.setItem("pagos_procesados", JSON.stringify(pagosProcesados));
+
+  // 🟢 Log y descarga
+  console.log(`📘 Descargando libro ${libroId} desde:`, urlPublica);
+  const link = document.createElement("a");
+  link.href = urlPublica;
+  link.download = `libro_${libroId}.pdf`;
+  link.target = "_blank";
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+};
+
 
   // ======================================================
   // 🔄 Verificación de pago periódica (cuando entra la vista)
   // ======================================================
-  useEffect(() => {
-    if (!id) return;
-    let activo = true;
+ useEffect(() => {
+  if (!id) return;
+  let activo = true;
 
-    const verificar = async () => {
-      while (activo) {
-        try {
-          const res = await fetch(`${apiUrl}/webhook_estado?libroId=${encodeURIComponent(id)}`);
-          const data = await res.json();
+  const verificar = async () => {
+    while (activo) {
+      try {
+        const res = await fetch(`${apiUrl}/webhook_estado?libroId=${encodeURIComponent(id)}`);
+        const data = await res.json();
 
-         if (
-  data.pago_exitoso &&
-  data.data?.[0]?.payment_id &&
-  !JSON.parse(localStorage.getItem("pagos_procesados") || "[]").includes(data.data[0].payment_id)
-) {
-  const procesados = JSON.parse(localStorage.getItem("pagos_procesados") || "[]");
-  procesados.push(data.data[0].payment_id);
-  localStorage.setItem("pagos_procesados", JSON.stringify(procesados));
+        if (data.pago_exitoso) {
+          const pago = data.data?.[0];
+          if (!pago) return;
 
-  if (producto.categoria === "cuentos") {
-    alert("✅ Hace click para desbloquear el cuento");
-    desbloquearCuento(id);
-  } else if (producto.categoria === "libros" && data.data?.[0]?.url_publica) {
-    alert("📘 ¡Gracias por tu compra! El código de desbloqueo es: migueletes2372");
-    descargarLibro(data.data[0].url_publica);
-  }
-  break;
-}
+          if (producto.categoria === "cuentos") {
+            alert("✅ Hace click para desbloquear el cuento");
+            desbloquearCuento(id);
+          } else if (producto.categoria === "libros" && pago.url_publica) {
+            alert("📘 ¡Gracias por tu compra! El código de desbloqueo es: migueletes2372");
+            // 👇 Ahora sí pasamos también paymentId y libroId
+            descargarLibro(pago.url_publica, pago.payment_id, id);
+          }
 
-        } catch (err) {
-          console.error("Error verificando pago:", err);
+          break; // detener el bucle al completar el pago
         }
-        await new Promise((r) => setTimeout(r, 2000)); // 2 seg entre verificaciones
+      } catch (err) {
+        console.error("Error verificando pago:", err);
       }
-    };
 
-    verificar();
-    return () => {
-      activo = false;
-    };
-  }, [id]);
+      await new Promise((r) => setTimeout(r, 2000)); // 2 seg entre verificaciones
+    }
+  };
+
+  verificar();
+  return () => {
+    activo = false;
+  };
+}, [id]);
 
   // ======================================================
   // ⚙️ Verificación puntual tras iniciar el pago
