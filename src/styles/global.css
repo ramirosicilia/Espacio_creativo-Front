@@ -992,53 +992,37 @@ button:last-of-type:hover {
 }
 
 /* 🟧 Medium (md) - hasta 767.98px */
+/* 🧭 Ajustes visuales para móviles */
 @media (max-width: 767.98px) {
-  header {
-    flex-direction: column;
-    gap: 10px;
-    padding: 15px;
-  }
-
-  .nav {
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .titulo-espacio {
-    font-size: 1.5rem;
-    text-align: center;
+  body {
+    background-color: #f9f9f9;
+    padding: 0;
+    margin: 0;
   }
 
   .libro-card {
-    width: 100%;
-    padding: 1.2rem;
+    width: 95%;
+    max-width: 420px;
+    margin: 1rem auto;
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
   }
 
-  .capitulo-contenedor {
-    padding: 20px;
-    font-size: 0.95rem;
+  .container-text-card {
+    padding-bottom: 1rem;
   }
 
-  .producto-imagen {
-    width: 80%;
-    height: auto;
+  .botones-libro {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 0.8rem;
   }
 
-  .slider-container img {
-    width: 100%;
-  }
-
-  .footer-title {
-    font-size: 1.2rem;
-  }
-
-  .footer-icons {
-    gap: 1rem;
-  }
-
-  .footer-icon {
-    font-size: 1.5rem;
+  .botones-libro button {
+    flex: 1;
+    min-width: 120px;
   }
 }
 
