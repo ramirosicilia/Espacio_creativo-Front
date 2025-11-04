@@ -231,8 +231,6 @@ header nav a:hover::after {
 
 
 
-
-
 .libro-card {
   display: flex;
   align-items: center;
@@ -245,9 +243,9 @@ header nav a:hover::after {
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08),
               inset 0 0 0 1px rgba(255, 255, 255, 0.6);
   padding: 2rem;
-  overflow: hidden;
+
   cursor: pointer;
-  opacity: 0;
+
   transform: translateY(40px);
   transition: opacity 1s ease-out, transform 1s ease-out;
   transform: translateY(40px);
