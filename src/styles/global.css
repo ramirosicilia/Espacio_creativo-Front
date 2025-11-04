@@ -1055,6 +1055,12 @@ button:last-of-type:hover {
 
   .nav-link {
     font-size: 14px;
+  } 
+
+  .boton-accion{
+    font-size: 0.75rem;
+    padding: 0px;
+
   }
 
   .libro-card {
