@@ -80,7 +80,15 @@ export function Compra() {
   // ======================================================
   // 📥 Descargar libro (PDF)
   // ======================================================
-  const descargarLibro = (urlPublica) => {
+  const descargarLibro = (urlPublica) => {   
+
+    const payment=JSON.parse(localStorage.getItem("payment")) 
+
+   if (!payment) { 
+    console.log("🚫 No hay registro de pago, no se descarga el libro.");
+    return;
+  }
+
     console.log("📘 Descargando libro desde:", urlPublica);
     const link = document.createElement("a");
     link.href = urlPublica;
@@ -144,7 +152,10 @@ export function Compra() {
         if (data.pago_exitoso) {
           if (producto.categoria === "cuentos") {
             desbloquearCuento(libroId);
-          } else if (producto.categoria === "libros" && data.data?.[0]?.url_publica) {
+          } else if (producto.categoria === "libros" && data.data?.[0]?.url_publica) { 
+              const paymentID = data.data?.[0]?.payment_id; 
+
+              localStorage.setItem("payment",JSON.stringify(paymentID))
             descargarLibro(data.data[0].url_publica);
           }
           return;
