@@ -95,51 +95,50 @@ export function Compra() {
   // 🔄 Verificación de pago periódica (cuando entra la vista)
   // ======================================================
   useEffect(() => {
-    if (!id) return;
-    let activo = true;
+  if (!id) return;
+  let activo = true;
+  const pagosProcesados = JSON.parse(localStorage.getItem("pagos_procesados") || "[]");
 
-    const verificar = async () => {
-      while (activo) {
-        try {
-          const res = await fetch(`${apiUrl}/webhook_estado?libroId=${encodeURIComponent(id)}`);
-                const data = await res.json();
+  const verificar = async () => {
+    while (activo) {
+      try {
+        const res = await fetch(`${apiUrl}/webhook_estado?libroId=${encodeURIComponent(id)}`);
+        const data = await res.json();
+
+        const paymentId = data.data?.[0]?.payment_id;
 
         if (
-        data.pago_exitoso &&
-        data.data?.[0]?.payment_id &&
-        !JSON.parse(localStorage.getItem("pagos_procesados") || "[]").includes(
-          data.data[0].payment_id
-        )
-      ) {
-        const paymentId = data.data[0].payment_id;
-      
-        // 🔐 Guarda el payment_id para evitar duplicados
-        const pagosProcesados = JSON.parse(localStorage.getItem("pagos_procesados") || "[]");
-        pagosProcesados.push(paymentId);
-        localStorage.setItem("pagos_procesados", JSON.stringify(pagosProcesados));
-      
-        if (producto.categoria === "cuentos") {
-          alert("✅ Hace click para desbloquear el cuento");
-          desbloquearCuento(id);
-        } else if (producto.categoria === "libros" && data.data?.[0]?.url_publica) {
-          alert("📘 ¡Gracias por tu compra! El código de desbloqueo es: migueletes2372");
-          descargarLibro(data.data[0].url_publica);
-        }
-      
-        break;
-      }
-        } catch (err) {
-          console.error("Error verificando pago:", err);
-        }
-        await new Promise((r) => setTimeout(r, 2000)); // 2 seg entre verificaciones
-      }
-    };
+          data.pago_exitoso &&
+          paymentId &&
+          !pagosProcesados.includes(paymentId)
+        ) {
+          // 🔐 Guardar en memoria y localStorage
+          pagosProcesados.push(paymentId);
+          localStorage.setItem("pagos_procesados", JSON.stringify(pagosProcesados));
 
-    verificar();
-    return () => {
-      activo = false;
-    };
-  }, [id]);
+          if (producto.categoria === "cuentos") {
+            alert("✅ Hace click para desbloquear el cuento");
+            desbloquearCuento(id);
+          } else if (producto.categoria === "libros" && data.data?.[0]?.url_publica) {
+            alert("📘 ¡Gracias por tu compra! El código de desbloqueo es: migueletes2372");
+            descargarLibro(data.data[0].url_publica);
+          }
+
+          break;
+        }
+      } catch (err) {
+        console.error("Error verificando pago:", err);
+      }
+
+      await new Promise((r) => setTimeout(r, 2000)); // 2 seg entre verificaciones
+    }
+  };
+
+  verificar();
+  return () => {
+    activo = false;
+  };
+}, [id]);
 
   // ======================================================
   // ⚙️ Verificación puntual tras iniciar el pago
