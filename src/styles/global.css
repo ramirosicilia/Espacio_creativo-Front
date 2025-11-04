@@ -234,16 +234,29 @@ header nav a:hover::after {
 
 
 .libro-card {
+  display: flex;
+  align-items: center;
+  width: 55rem;
+  justify-content: space-between;
+  gap: 1.5rem;
+  background: linear-gradient(145deg, #ffffff, #f4f6fb);
+  border-radius: 1.5rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08),
+              inset 0 0 0 1px rgba(255, 255, 255, 0.6);
+  padding: 2rem;
+
+  cursor: pointer;
   opacity: 0;
   transform: translateY(40px);
-  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
-}
+  transition: opacity 1s ease-out, transform 1s ease-out;
+  transform: translateY(40px);
+  transition: opacity 1s ease-out, transform 1s ease-out;
+} 
 
 .libro-card.visible {
   opacity: 1;
   transform: translateY(0);
 }
-
 
 .libro-card:hover {
   transform: translateY(-8px) scale(1.02);
@@ -922,14 +935,19 @@ button:last-of-type:hover {
 /* 🔶 Large (lg) - hasta 991.98px */
 @media (max-width: 991.98px) {
   .libro-card {
-    flex-direction: column !important;
-    align-items: flex-start !important;
-    justify-content: flex-start !important;
-    text-align: left !important;
-    transform: none !important; /* evitar que se anime o mueva */
-    opacity: 1 !important; /* mostrar directamente */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 95%;
+    max-width: 700px;
+    height: auto;
+    margin: 0 auto;
+    text-align: center;
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
   }
-}
 
   .libro-card img {
     width: 100%;
@@ -972,7 +990,7 @@ button:last-of-type:hover {
     flex-wrap: wrap;
     margin-top: 1rem;
   }
-
+}
 
 /* 🟧 Medium (md) - hasta 767.98px */
 @media (max-width: 767.98px) {
