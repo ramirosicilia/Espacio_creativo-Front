@@ -237,6 +237,7 @@ header nav a:hover::after {
   display: flex;
   align-items: center;
   width: 55rem;
+  height: auto;
   justify-content: space-between;
   gap: 1.5rem;
   background: linear-gradient(145deg, #ffffff, #f4f6fb);
