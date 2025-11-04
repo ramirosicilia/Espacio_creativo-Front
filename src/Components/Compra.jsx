@@ -233,25 +233,37 @@ export function Compra() {
         callbacks: {
           onReady: () => console.log("🧱 Wallet lista"),
           onSuccess: async (payment) => {
-            console.log("✅ Pago exitoso desde front (raw):", payment);
+  console.log("✅ Pago exitoso desde front (raw):", payment);
 
-            // Intentamos extraer distintas formas del payment id
-            const paymentIdFromMP =
-              (payment && (payment.id || payment.payment_id || payment.payment?.id || payment.response?.id || payment.collection_id)) ||
-              null;
+  // Intentamos extraer distintas formas del payment id
+  const paymentIdFromMP =
+    (payment && (payment.id || payment.payment_id || payment.payment?.id || payment.response?.id || payment.collection_id)) ||
+    null;
 
-           if (paymentIdFromMP) {
-  console.log("💾 Guardando payment_id_actual:", paymentIdFromMP);
-  localStorage.setItem("payment_id_actual", paymentIdFromMP);
-  await verificarPagoEnBackend(id, paymentIdFromMP);
+  if (paymentIdFromMP) {
+    console.log("💾 Guardando payment_id_actual (desde MercadoPago):", paymentIdFromMP);
+    localStorage.setItem("payment_id_actual", paymentIdFromMP);
+    await verificarPagoEnBackend(id, paymentIdFromMP);
+  } else {
+    console.warn("⚠️ No se pudo extraer payment_id desde onSuccess. Consultando backend...");
+    // 🔁 Reintenta preguntar al backend, que suele tener el payment_id real
+    const exito = await verificarPagoEnBackend(id, null);
 
-     }
-                else {
-              console.warn("⚠️ No se pudo extraer payment_id desde onSuccess:", payment);
-              // Intentamos ver si backend reconoce algo sin payment_id (menos seguro)
-              await verificarPagoEnBackend(id, null);
-            }
-          },
+    // Si el backend responde con éxito, ya guarda el payment_id_actual dentro de verificarPagoEnBackend()
+    if (!exito) {
+      console.error("❌ Backend no devolvió pago exitoso todavía.");
+    }
+  }
+
+  // Verificamos que efectivamente se guardó algo en el storage
+  const testStorage = localStorage.getItem("payment_id_actual");
+  if (testStorage) {
+    console.log("✅ payment_id_actual confirmado en localStorage:", testStorage);
+  } else {
+    console.error("🚫 No se guardó ningún payment_id_actual en localStorage.");
+  }
+},
+
           onError: (error) => console.error("❌ Error en el Brick:", error),
         },
       });
