@@ -95,59 +95,49 @@ export function Compra() {
   // 🔄 Verificación de pago periódica (cuando entra la vista)
   // ======================================================
   useEffect(() => {
-  if (!id) return;
-  let activo = true;
+    if (!id) return;
+    let activo = true;
 
-  const verificar = async () => {
-    let ultimoPaymentId = null; // 🧠 recordamos el último payment_id conocido
-    let intentos = 0;
-    const maxIntentos = 20;
+    const verificar = async () => {
+      while (activo) {
+        try {
+          const res = await fetch(`${apiUrl}/webhook_estado?libroId=${encodeURIComponent(id)}`);
+          const data = await res.json();
 
-    while (activo && intentos < maxIntentos) {
-      try {
-        const res = await fetch(`${apiUrl}/webhook_estado?libroId=${encodeURIComponent(id)}`);
-        const data = await res.json();
-
-        if (data.pago_exitoso && data.data?.length > 0) {
-          const pago = data.data[0];
-          const nuevoPaymentId = pago.payment_id;
-
-          // 🧩 Si es un pago nuevo (distinto al último visto)
-          if (nuevoPaymentId && nuevoPaymentId !== ultimoPaymentId) {
-            ultimoPaymentId = nuevoPaymentId;
-
-            if (producto.categoria === "cuentos") {
-              alert("✅ Hace click para desbloquear el cuento");
-              desbloquearCuento(id);
-            } else if (producto.categoria === "libros" && pago.url_publica) {
-              alert("📘 ¡Gracias por tu compra! El código de desbloqueo es: migueletes2372");
-              descargarLibro(pago.url_publica);
-            }
-            break; // 🔚 salimos del bucle
-          } else {
-            console.log("🟡 Mismo payment_id detectado, no mostrar alerta.");
-            break;
-          }
+         if (data.pago_exitoso && data.data?.length > 0) {
+      const pago = data.data[0];
+      const nuevoPaymentId = pago.payment_id;
+            
+      // 🧩 Comprobar si ya habíamos procesado este payment_id
+      if (!window.ultimoPaymentIdProcesado || window.ultimoPaymentIdProcesado !== nuevoPaymentId) {
+        window.ultimoPaymentIdProcesado = nuevoPaymentId; // guardar para no repetir
+      
+        if (producto.categoria === "cuentos") {
+          alert("✅ Hace click para desbloquear el cuento");
+          desbloquearCuento(id);
+        } else if (producto.categoria === "libros" && pago.url_publica) {
+          alert("📘 ¡Gracias por tu compra! El codigo de desbloqueo es: migueletes2372");
+          descargarLibro(pago.url_publica);
         }
-      } catch (err) {
-        console.error("Error verificando pago:", err);
+        break;
+      } else {
+        console.log("🟡 Mismo payment_id detectado, no disparar alerta nuevamente.");
+        break;
       }
+}
 
-      intentos++;
-      await new Promise((r) => setTimeout(r, 2000));
-    }
+        } catch (err) {
+          console.error("Error verificando pago:", err);
+        }
+        await new Promise((r) => setTimeout(r, 2000)); // 2 seg entre verificaciones
+      }
+    };
 
-    if (intentos >= maxIntentos) {
-      console.log("⏹ Tiempo de espera agotado.");
-    }
-  };
-
-  verificar();
-  return () => {
-    activo = false;
-  };
-}, [id]);
-
+    verificar();
+    return () => {
+      activo = false;
+    };
+  }, [id]);
 
   // ======================================================
   // ⚙️ Verificación puntual tras iniciar el pago
