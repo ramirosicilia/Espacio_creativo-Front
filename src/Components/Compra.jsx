@@ -61,103 +61,122 @@ export function Compra() {
   // ======================================================
   // 🔓 Desbloquear cuento
   // ======================================================
-  const desbloquearCuento = (libroId) => {
-    console.log("✅ Desbloqueando cuento", libroId);
-    setCuentosDesbloqueados(true);
-    setCargando(false);
-
-    const cuentosPagados = JSON.parse(localStorage.getItem("cuentos_pagados")) || [];
-    if (!cuentosPagados.includes(libroId)) {
-      cuentosPagados.push(libroId);
-      localStorage.setItem("cuentos_pagados", JSON.stringify(cuentosPagados));
-    }
-
-    setTimeout(() => {
-      window.location.href = `/cuento/${libroId}`;
-    }, 1500);
-  };
-
   // ======================================================
-  // 📥 Descargar libro (PDF)
-  // ======================================================
-  const descargarLibro = (urlPublica) => {
-    console.log("📘 Descargando libro desde:", urlPublica);
-    const link = document.createElement("a");
-    link.href = urlPublica;
-    link.download = "libro.pdf";
-    link.target = "_blank";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
+// 🔓 Desbloquear cuento
+// ======================================================
+const desbloquearCuento = (libroId) => {
+  console.log("✅ Desbloqueando cuento", libroId);
+  setCuentosDesbloqueados(true);
+  setCargando(false);
 
-  // ======================================================
-  // 🔄 Verificación de pago periódica (cuando entra la vista)
-  // ======================================================
-  useEffect(() => {
-    if (!id) return;
-    let activo = true;
+  const cuentosPagados = JSON.parse(localStorage.getItem("cuentos_pagados")) || [];
+  if (!cuentosPagados.includes(libroId)) {
+    cuentosPagados.push(libroId);
+    localStorage.setItem("cuentos_pagados", JSON.stringify(cuentosPagados));
+  }
 
-    const verificar = async () => {
-      while (activo) {
-        try {
-          const res = await fetch(`${apiUrl}/webhook_estado?libroId=${encodeURIComponent(id)}`);
-          const data = await res.json();
+  setTimeout(() => {
+    window.location.href = `/cuento/${libroId}`;
+  }, 1500);
+};
 
-          if (data.pago_exitoso) {
-            if (producto.categoria === "cuentos") {
-              alert("✅ Hace click para desbloquear el cuento");
-              desbloquearCuento(id);
-            } else if (producto.categoria === "libros" && data.data?.[0]?.url_publica) {
-              alert("📘 ¡Gracias por tu compra! El codigo de desbloqueo es: migueletes2372");
-              descargarLibro(data.data[0].url_publica);
-            }
-            break;
-          }
-        } catch (err) {
-          console.error("Error verificando pago:", err);
-        }
-        await new Promise((r) => setTimeout(r, 2000)); // 2 seg entre verificaciones
-      }
-    };
+// ======================================================
+// 📥 Descargar libro (PDF)
+// ======================================================
+const descargarLibro = (urlPublica) => {
+  console.log("📘 Descargando libro desde:", urlPublica);
+  const link = document.createElement("a");
+  link.href = urlPublica;
+  link.download = "libro.pdf";
+  link.target = "_blank";
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+};
 
-    verificar();
-    return () => {
-      activo = false;
-    };
-  }, [id]);
+// ======================================================
+// 🔄 Verificación de pago periódica (cuando entra la vista)
+// ======================================================
+useEffect(() => {
+  if (!id) return;
+  let activo = true;
 
-  // ======================================================
-  // ⚙️ Verificación puntual tras iniciar el pago
-  // ======================================================
-  const verificarPagoEnBackend = async (libroId) => {
-    try {
-      const reintentarCada = 2000;
-      const maxIntentos = 20;
-
-      for (let intento = 1; intento <= maxIntentos; intento++) {
-        const res = await fetch(`${apiUrl}/webhook_estado?libroId=${encodeURIComponent(libroId)}`);
+  const verificar = async () => {
+    while (activo) {
+      try {
+        const res = await fetch(`${apiUrl}/webhook_estado?libroId=${encodeURIComponent(id)}`);
         const data = await res.json();
+        const ultimoPayment = localStorage.getItem("ultimo_payment_id");
 
-        console.log(`🕓 Verificación inmediata ${intento}/${maxIntentos}:`, data);
+        console.log("🔍 Verificando pago en backend:", data);
 
-        if (data.pago_exitoso) {
+        // ✅ Solo si el backend confirma y coincide el payment_id
+        if (data.pago_exitoso && data.data?.[0]?.payment_id === ultimoPayment) {
           if (producto.categoria === "cuentos") {
-            desbloquearCuento(libroId);
+            alert("✅ Hace click para desbloquear el cuento");
+            desbloquearCuento(id);
           } else if (producto.categoria === "libros" && data.data?.[0]?.url_publica) {
+            alert("📘 ¡Gracias por tu compra! El código de desbloqueo es: migueletes2372");
             descargarLibro(data.data[0].url_publica);
           }
-          return;
+          break;
+        } else if (data.pago_exitoso && !ultimoPayment) {
+          // Si no hay localStorage (caso especial de recarga)
+          if (producto.categoria === "cuentos") {
+            alert("✅ Pago detectado correctamente");
+            desbloquearCuento(id);
+          } else if (producto.categoria === "libros" && data.data?.[0]?.url_publica) {
+            alert("📘 ¡Gracias por tu compra! El código de desbloqueo es: migueletes2372");
+            descargarLibro(data.data[0].url_publica);
+          }
+          break;
         }
-
-        await new Promise((r) => setTimeout(r, reintentarCada));
+      } catch (err) {
+        console.error("Error verificando pago:", err);
       }
-
-      console.warn("⚠️ No se detectó pago tras verificación inmediata.");
-    } catch (e) {
-      console.error("❌ Error verificando pago:", e);
+      await new Promise((r) => setTimeout(r, 2000)); // 2 seg entre verificaciones
     }
   };
+
+  verificar();
+  return () => {
+    activo = false;
+  };
+}, [id]);
+
+// ======================================================
+// ⚙️ Verificación puntual tras iniciar el pago
+// ======================================================
+const verificarPagoEnBackend = async (libroId) => {
+  try {
+    const reintentarCada = 2000;
+    const maxIntentos = 20;
+    const ultimoPayment = localStorage.getItem("ultimo_payment_id");
+
+    for (let intento = 1; intento <= maxIntentos; intento++) {
+      const res = await fetch(`${apiUrl}/webhook_estado?libroId=${encodeURIComponent(libroId)}`);
+      const data = await res.json();
+
+      console.log(`🕓 Verificación inmediata ${intento}/${maxIntentos}:`, data);
+
+      // ✅ Solo se considera exitoso si coincide el payment_id del localStorage
+      if (data.pago_exitoso && data.data?.[0]?.payment_id === ultimoPayment) {
+        if (producto.categoria === "cuentos") {
+          desbloquearCuento(libroId);
+        } else if (producto.categoria === "libros" && data.data?.[0]?.url_publica) {
+          descargarLibro(data.data[0].url_publica);
+        }
+        return;
+      }
+
+      await new Promise((r) => setTimeout(r, reintentarCada));
+    }
+
+    console.warn("⚠️ No se detectó pago tras verificación inmediata.");
+  } catch (e) {
+    console.error("❌ Error verificando pago:", e);
+  }
+};
 
   // ======================================================
   // 💳 Iniciar compra con MercadoPago
