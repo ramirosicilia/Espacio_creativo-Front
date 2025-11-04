@@ -99,18 +99,17 @@ export function Compra() {
     let activo = true;
 
     const verificar = async () => {
-      while (activo) {
-        try {
-          const res = await fetch(`${apiUrl}/webhook_estado?libroId=${encodeURIComponent(id)}`);
-          const data = await res.json();
-
-         if (data.pago_exitoso && data.data?.length > 0) {
+          while (activo) {
+            try {
+              const res = await fetch(`${apiUrl}/webhook_estado?libroId=${encodeURIComponent(id)}`);
+              const data = await res.json();
+    if (data.pago_exitoso && data.data?.length > 0) {
       const pago = data.data[0];
       const nuevoPaymentId = pago.payment_id;
-            
-      // 🧩 Comprobar si ya habíamos procesado este payment_id
-      if (!window.ultimoPaymentIdProcesado || window.ultimoPaymentIdProcesado !== nuevoPaymentId) {
-        window.ultimoPaymentIdProcesado = nuevoPaymentId; // guardar para no repetir
+    
+      window.pagados = window.pagados || {};
+      if (!window.pagados[id] || window.pagados[id] !== nuevoPaymentId) {
+        window.pagados[id] = nuevoPaymentId;
       
         if (producto.categoria === "cuentos") {
           alert("✅ Hace click para desbloquear el cuento");
@@ -121,10 +120,11 @@ export function Compra() {
         }
         break;
       } else {
-        console.log("🟡 Mismo payment_id detectado, no disparar alerta nuevamente.");
+        console.log("🟡 Mismo payment_id detectado para este producto, no repetir.");
         break;
       }
-}
+    }
+
 
         } catch (err) {
           console.error("Error verificando pago:", err);
