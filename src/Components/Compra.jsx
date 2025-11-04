@@ -240,13 +240,13 @@ export function Compra() {
               (payment && (payment.id || payment.payment_id || payment.payment?.id || payment.response?.id || payment.collection_id)) ||
               null;
 
-            if (paymentIdFromMP) {
-              console.log("💾 Guardando payment_id_actual:", paymentIdFromMP);
-              localStorage.setItem("payment_id_actual", paymentIdFromMP);
+           if (paymentIdFromMP) {
+  console.log("💾 Guardando payment_id_actual:", paymentIdFromMP);
+  localStorage.setItem("payment_id_actual", paymentIdFromMP);
+  await verificarPagoEnBackend(id, paymentIdFromMP);
 
-              // Verificamos en backend con el payment_id recién obtenido
-              await verificarPagoEnBackend(id, paymentIdFromMP);
-            } else {
+     }
+                else {
               console.warn("⚠️ No se pudo extraer payment_id desde onSuccess:", payment);
               // Intentamos ver si backend reconoce algo sin payment_id (menos seguro)
               await verificarPagoEnBackend(id, null);
