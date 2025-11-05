@@ -117,54 +117,38 @@ useEffect(() => {
         console.log("🔍 Estado del pago:", data);
 
         if (data.pago_exitoso && data.data?.[0]?.payment_id) {
-          const paymentID = data.data[0].payment_id;
-          localStorage.setItem("payment", JSON.stringify(paymentID));
+  const paymentID = data.data[0].payment_id;
+  localStorage.setItem("payment", JSON.stringify(paymentID));
 
-          // ✅ Doble verificación con el mismo libroId (id)
-          const validacion = await fetch(
-            `${apiUrl}/webhook_estado?libroId=${encodeURIComponent(id)}&sessionId=${encodeURIComponent(sessionId)}`
-          );
-          const validacionData = await validacion.json();
+  // Doble verificación: asegurarse de que el payment_id sea aprobado desde el backend
+  const validacion = await fetch(`${apiUrl}/webhook_estado?libroId=${encodeURIComponent(libroId)}&sessionId=${encodeURIComponent(localStorage.getItem("session_id"))}`);
+  const validacionData = await validacion.json();
 
-          console.log("🧾 Segunda validación:", validacionData);
+  if (validacionData.pago_exitoso && validacionData.data?.[0]?.payment_id === paymentID) {
+    if (producto.categoria === "cuentos") {
+      desbloquearCuento(libroId);
+    } else if (producto.categoria === "libros" && validacionData.data?.[0]?.url_publica) {
+      descargarLibro(validacionData.data[0].url_publica);
+    }
+  } else {
+    console.warn("⚠️ Pago no verificado en segunda validación. No se desbloquea nada.");
+  }
+  return;
+}
 
-          if (
-            validacionData.pago_exitoso &&
-            validacionData.data?.[0]?.payment_id === paymentID
-          ) {
-            yaRedirigio = true;
-
-            if (producto.categoria === "cuentos") {
-              alert("✅ ¡Pago aprobado! Desbloqueando cuento...");
-              desbloquearCuento(id);
-            } else if (
-              producto.categoria === "libros" &&
-              validacionData.data?.[0]?.url_publica
-            ) {
-              alert("📘 ¡Gracias por tu compra! Descargando libro...");
-              descargarLibro(validacionData.data[0].url_publica);
-            }
-          } else {
-            console.warn("⚠️ Pago no verificado en segunda validación. No se desbloquea nada.");
-          }
-
-          return; // 🔒 Cortar el bucle tras intento exitoso
-        }
       } catch (err) {
-        console.error("❌ Error verificando pago:", err);
+        console.error("Error verificando pago:", err);
       }
 
-      await new Promise((r) => setTimeout(r, 3000)); // ⏳ Reintenta cada 3s
+      await new Promise((r) => setTimeout(r, 3000)); // cada 3s
     }
   };
 
   verificar();
-
   return () => {
     activo = false;
   };
 }, [id]);
-
 
   // ======================================================
   // ⚙️ Verificación puntual tras iniciar el pago
