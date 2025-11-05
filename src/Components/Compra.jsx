@@ -82,12 +82,6 @@ export function Compra() {
   // ======================================================
   const descargarLibro = (urlPublica) => {   
 
-    const payment=JSON.parse(localStorage.getItem("payment")) 
-
-   if (!payment) { 
-    console.log("🚫 No hay registro de pago, no se descarga el libro.");
-    return;
-  }
 
     console.log("📘 Descargando libro desde:", urlPublica);
     const link = document.createElement("a");
