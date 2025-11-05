@@ -122,6 +122,7 @@ export function Compra() {
             }
             break;
           }
+
         } catch (err) {
           console.error("Error verificando pago:", err);
         }
@@ -172,7 +173,14 @@ export function Compra() {
 
 
 
-  
+    useEffect(() => {
+  let sessionId = localStorage.getItem("session_id");
+  if (!sessionId) {
+    sessionId = `${Date.now()}-${Math.random().toString(36).substring(2, 8)}`;
+    localStorage.setItem("session_id", sessionId);
+  }
+}, []);
+
 
   // ======================================================
   // 💳 Iniciar compra con MercadoPago
@@ -193,6 +201,7 @@ export function Compra() {
               quantity: 1,
               unit_price: producto.precio,
               categoria: producto.categoria,
+              session_id: localStorage.getItem("session_id"),
             },
           ],
         }),
