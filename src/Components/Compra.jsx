@@ -241,6 +241,7 @@ export function Compra() {
 
       setPreferenceId(data.id);
       setBotonVisible(false);
+      verificarPagoEnBackend(id);
 
       const bricksBuilder = mercadoPago.bricks();
       const container = document.getElementById("wallet_container");
@@ -253,7 +254,7 @@ export function Compra() {
           onReady: () => console.log("🧱 Wallet lista"),
           onSuccess: async (payment) => {
             console.log("✅ Pago exitoso desde front:", payment);
-            verificarPagoEnBackend(id); // 🔹 Ahora se ejecuta solo tras el pago
+            verificarPagoEnBackend(id);
           },
           onError: (error) => console.error("❌ Error en el Brick:", error),
         },
