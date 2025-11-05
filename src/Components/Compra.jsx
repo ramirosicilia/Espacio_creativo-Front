@@ -80,12 +80,8 @@ export function Compra() {
   // ======================================================
   // 📥 Descargar libro (PDF)
   // ======================================================
-  const descargarLibro = (urlPublica) => {
-    if (!urlPublica) {
-      console.warn("⚠️ No se recibió una URL pública válida para descargar el libro.");
-      alert("⚠️ No se encontró el archivo del libro. Intenta nuevamente más tarde o contacta soporte.");
-      return;
-    }
+  const descargarLibro = (urlPublica) => {   
+
 
     console.log("📘 Descargando libro desde:", urlPublica);
     const link = document.createElement("a");
@@ -98,74 +94,77 @@ export function Compra() {
   };
 
   // ======================================================
-  // 🔄 Verificación de pago periódica (más robusta)
+  // 🔄 Verificación de pago periódica (cuando entra la vista)
   // ======================================================
-  useEffect(() => {
-    if (!id) return;
-    let activo = true;
-    let yaRedirigio = false;
+  // ======================================================
+// 🔄 Verificación de pago periódica (más robusta)
+// ======================================================
+useEffect(() => {
+  if (!id) return;
+  let activo = true;
+  let yaRedirigio = false;
 
-    const sessionId = localStorage.getItem("session_id");
+  const sessionId = localStorage.getItem("session_id");
 
-    const verificar = async () => {
-      while (activo && !yaRedirigio) {
-        try {
-          const res = await fetch(
+  const verificar = async () => {
+    while (activo && !yaRedirigio) {
+      try {
+        const res = await fetch(
+          `${apiUrl}/webhook_estado?libroId=${encodeURIComponent(id)}&sessionId=${encodeURIComponent(sessionId)}`
+        );
+        const data = await res.json();
+
+        console.log("🔍 Estado del pago:", data);
+
+        if (data.pago_exitoso && data.data?.[0]?.payment_id) {
+          const paymentID = data.data[0].payment_id;
+          localStorage.setItem("payment", JSON.stringify(paymentID));
+
+          // ✅ Doble verificación con el mismo libroId (id)
+          const validacion = await fetch(
             `${apiUrl}/webhook_estado?libroId=${encodeURIComponent(id)}&sessionId=${encodeURIComponent(sessionId)}`
           );
-          const data = await res.json();
+          const validacionData = await validacion.json();
 
-          console.log("🔍 Estado del pago:", data);
+          console.log("🧾 Segunda validación:", validacionData);
 
-          if (data.pago_exitoso && data.data?.[0]?.payment_id) {
-            const paymentID = data.data[0].payment_id;
-            localStorage.setItem("payment", JSON.stringify(paymentID));
+          if (
+            validacionData.pago_exitoso &&
+            validacionData.data?.[0]?.payment_id === paymentID
+          ) {
+            yaRedirigio = true;
 
-            // ✅ Doble verificación
-            const validacion = await fetch(
-              `${apiUrl}/webhook_estado?libroId=${encodeURIComponent(id)}&sessionId=${encodeURIComponent(sessionId)}`
-            );
-            const validacionData = await validacion.json();
-
-            console.log("🧾 Segunda validación:", validacionData);
-
-            if (
-              validacionData.pago_exitoso &&
-              validacionData.data?.[0]?.payment_id === paymentID
+            if (producto.categoria === "cuentos") {
+              alert("✅ ¡Pago aprobado! Desbloqueando cuento...");
+              desbloquearCuento(id);
+            } else if (
+              producto.categoria === "libros" &&
+              validacionData.data?.[0]?.url_publica
             ) {
-              yaRedirigio = true;
-
-              if (producto.categoria === "cuentos") {
-                alert("✅ ¡Pago aprobado! Desbloqueando cuento...");
-                desbloquearCuento(id);
-              } else if (
-                producto.categoria === "libros" &&
-                validacionData.data?.[0]?.url_publica
-              ) {
-                alert("📘 ¡Gracias por tu compra! Descargando libro...");
-                descargarLibro(validacionData.data[0].url_publica);
-              } else {
-                alert("⚠️ El pago fue aprobado pero no se encontró el archivo del libro.");
-              }
-            } else {
-              console.warn("⚠️ Pago no verificado en segunda validación. No se desbloquea nada.");
+              alert("📘 ¡Gracias por tu compra! Descargando libro...");
+              descargarLibro(validacionData.data[0].url_publica);
             }
-
-            return;
+          } else {
+            console.warn("⚠️ Pago no verificado en segunda validación. No se desbloquea nada.");
           }
-        } catch (err) {
-          console.error("❌ Error verificando pago:", err);
+
+          return; // 🔒 Cortar el bucle tras intento exitoso
         }
-
-        await new Promise((r) => setTimeout(r, 3000));
+      } catch (err) {
+        console.error("❌ Error verificando pago:", err);
       }
-    };
 
-    verificar();
-    return () => {
-      activo = false;
-    };
-  }, [id]);
+      await new Promise((r) => setTimeout(r, 3000)); // ⏳ Reintenta cada 3s
+    }
+  };
+
+  verificar();
+
+  return () => {
+    activo = false;
+  };
+}, [id]);
+
 
   // ======================================================
   // ⚙️ Verificación puntual tras iniciar el pago
@@ -184,12 +183,11 @@ export function Compra() {
         if (data.pago_exitoso) {
           if (producto.categoria === "cuentos") {
             desbloquearCuento(libroId);
-          } else if (producto.categoria === "libros" && data.data?.[0]?.url_publica) {
-            const paymentID = data.data?.[0]?.payment_id;
-            localStorage.setItem("payment", JSON.stringify(paymentID));
+          } else if (producto.categoria === "libros" && data.data?.[0]?.url_publica) { 
+              const paymentID = data.data?.[0]?.payment_id; 
+
+              localStorage.setItem("payment",JSON.stringify(paymentID))
             descargarLibro(data.data[0].url_publica);
-          } else {
-            alert("⚠️ Pago exitoso, pero no se encontró la URL del libro.");
           }
           return;
         }
@@ -201,15 +199,18 @@ export function Compra() {
     } catch (e) {
       console.error("❌ Error verificando pago:", e);
     }
-  };
+  }; 
 
-  useEffect(() => {
-    let sessionId = localStorage.getItem("session_id");
-    if (!sessionId) {
-      sessionId = `${Date.now()}-${Math.random().toString(36).substring(2, 8)}`;
-      localStorage.setItem("session_id", sessionId);
-    }
-  }, []);
+
+
+    useEffect(() => {
+  let sessionId = localStorage.getItem("session_id");
+  if (!sessionId) {
+    sessionId = `${Date.now()}-${Math.random().toString(36).substring(2, 8)}`;
+    localStorage.setItem("session_id", sessionId);
+  }
+}, []);
+
 
   // ======================================================
   // 💳 Iniciar compra con MercadoPago
@@ -277,29 +278,39 @@ export function Compra() {
   // ======================================================
   // 🎨 Render
   // ======================================================
-  return (
-    <div className="producto-container">
-      <img src={producto.imagen} alt={producto.titulo} className="producto-imagen" />
+ return (
+  <div className="producto-container">
+    <img
+      src={producto.imagen}
+      alt={producto.titulo}
+      className="producto-imagen"
+    />
 
-      <div className="producto-detalle">
-        <h2 className="producto-titulo">{producto.titulo}</h2>
+    <div className="producto-detalle">
+      <h2 className="producto-titulo">{producto.titulo}</h2>
 
-        <p className="producto-precio">
-          Precio: <strong>${producto.precio} ARS</strong>
-        </p>
+      <p className="producto-precio">
+        Precio: <strong>${producto.precio} ARS</strong>
+      </p>
 
-        <button
-          className={`boton-comprar ${botonVisible ? "visible" : ""}`}
-          onClick={handlePagar}
-          disabled={cargando}
-        >
-          {cargando ? "Procesando..." : "Comprar Ahora 💳"}
-        </button>
+      <button
+        className={`boton-comprar ${botonVisible ? "visible" : ""}`}
+        onClick={handlePagar}
+        disabled={cargando}
+      >
+        {cargando ? "Procesando..." : "Comprar Ahora 💳"}
+      </button>
 
-        {cargando && <p className="texto-cargando">🔄 Cargando Mercado Pago...</p>}
+      {cargando && (
+        <p className="texto-cargando">🔄 Cargando Mercado Pago...</p>
+      )}
 
-        <div id="wallet_container" className={`wallet-container ${botonVisible ? "bloqueado" : ""}`}></div>
-      </div>
+      <div
+        id="wallet_container"
+        className={`wallet-container ${botonVisible ? "bloqueado" : ""}`}
+      ></div>
     </div>
-  );
+  </div>
+);
+
 }
