@@ -142,7 +142,7 @@ export function Compra() {
                 producto.categoria === "libros" &&
                 validacionData.data?.[0]?.url_publica
               ) {
-                alert("📘 ¡Gracias por tu compra! Descargando libro...");
+           
                 descargarLibro(validacionData.data[0].url_publica);
               } else {
                 alert("⚠️ El pago fue aprobado pero no se encontró el archivo del libro.");
@@ -181,19 +181,48 @@ export function Compra() {
 
         console.log(`🕓 Verificación inmediata ${intento}/${maxIntentos}:`, data);
 
-        if (data.pago_exitoso) {
-          if (producto.categoria === "cuentos") {
-            desbloquearCuento(libroId);
-          } else if (producto.categoria === "libros" && data.data?.[0]?.url_publica) {
-            const paymentID = data.data?.[0]?.payment_id;
-            localStorage.setItem("payment", JSON.stringify(paymentID));
-            descargarLibro(data.data[0].url_publica);
-          } else {
-            alert("⚠️ Pago exitoso, pero no se encontró la URL del libro.");
-          }
-          return;
-        }
+        if (
+  data.pago_exitoso &&
+  data.data?.[0]?.payment_id &&
+  !JSON.parse(localStorage.getItem("pago_aprobado") || "false")
+) {
+  const paymentID = data.data[0].payment_id;
 
+  // ✅ Marcamos en localStorage que el pago fue aprobado
+  localStorage.setItem("pago_aprobado", JSON.stringify(true));
+  localStorage.setItem("payment", JSON.stringify(paymentID));
+
+  // ✅ Doble verificación desde el backend
+  const validacion = await fetch(
+    `${apiUrl}/webhook_estado?libroId=${encodeURIComponent(id)}&sessionId=${encodeURIComponent(sessionId)}`
+  );
+  const validacionData = await validacion.json();
+
+  console.log("🧾 Segunda validación:", validacionData);
+
+  if (
+    validacionData.pago_exitoso &&
+    validacionData.data?.[0]?.payment_id === paymentID
+  ) {
+    yaRedirigio = true;
+
+    if (producto.categoria === "cuentos") {
+      alert("✅ ¡Pago aprobado! Desbloqueando cuento...");
+      desbloquearCuento(id);
+    } else if (
+      producto.categoria === "libros" &&
+      validacionData.data?.[0]?.url_publica
+    ) {
+      descargarLibro(validacionData.data[0].url_publica);
+    } else {
+      alert("⚠️ El pago fue aprobado pero no se encontró el archivo del libro.");
+    }
+  } else {
+    console.warn("⚠️ Pago no verificado en segunda validación. No se desbloquea nada.");
+  }
+
+  return;
+}
         await new Promise((r) => setTimeout(r, reintentarCada));
       }
 
