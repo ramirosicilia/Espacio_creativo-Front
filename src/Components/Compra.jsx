@@ -15,6 +15,9 @@ import cuento5 from "../assets/books/Citas.jpg";
 import cuento6 from "../assets/books/espejo.jpg";   
 
 
+
+
+// 🟢 versión actualizada: usa "url_publica" en vez de "pdf_url"
 export function Compra() {
   const { id } = useParams();
   const [mercadoPago, setMercadoPago] = useState(null);
@@ -56,17 +59,6 @@ export function Compra() {
   }, [publicKey]);
 
   // ======================================================
-  // 🧩 Crear o recuperar session_id
-  // ======================================================
-  useEffect(() => {
-    let sessionId = localStorage.getItem("session_id");
-    if (!sessionId) {
-      sessionId = `${Date.now()}-${Math.random().toString(36).substring(2, 8)}`;
-      localStorage.setItem("session_id", sessionId);
-    }
-  }, []);
-
-  // ======================================================
   // 🔓 Desbloquear cuento
   // ======================================================
   const desbloquearCuento = (libroId) => {
@@ -90,8 +82,8 @@ export function Compra() {
   // ======================================================
   const descargarLibro = (urlPublica) => {
     if (!urlPublica) {
-      console.warn("⚠️ No se recibió una URL válida para descargar el libro.");
-      alert("⚠️ No se encontró el archivo del libro. Intenta más tarde o contacta soporte.");
+      console.warn("⚠️ No se recibió una URL pública válida para descargar el libro.");
+      alert("⚠️ No se encontró el archivo del libro. Intenta nuevamente más tarde o contacta soporte.");
       return;
     }
 
@@ -112,6 +104,7 @@ export function Compra() {
     if (!id) return;
     let activo = true;
     let yaRedirigio = false;
+
     const sessionId = localStorage.getItem("session_id");
 
     const verificar = async () => {
@@ -121,24 +114,28 @@ export function Compra() {
             `${apiUrl}/webhook_estado?libroId=${encodeURIComponent(id)}&sessionId=${encodeURIComponent(sessionId)}`
           );
           const data = await res.json();
+
           console.log("🔍 Estado del pago:", data);
 
           if (data.pago_exitoso && data.data?.[0]?.payment_id) {
             const paymentID = data.data[0].payment_id;
             localStorage.setItem("payment", JSON.stringify(paymentID));
 
-            // ✅ Segunda verificación
+            // ✅ Doble verificación
             const validacion = await fetch(
               `${apiUrl}/webhook_estado?libroId=${encodeURIComponent(id)}&sessionId=${encodeURIComponent(sessionId)}`
             );
             const validacionData = await validacion.json();
+
             console.log("🧾 Segunda validación:", validacionData);
 
             if (
               validacionData.pago_exitoso &&
               validacionData.data?.[0]?.payment_id === paymentID
             ) {
-              yaRedirigio = true;
+              yaRedirigio = true; 
+
+               
 
               if (producto.categoria === "cuentos") {
                 alert("✅ ¡Pago aprobado! Desbloqueando cuento...");
@@ -146,23 +143,46 @@ export function Compra() {
               } else if (
                 producto.categoria === "libros" &&
                 validacionData.data?.[0]?.url_publica
-              ) {
-                alert("📘 ¡El código de desbloqueo es: migueletes2372");
+              ) { 
+                  
+                alert("📘 ¡el codigo de Desbloqueo es migueletes2372");
                 descargarLibro(validacionData.data[0].url_publica);
               } else {
                 alert("⚠️ El pago fue aprobado pero no se encontró el archivo del libro.");
-              }
+              }    
+              if (
+  validacionData.pago_exitoso &&
+  validacionData.data?.[0]?.payment_id === paymentID
+) {
+  yaRedirigio = true;
 
-              // 🔥 Solo acá se elimina el session_id
-              setTimeout(() => {
-                console.log("🧩 Eliminando session_id:", sessionId);
-                localStorage.removeItem("session_id");
-              }, 1000);
+  if (producto.categoria === "cuentos") {
+    alert("✅ ¡Pago aprobado! Desbloqueando cuento...");
+    desbloquearCuento(id);
+  } else if (
+    producto.categoria === "libros" &&
+    validacionData.data?.[0]?.url_publica
+  ) {
+    alert("📘 ¡El código de desbloqueo es: migueletes2372");
+    descargarLibro(validacionData.data[0].url_publica);
+  } else {
+    alert("⚠️ El pago fue aprobado pero no se encontró el archivo del libro.");
+  }
 
-              return;
+  // 🔥 Solo acá, tras éxito total
+          setTimeout(() => {
+            console.log("🧩 Eliminando session_id:", sessionId);
+            localStorage.removeItem("session_id");
+          }, 1000);
+        
+          return;
+        }
+
             } else {
-              console.warn("⚠️ Pago no verificado en segunda validación.");
-            }
+              console.warn("⚠️ Pago no verificado en segunda validación. No se desbloquea nada.");
+            } 
+
+            
 
             return;
           }
@@ -178,7 +198,7 @@ export function Compra() {
     return () => {
       activo = false;
     };
-  }, [id, apiUrl, producto]);
+  }, [id]);
 
   // ======================================================
   // ⚙️ Verificación puntual tras iniciar el pago
@@ -191,18 +211,23 @@ export function Compra() {
       for (let intento = 1; intento <= maxIntentos; intento++) {
         const res = await fetch(`${apiUrl}/webhook_estado?libroId=${encodeURIComponent(libroId)}`);
         const data = await res.json();
+
         console.log(`🕓 Verificación inmediata ${intento}/${maxIntentos}:`, data);
 
-        if (data.pago_exitoso) {
+        if (data.pago_exitoso) { 
+
+           
           if (producto.categoria === "cuentos") {
             desbloquearCuento(libroId);
           } else if (producto.categoria === "libros" && data.data?.[0]?.url_publica) {
-            const paymentID = data.data[0].payment_id;
+            const paymentID = data.data?.[0]?.payment_id;
             localStorage.setItem("payment", JSON.stringify(paymentID));
             descargarLibro(data.data[0].url_publica);
+         
           } else {
             alert("⚠️ Pago exitoso, pero no se encontró la URL del libro.");
-          }
+          } 
+          
           return;
         }
 
@@ -214,6 +239,14 @@ export function Compra() {
       console.error("❌ Error verificando pago:", e);
     }
   };
+
+  useEffect(() => {
+    let sessionId = localStorage.getItem("session_id");
+    if (!sessionId) {
+      sessionId = `${Date.now()}-${Math.random().toString(36).substring(2, 8)}`;
+      localStorage.setItem("session_id", sessionId);
+    }
+  }, []);
 
   // ======================================================
   // 💳 Iniciar compra con MercadoPago
@@ -284,6 +317,7 @@ export function Compra() {
   return (
     <div className="producto-container">
       <img src={producto.imagen} alt={producto.titulo} className="producto-imagen" />
+
       <div className="producto-detalle">
         <h2 className="producto-titulo">{producto.titulo}</h2>
 
