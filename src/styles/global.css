@@ -1058,7 +1058,7 @@ button:last-of-type:hover {
   }
 
   .libro-card {
-    width: 92%;
+    width: 100%;
     flex-direction: column;
     text-align: center;
     padding: 1rem;
@@ -1124,7 +1124,7 @@ button:last-of-type:hover {
   .libro-card {
     padding: 0.8rem;
     gap: 0.8rem;
-    width: 95%;
+    width: 100%;
   }
 
   .title-book {
