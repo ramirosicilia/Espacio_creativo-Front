@@ -1051,7 +1051,27 @@ button:last-of-type:hover {
 
   .titulo-espacio {
     font-size: 1.3rem;
+  } 
+
+  /* 📱 Ajustes solo para responsive */
+@media (max-width: 600px) {
+  .acciones-container {
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+    align-items: center;
   }
+
+  .boton-accion {
+    width: 80%;
+    padding: 12px 0;
+    font-size: 16px;
+    font-weight: 600;
+    border-radius: 14px; /* más suaves */
+    text-align: center;
+  }
+}
+
 
   .nav-link {
     font-size: 14px;
