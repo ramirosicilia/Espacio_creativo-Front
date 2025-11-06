@@ -133,9 +133,7 @@ export function Compra() {
               validacionData.pago_exitoso &&
               validacionData.data?.[0]?.payment_id === paymentID
             ) {
-              yaRedirigio = true; 
-
-               
+              yaRedirigio = true;
 
               if (producto.categoria === "cuentos") {
                 alert("✅ ¡Pago aprobado! Desbloqueando cuento...");
@@ -143,46 +141,23 @@ export function Compra() {
               } else if (
                 producto.categoria === "libros" &&
                 validacionData.data?.[0]?.url_publica
-              ) { 
-                  
-                alert("📘 ¡el codigo de Desbloqueo es migueletes2372");
+              ) {
+                alert("📘 ¡El código de desbloqueo es: migueletes2372");
                 descargarLibro(validacionData.data[0].url_publica);
               } else {
                 alert("⚠️ El pago fue aprobado pero no se encontró el archivo del libro.");
-              }    
-              if (
-  validacionData.pago_exitoso &&
-  validacionData.data?.[0]?.payment_id === paymentID
-) {
-  yaRedirigio = true;
+              }
 
-  if (producto.categoria === "cuentos") {
-    alert("✅ ¡Pago aprobado! Desbloqueando cuento...");
-    desbloquearCuento(id);
-  } else if (
-    producto.categoria === "libros" &&
-    validacionData.data?.[0]?.url_publica
-  ) {
-    alert("📘 ¡El código de desbloqueo es: migueletes2372");
-    descargarLibro(validacionData.data[0].url_publica);
-  } else {
-    alert("⚠️ El pago fue aprobado pero no se encontró el archivo del libro.");
-  }
+              // 🔥 Solo acá, tras éxito total
+              setTimeout(() => {
+                console.log("🧩 Eliminando session_id:", sessionId);
+                localStorage.removeItem("session_id");
+              }, 1000);
 
-  // 🔥 Solo acá, tras éxito total
-          setTimeout(() => {
-            console.log("🧩 Eliminando session_id:", sessionId);
-            localStorage.removeItem("session_id");
-          }, 1000);
-        
-          return;
-        }
-
+              return;
             } else {
               console.warn("⚠️ Pago no verificado en segunda validación. No se desbloquea nada.");
-            } 
-
-            
+            }
 
             return;
           }
@@ -214,20 +189,17 @@ export function Compra() {
 
         console.log(`🕓 Verificación inmediata ${intento}/${maxIntentos}:`, data);
 
-        if (data.pago_exitoso) { 
-
-           
+        if (data.pago_exitoso) {
           if (producto.categoria === "cuentos") {
             desbloquearCuento(libroId);
           } else if (producto.categoria === "libros" && data.data?.[0]?.url_publica) {
             const paymentID = data.data?.[0]?.payment_id;
             localStorage.setItem("payment", JSON.stringify(paymentID));
             descargarLibro(data.data[0].url_publica);
-         
           } else {
             alert("⚠️ Pago exitoso, pero no se encontró la URL del libro.");
-          } 
-          
+          }
+
           return;
         }
 
