@@ -117,13 +117,7 @@ export function Compra() {
 
           console.log("🔍 Estado del pago:", data);
 
-       if (
-  data?.pago_exitoso === true &&
-  data?.data?.length > 0 &&
-  Number(data.data[0].amount) > 0 &&
-  data.data[0].status === "approved"
-) 
- {
+          if (data.pago_exitoso && data.data?.[0]?.payment_id) {
             const paymentID = data.data[0].payment_id;
             localStorage.setItem("payment", JSON.stringify(paymentID));
 
@@ -139,7 +133,9 @@ export function Compra() {
               validacionData.pago_exitoso &&
               validacionData.data?.[0]?.payment_id === paymentID
             ) {
-              yaRedirigio = true;
+              yaRedirigio = true; 
+
+                localStorage.removeItem("session_id");
 
               if (producto.categoria === "cuentos") {
                 alert("✅ ¡Pago aprobado! Desbloqueando cuento...");
@@ -187,7 +183,10 @@ export function Compra() {
 
         console.log(`🕓 Verificación inmediata ${intento}/${maxIntentos}:`, data);
 
-        if (data.pago_exitoso) {
+        if (data.pago_exitoso) { 
+
+            localStorage.removeItem("session_id"); 
+            
           if (producto.categoria === "cuentos") {
             desbloquearCuento(libroId);
           } else if (producto.categoria === "libros" && data.data?.[0]?.url_publica) {
