@@ -1,6 +1,7 @@
 import BotonesLibro from "./BotonesLibro";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState  } from "react";
+
 
 export default function LibrosCard({ libro }) {
   const cardRef = useRef();
