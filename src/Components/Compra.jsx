@@ -30,7 +30,7 @@ export function Compra() {
   // 📚 PRODUCTOS
   // ======================================================
   const productos = {
-    1: { titulo: "Los Héroes de la Dimensión Paralela", imagen: libro1, precio: (5).toFixed(2), categoria: "libros" },
+    1: { titulo: "Los Héroes de la Dimensión Paralela", imagen: libro1, precio:(4990).toFixed(2), categoria: "libros" },
     2: { titulo: "Reconquistando la Tierra", imagen: libro2, precio: (4990).toFixed(2), categoria: "libros" },
     3: { titulo: "La Tercer Guerra", imagen: libro3, precio: (4990).toFixed(2), categoria: "libros" },
     4: { titulo: "El Cuidador", imagen: cuento1, precio: (3990).toFixed(2), categoria: "cuentos" },
