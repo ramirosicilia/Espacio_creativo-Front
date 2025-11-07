@@ -60,7 +60,7 @@ function Capitulo1Libro1() {
   return {
     id: "1-1",
     categoria: "Libro", // 👈 agregado
-    titulo: "Capítulo 1 — El Viaje:",
+    titulo: "Capítulo 1 — El Viaje",
     contenido: dimensionParalela(),
   };
 }
