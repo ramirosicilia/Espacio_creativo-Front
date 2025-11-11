@@ -143,7 +143,7 @@ export default function Home() {
     },
     {
       id: 9,
-      titulo: "A travéz del espejo",
+      titulo: "A través del espejo",
       categoria:"Cuento",
       genero:"Terror/Thriller",
       descripcion: `En los años sesenta, los Miller ocultaban un secreto que ni la muerte pudo enterrar.
