@@ -30,15 +30,15 @@ export function Compra() {
   // 📚 PRODUCTOS
   // ======================================================
   const productos = {
-    1: { titulo: "Los Héroes de la Dimensión Paralela", imagen: libro1, precio:(4990).toFixed(2), categoria: "libros" },
-    2: { titulo: "Reconquistando la Tierra", imagen: libro2, precio: (4990).toFixed(2), categoria: "libros" },
-    3: { titulo: "La Tercer Guerra", imagen: libro3, precio: (4990).toFixed(2), categoria: "libros" },
-    4: { titulo: "El Cuidador", imagen: cuento1, precio: (3990).toFixed(2), categoria: "cuentos" },
-    5: { titulo: "La Mirada de un Ángel", imagen: cuento2, precio: (3990).toFixed(2), categoria: "cuentos" },
-    6: { titulo: "El Último Deseo", imagen: cuento3, precio: (3990).toFixed(2), categoria: "cuentos" },
-    7: { titulo: "El Nuevo Despertar", imagen: cuento4, precio: (3990).toFixed(2), categoria: "cuentos" },
-    8: { titulo: "El Infierno de las Apps de Citas", imagen: cuento5, precio: (3990).toFixed(2), categoria: "cuentos" },
-    9: { titulo: "A Través del Espejo", imagen: cuento6, precio: (3990).toFixed(2), categoria: "cuentos" },
+    1: { titulo: "Los Héroes de la Dimensión Paralela", imagen: libro1, precio:(1990).toFixed(2), categoria: "libros" },
+    2: { titulo: "Reconquistando la Tierra", imagen: libro2, precio: (1990).toFixed(2), categoria: "libros" },
+    3: { titulo: "La Tercer Guerra", imagen: libro3, precio: (1990).toFixed(2), categoria: "libros" },
+    4: { titulo: "El Cuidador", imagen: cuento1, precio: (1990).toFixed(2), categoria: "cuentos" },
+    5: { titulo: "La Mirada de un Ángel", imagen: cuento2, precio: (1990).toFixed(2), categoria: "cuentos" },
+    6: { titulo: "El Último Deseo", imagen: cuento3, precio: (1990).toFixed(2), categoria: "cuentos" },
+    7: { titulo: "El Nuevo Despertar", imagen: cuento4, precio: (1990).toFixed(2), categoria: "cuentos" },
+    8: { titulo: "El Infierno de las Apps de Citas", imagen: cuento5, precio: (1990).toFixed(2), categoria: "cuentos" },
+    9: { titulo: "A Través del Espejo", imagen: cuento6, precio: (1990).toFixed(2), categoria: "cuentos" },
   };
 
   const producto = productos[id];
